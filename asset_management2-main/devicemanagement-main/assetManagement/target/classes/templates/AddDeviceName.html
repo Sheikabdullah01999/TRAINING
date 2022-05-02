@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="ISO-8859-1">
+    <title>device category</title>
+    <link rel="stylesheet"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+          crossorigin="anonymous">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orelega+One&display=swap" rel="stylesheet">
+    <style type="text/css">
+    h1
+    {
+    color:red;
+    text-align:center;
+    padding:20px;
+    font-family: 'Orelega One', cursive;
+    }
+    .control-label
+    {
+    font-style:italic;
+    font-size:18px;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+
+            <!-- success message -->
+            <div th:if="${param.success}">
+                <div class="alert alert-info">You've successfully saved!</div>
+            </div>
+            <br>
+            <br>
+            <div th:if="${param.error}">
+                <div class="alert alert-info"><span th:if="${errorMessage != null}" th:text="${errorMessage}"></span></div>
+            </div>
+            <h1>Device Name</h1>
+
+            <form th:action="@{/saveDeviceName}" method="post" th:object="${deviceName}">
+
+
+                <div class="form-group">
+                    <label class="control-label" for="sample1"> Device Name </label>
+                    <input id="sample1" class="form-control" th:field="*{name}" placeholder="deviceName"
+                           required autofocus="autofocus" />
+                </div>
+
+                <div class="form-group">
+                    <button type="submit" class="btn btn-success">ADD</button>
+                    <button type="submit" class="btn btn-primary"><a href="/"th:href="@{/}" style="color:white";>Back</a></button>
+                </div>
+            </form>
+</body>
+</html>

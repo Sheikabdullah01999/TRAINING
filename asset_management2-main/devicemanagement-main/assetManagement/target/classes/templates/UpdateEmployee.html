@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="ISO-8859-1">
+    <title>Employee Registration</title>
+    <link rel="stylesheet"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+          crossorigin="anonymous">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orelega+One&display=swap" rel="stylesheet">
+    <style type="text/css">
+    h1
+    {
+    color:red;
+    text-align:center;
+    padding:20px;
+    font-family: 'Orelega One', cursive;
+    }
+    .control-label
+    {
+    font-style:italic;
+    font-size:18px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+
+            <!-- success message -->
+            <div th:if="${param.success}">
+                <div class="alert alert-info">You've successfully updated!</div>
+            </div>
+            <br>
+            <br>
+            <div th:if="${errorMessage!=null}">
+                <div class="alert alert-info">[[${errorMessage}]]</div>
+            </div>
+            <h1>Employee Registration</h1>
+
+            <form th:action="@{/updateEmployee}" method="post" th:object="${employee}">
+                <div class="form-group">
+                    <label class="control-label" for="firstName"> EmployeeId </label>
+                    <input id="firstName" class="form-control" th:field="*{empId}"
+                           required autofocus="autofocus" readonly="readonly" />
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label" for="lastName"> EmployeeName </label>
+                    <input id="lastName" class="form-control" th:field="*{empName}"
+                           required autofocus="autofocus" />
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label" for="email"> EmployeeEmail </label>
+                    <input id="email" class="form-control" th:field="*{email}" required
+                           autofocus="autofocus" readonly="readonly" />
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label" for="password" hidden> EmployeePassword </label>
+                    <input id="password" class="form-control" type="hidden"
+                           th:field="*{empPassword}" required autofocus="autofocus"  readonly="readonly"/>
+                </div>
+                <div class="form-group">
+                    <label class="control-label" for="department"> EmployeeDepartment </label>
+                    <input id="department" class="form-control"
+                           th:field="*{empDepartment}" required autofocus="autofocus" />
+                </div>
+                <div class="form-group">
+                    <label class="control-label"> EmployeeLaptop </label>
+                    <select class="form-control" th:name="device" th:field="*{empDevices}" multiple>
+                        <option th:each="device:${List_Of_Devices}" th:value="${device}" th:text="${device}"></option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="control-label"> EmployeeRole </label>
+                    <!--          <input id="role" class="form-control"-->
+                    <!--                 th:field="*{assignRole}" required autofocus="autofocus" />-->
+                    <select class="form-control"  th:field="*{assignRole}">
+                        <option th:each="role:${List_Of_Roles}" th:value="${role.roleName}" th:text="${role.roleName}"></option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-success">Register</button>
+                    <button type="submit" class="btn btn-primary"><a href="/"th:href="@{/}" style="color:white";>Back</a></button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

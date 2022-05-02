@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="ISO-8859-1">
+    <title>Employee Registration</title>
+    <link rel="stylesheet"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+          crossorigin="anonymous">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orelega+One&display=swap" rel="stylesheet">
+    <style type="text/css">
+    h1
+    {
+    color:red;
+    text-align:center;
+    padding:20px;
+    font-family: 'Orelega One', cursive;
+    }
+    .control-label
+    {
+    font-style:italic;
+    font-size:18px;
+    }
+  </style>
+</head>
+<body>
+<!-- Create HTML registration form -->
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+
+            <!-- success message -->
+            <div th:if="${param.success}">
+                <div class="alert alert-info">You've successfully updated!</div>
+            </div>
+            <br>
+            <br>
+            <div th:if="${param.error}">
+                <div class="alert alert-info"><span th:if="${errorMessage != null}" th:text="${errorMessage}"></span></div>
+            </div>
+            <h1>Update Device</h1>
+
+            <form th:action="@{/device_details}" method="post" th:object="${device}">
+                <div class="form-group">
+                    <label class="control-label" for="id"> DeviceId </label>
+                    <input id="id" class="form-control" th:field="*{id}" readonly="readonly"
+                           required autofocus="autofocus" />
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label" > DeviceCategory </label>
+                    <select class="form-control"  th:field="*{category}">
+                    <option th:each="device:${ListOfDeviceCategory}" th:value="${device.category}" th:text="${device.category}"></option>
+                </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label" > DeviceName </label>
+                    <select class="form-control"  th:field="*{DeviceName}">
+                        <option th:each="device:${ListOfDeviceName}" th:value="${device.name}" th:text="${device.name}"></option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label" for="department"> DevicePurchaseDate </label>
+                    <input id="department" class="form-control"
+                           th:field="*{devicePurchaseDate}" required autofocus="autofocus" />
+                </div>
+                <div class="form-group">
+                    <label class="control-label" for="laptop"> Assign Status </label>
+                    <input id="" class="form-control" readonly="readonly"
+                           th:field="*{assignStatus}" required autofocus="autofocus" />
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label" for="laptop"> DeviceStatus  </label>
+                    <input id="laptop" class="form-control" readonly="readonly"
+                           th:field="*{deviceStatus}" required autofocus="autofocus" />
+                </div>
+
+                <div class="form-group">
+                    <button type="submit" class="btn btn-success">Register</button>
+                    <button type="submit" class="btn btn-primary"><a href="/"th:href="@{/}" style="color:white";>Back</a></button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>
