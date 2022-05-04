@@ -36,6 +36,9 @@ public class AdminController {
     public String home(Model model) {
         List<String> deviceList=adminService.getAllDevices();
         model.addAttribute("List_Of_Devices",deviceList);
+        Authentication authentication=adminService.getCurrentUser();
+        String currentUser=authentication.getName();
+        model.addAttribute("user",currentUser);
         return "index";
     }
     @GetMapping("/login")
@@ -108,16 +111,6 @@ public class AdminController {
         model.addAttribute("Device_details",deviceList);
         return "DeviceDetails";
     }
-    @GetMapping("/currentUser")
-    public String  getCurrentUserDetails(Model model)
-    {
-        Authentication authentication=adminService.getCurrentUser();
-        String currentUser=authentication.getName();
-        model.addAttribute("user",currentUser);
-        return  "index";
-    }
-
-
     @GetMapping("/damaged")
     public String getDamagedDeviceDetails(@RequestParam String device,@RequestParam String status, Model model)
     {
@@ -129,7 +122,7 @@ public class AdminController {
         catch(UserAlreadyExistException e)
         {
             model.addAttribute("errorMessage",e.getMessage());
-            return "AddDeviceDetails";
+            return "DeviceDetails";
         }
     }
 
