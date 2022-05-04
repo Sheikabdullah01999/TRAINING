@@ -20,13 +20,4 @@ public class DeviceCategory {
     public void setCategory(String category) {
         this.category = category;
     }
-
-
-//    public String getDeviceCategory() {
-//        return deviceCategory;
-//    }
-//
-//    public void setDeviceCategory(String deviceCategory) {
-//        this.deviceCategory = deviceCategory;
-//    }
 }

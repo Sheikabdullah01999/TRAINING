@@ -48,6 +48,9 @@ public class AdminService {
     @Autowired
     private DeviceNameDao deviceNameDao;
 
+    @Autowired
+    private EmployeeDepartmentDao employeeDepartmentDao;
+
     //@Secured({ "ROLE_RUN_AS_REPORTER" })
     public Authentication getCurrentUser() {
         Authentication authentication =
@@ -541,6 +544,15 @@ public class AdminService {
      getCurrentUser();
      System.out.println();
         return historyList;
+    }
+
+    public void saveEmpDepartment(EmployeeDepartment employeeDepartment) {
+        employeeDepartmentDao.save(employeeDepartment);
+    }
+
+    public List<EmployeeDepartment> getAllEmpDepartments() {
+        List<EmployeeDepartment> list=employeeDepartmentDao.findAll();
+        return list;
     }
 }
 

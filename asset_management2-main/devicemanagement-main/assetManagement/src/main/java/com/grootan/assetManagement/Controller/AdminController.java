@@ -8,15 +8,10 @@ import com.grootan.assetManagement.Repository.EmployeeDao;
 import com.grootan.assetManagement.Service.AdminService;
 import com.grootan.assetManagement.Service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
-
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
@@ -50,6 +45,8 @@ public class AdminController {
         model.addAttribute("List_Of_Roles",roles);
         List<String> deviceList=adminService.getAllDevicesByName();
         model.addAttribute("List_Of_Devices",deviceList);
+        List<EmployeeDepartment> employeeDepartmentList=adminService.getAllEmpDepartments();
+        model.addAttribute("ListOfEmpDepartment",employeeDepartmentList);
         Employee employee = new Employee();
         model.addAttribute("employee",employee);
         return "Registration";
@@ -73,6 +70,13 @@ public class AdminController {
     public String list_of_employee(Model model)
     {
         model.addAttribute("List_Of_Employees",adminService.getAllEmployees());
+        return "ListOfEmployees";
+    }
+
+    @GetMapping("/ListOfEmpDepartment")
+    public String listOfDepartment(Model model)
+    {
+        model.addAttribute("ListOfDepartment",adminService.getAllEmpDepartments());
         return "ListOfEmployees";
     }
 
@@ -107,14 +111,6 @@ public class AdminController {
         List<Device> deviceList =adminService.getDevice(device);
         model.addAttribute("Device_details",deviceList);
         return "DeviceDetails";
-    }
-    @GetMapping("/currentUser")
-    public String  getCurrentUserDetails(Model model)
-    {
-        Authentication authentication=adminService.getCurrentUser();
-        String currentUser=authentication.getName();
-        model.addAttribute("user",currentUser);
-        return  "index";
     }
 
 
@@ -275,6 +271,28 @@ public class AdminController {
         model.addAttribute("deviceCategory",deviceCategory);
         return "AddDeviceCategory";
     }
+    @PostMapping("/saveEmpDepartment")
+    public String saveEmpDepartment(@ModelAttribute("employeeDepartment") EmployeeDepartment employeeDepartment,Model model)
+    {
+        try{
+            adminService.saveEmpDepartment(employeeDepartment);
+            return "redirect:/department?success";
+        }
+        catch(UserAlreadyExistException e)
+        {
+            model.addAttribute("errorMessage",e.getMessage());
+            return "AddEmployeeDepartment";
+        }
+
+    }
+
+    @GetMapping("/department")
+    public String addDepartment(Model model)
+    {
+        EmployeeDepartment employeeDepartment=new EmployeeDepartment();
+        model.addAttribute("employeeDepartment",employeeDepartment);
+        return "AddEmployeeDepartment";
+    }
 
     @PostMapping("/saveDeviceName")
     public String saveDeviceName(@ModelAttribute("deviceName") DeviceName deviceName,Model model)
@@ -298,5 +316,6 @@ public class AdminController {
         model.addAttribute("deviceName",deviceName);
         return "AddDeviceName";
     }
+
 
 }
