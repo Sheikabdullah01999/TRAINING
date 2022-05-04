@@ -501,6 +501,9 @@ public class AdminService {
     public List<History> getHistory() {
      List<History> historyList=historyDao.findAll();
      System.out.println(historyList);
+
+
+     System.out.print("/n");
         return historyList;
     }
 }
