@@ -66,7 +66,7 @@ public class AdminController {
         {
 
             model.addAttribute("errorMessage",e.getMessage());
-            return "registration";
+            return "Registration";
         }
     }
     @GetMapping("/List_Of_Employees")
@@ -121,21 +121,15 @@ public class AdminController {
     @GetMapping("/damaged")
     public String getDamagedDeviceDetails(@RequestParam String device,@RequestParam String status, Model model)
     {
-
         List<Device> deviceList =adminService.getDamagedDevice(device,status);
-        if(deviceList.isEmpty())
-        {
-            model.addAttribute("message","No Records Found");
-            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
-            LocalDateTime now = LocalDateTime.now();
-            model.addAttribute("timestamp",dtf.format(now));
-            model.addAttribute("status", HttpStatus.NOT_FOUND);
-            return "Error";
-        }
-        else
-        {
+        try{
             model.addAttribute("Device_details",deviceList);
             return "DeviceDetails";
+        }
+        catch(UserAlreadyExistException e)
+        {
+            model.addAttribute("errorMessage",e.getMessage());
+            return "AddDeviceDetails";
         }
     }
 
@@ -143,12 +137,11 @@ public class AdminController {
     @GetMapping("/add_device_details")
     public String addDeviceDetails(Model model)
     {
-        Device device=new Device();
-        model.addAttribute("devices",device);
         List<DeviceCategory> devices = adminService.getCategory();
         model.addAttribute("ListOfDeviceCategory",devices);
         List<DeviceName> devicesList = adminService.getName();
         model.addAttribute("ListOfDeviceName",devicesList);
+        model.addAttribute("device",new Device());
         return "AddDeviceDetails";
     }
 
@@ -176,12 +169,8 @@ public class AdminController {
         }
         catch(UserAlreadyExistException e)
         {
-            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
-            LocalDateTime now = LocalDateTime.now();
-            model.addAttribute("timestamp",dtf.format(now));
-            model.addAttribute("status", HttpStatus.CONFLICT);
-            model.addAttribute("message",e.getMessage());
-            return "Error";
+            model.addAttribute("errorMessage",e.getMessage());
+            return "AddDeviceDetails";
         }
 
     }
@@ -273,12 +262,8 @@ public class AdminController {
         }
         catch(UserAlreadyExistException e)
         {
-            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
-            LocalDateTime now = LocalDateTime.now();
-            model.addAttribute("timestamp",dtf.format(now));
-            model.addAttribute("status", HttpStatus.CONFLICT);
-            model.addAttribute("message",e.getMessage());
-            return "Error";
+            model.addAttribute("errorMessage",e.getMessage());
+            return "AddDeviceCategory";
         }
 
     }
@@ -301,12 +286,8 @@ public class AdminController {
         }
         catch(UserAlreadyExistException e)
         {
-            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
-            LocalDateTime now = LocalDateTime.now();
-            model.addAttribute("timestamp",dtf.format(now));
-            model.addAttribute("status", HttpStatus.CONFLICT);
-            model.addAttribute("message",e.getMessage());
-            return "Error";
+            model.addAttribute("errorMessage",e.getMessage());
+            return "AddDeviceName";
         }
     }
 

@@ -23,6 +23,10 @@
     font-style:italic;
     font-size:18px;
     }
+    li
+    {
+    list-style:none;
+    }
   </style>
 </head>
 <body>
@@ -40,7 +44,7 @@
             <div th:if="${errorMessage!=null}">
                 <div class="alert alert-info">[[${errorMessage}]]</div>
             </div>
-            <h1>Employee Registration</h1>
+            <h1>Employee Updation</h1>
 
             <form th:action="@{/updateEmployee}" method="post" th:object="${employee}">
                 <div class="form-group">
@@ -57,7 +61,7 @@
 
                 <div class="form-group">
                     <label class="control-label" for="email"> EmployeeEmail </label>
-                    <input id="email" class="form-control" th:field="*{email}" required
+                    <input id="email" class="form-control" th:field="*{email}"
                            autofocus="autofocus" readonly="readonly" />
                 </div>
 
@@ -72,13 +76,15 @@
                            th:field="*{empDepartment}" required autofocus="autofocus" />
                 </div>
                 <div class="form-group">
-                    <label class="control-label"> EmployeeLaptop </label>
-                    <select class="form-control" th:name="device" th:field="*{empDevices}" multiple>
-                        <option th:each="device:${List_Of_Devices}" th:value="${device}" th:text="${device}"></option>
-                    </select>
+                    <label class="control-label"> EmployeeDevices </label>
+                    <ul>
+                        <li th:each="device : ${List_Of_Devices}">
+                            <input type="checkbox" th:field="*{empDevices}" th:value="${device}" th:text="${device}" />
+                        </li>
+                    </ul>
                 </div>
                 <div class="form-group">
-                    <label class="control-label"> EmployeeRole </label>
+                    <label class="control-label"> EmployeeRole </label>                             
                     <!--          <input id="role" class="form-control"-->
                     <!--                 th:field="*{assignRole}" required autofocus="autofocus" />-->
                     <select class="form-control"  th:field="*{assignRole}">
