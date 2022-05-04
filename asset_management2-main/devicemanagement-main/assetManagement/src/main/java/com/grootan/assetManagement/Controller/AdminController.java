@@ -9,6 +9,7 @@ import com.grootan.assetManagement.Service.AdminService;
 import com.grootan.assetManagement.Service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -106,6 +107,14 @@ public class AdminController {
         List<Device> deviceList =adminService.getDevice(device);
         model.addAttribute("Device_details",deviceList);
         return "DeviceDetails";
+    }
+    @GetMapping("/currentUser")
+    public String  getCurrentUserDetails(Model model)
+    {
+        Authentication authentication=adminService.getCurrentUser();
+        String currentUser=authentication.getName();
+        model.addAttribute("user",currentUser);
+        return  "index";
     }
 
 

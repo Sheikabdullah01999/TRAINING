@@ -6,12 +6,17 @@ import com.grootan.assetManagement.Repository.*;
 import com.grootan.assetManagement.Exception.ResourceNotFoundException;
 import com.grootan.assetManagement.Exception.UserAlreadyExistException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.regex.Pattern;
 
 @Service
 public class AdminService {
@@ -43,6 +48,15 @@ public class AdminService {
     @Autowired
     private DeviceNameDao deviceNameDao;
 
+    //@Secured({ "ROLE_RUN_AS_REPORTER" })
+    public Authentication getCurrentUser() {
+        Authentication authentication =
+                SecurityContextHolder.getContext().getAuthentication();
+        String s=authentication.getName();
+        System.out.println(s);
+        return authentication;
+    }
+
   public void initRoleAndUser() {
 
         Role adminRole = new Role();
@@ -70,6 +84,9 @@ public class AdminService {
     }
 
 
+
+
+
     public String getEncodedPassword(String password) {
         return passwordEncoder.encode(password);
     }
@@ -87,11 +104,29 @@ public class AdminService {
     {
         return employeeDao.findByEmpDevices(empDevices)!=null;
     }
+
     private boolean deviceCategoryExists(final String category)
     {
         return deviceCategoryDao.findByDeviceCategory(category)!=null;
     }
+    public static boolean isValid(String email)
+    {
+        String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\."+
+                "[a-zA-Z0-9_+&*-]+)*@" +
+                "(?:[a-zA-Z0-9-]+\\.)+[a-z" +
+                "A-Z]{2,7}$";
+
+        Pattern pat = Pattern.compile(emailRegex);
+        if (email == null)
+            return false;
+        return pat.matcher(email).matches();
+    }
     public Employee saveEmployee(Employee employeeDetails) {
+        Boolean validEmail=isValid(employeeDetails.getEmail());
+        if(!validEmail)
+        {
+            throw new UserAlreadyExistException("Incorrect email: "+employeeDetails.getEmail());
+        }
         if(emailExists(employeeDetails.getEmail()))
         {
             throw new UserAlreadyExistException("There is an account with that email address: "+employeeDetails.getEmail());
@@ -109,13 +144,13 @@ public class AdminService {
         Employee employee;
         if(devices==null)
         {
-            List<Device> d=new ArrayList<>();
+            List<Device> devices1=new ArrayList<>();
             employee = new Employee(employeeDetails.getEmpId(),
                     employeeDetails.getEmpName(), employeeDetails.getEmail(),
                     passwordEncoder.encode(employeeDetails.getEmpPassword()),
                     employeeDetails.getEmpDepartment(),
                     "", employeeDetails.getAssignRole(),
-                    Arrays.asList(new Role(employeeDetails.getAssignRole())),d);
+                    Arrays.asList(new Role(employeeDetails.getAssignRole())),devices1);
         }
         else
         {
@@ -131,6 +166,7 @@ public class AdminService {
                 if(updatedDevice=="")
                 {
                     updatedDevice=updatedDevice+device;
+                    updatedDevice=device;
                 }
                 else
                 {
@@ -501,9 +537,8 @@ public class AdminService {
     public List<History> getHistory() {
      List<History> historyList=historyDao.findAll();
      System.out.println(historyList);
-
-
      System.out.print("/n");
+     getCurrentUser();
         return historyList;
     }
 }
