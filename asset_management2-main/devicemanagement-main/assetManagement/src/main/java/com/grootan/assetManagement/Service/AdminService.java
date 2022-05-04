@@ -540,7 +540,15 @@ public class AdminService {
 
     public List<History> getHistory() {
      List<History> historyList=historyDao.findAll();
+<<<<<<< HEAD
      return historyList;
+=======
+     System.out.println(historyList);
+     System.out.print("/n");
+     getCurrentUser();
+     System.out.println();
+        return historyList;
+>>>>>>> c171cbabd6ab6506f5645f14c20ea930a78596db
     }
 }
 
