@@ -536,6 +536,7 @@ public class AdminService {
     public List<History> getHistory() {
      List<History> historyList=historyDao.findAll();
      getCurrentUser();
+     System.out.println();
         return historyList;
     }
 }
