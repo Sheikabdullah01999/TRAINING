@@ -39,23 +39,21 @@
             </div>
             <br>
             <br>
-            <div th:if="${param.error}">
-                <div class="alert alert-info"><span th:if="${errorMessage != null}" th:text=""></span></div>
+            <div th:if="${errorMessage!=null}">
+                <div class="alert alert-info">[[${errorMessage}]]</div>
             </div>
             <h1>Device Registration</h1>
 
-            <form th:action="@{/device_details}" method="post" th:object="${devices}">
-
-                    <label class="control-label"> Device Category </label>
-
-                <select class="form-control"  th:field="*{category}">
-                    <option th:each="device:${ListOfDeviceCategory}" th:value="${device.category}" th:text="${device.category}"></option>
-                </select>
-
-
+            <form th:action="@{/device_details}" method="post" th:object="${device}">
+                <div>
+               <label class="control-label"> Device Category </label>
+               <select class="form-control"  th:field="*{category}">
+                   <option th:each="device:${ListOfDeviceCategory}" th:value="${device.category}" th:text="${device.category}"></option>
+               </select>
+           </div>
                 <div class="form-group">
                     <label class="control-label"> Device Name </label>
-                    <select class="form-control"  th:field="*{DeviceName}">
+                    <select class="form-control"  th:field="*{deviceName}">
                         <option th:each="device:${ListOfDeviceName}" th:value="${device.name}" th:text="${device.name}"></option>
                     </select>
                 </div>

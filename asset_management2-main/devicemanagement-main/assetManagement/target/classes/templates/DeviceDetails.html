@@ -64,6 +64,7 @@
             <th scope="col">category</th>
             <th scope="col">device name</th>
             <th scope="col">device purchase date</th>
+            <th scope="col" >device manufacture id</th>
             <th scope="col">assign status</th>
             <th scope="col">device status</th>
             <th scope="col" colspan="2">operations</th>
@@ -75,6 +76,7 @@
             <td th:text="${device.category}"></td>
             <td th:text="${device.deviceName}"></td>
             <td th:text="${device.devicePurchaseDate}"></td>
+            <td th:text="${device.manufacturedId}"></td>
             <td th:text="${device.assignStatus}"></td>
             <td th:text="${device.deviceStatus}"></td>
             <td><button class="submit1"><a th:href="@{'/update/' +${device.id}}">update</a></button></td>

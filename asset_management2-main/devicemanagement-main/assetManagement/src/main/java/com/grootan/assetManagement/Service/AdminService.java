@@ -82,14 +82,14 @@ public class AdminService {
         return employeeDao.findByEmpId(empId)!=null;
     }
     private boolean deviceIdExists(final String id) { return deviceDao.findByDeviceId(id)!=null; }
-    private boolean deviceNameExists(final String name){ return deviceDao.findByDeviceName(name)!=null; }
+    private boolean deviceNameExists(final String name){ return deviceNameDao.findByDeviceName(name)!=null; }
     private boolean employeeDevicesExists(final String empDevices)
     {
         return employeeDao.findByEmpDevices(empDevices)!=null;
     }
     private boolean deviceCategoryExists(final String category)
     {
-        return deviceDao.findByDeviceCategory(category)!=null;
+        return deviceCategoryDao.findByDeviceCategory(category)!=null;
     }
     public Employee saveEmployee(Employee employeeDetails) {
         if(emailExists(employeeDetails.getEmail()))
@@ -106,26 +106,6 @@ public class AdminService {
         }
 
         String devices= employeeDetails.getEmpDevices();
-        List<Integer> list=getDeviceID(devices);
-        List<String> deviceList =new ArrayList<>();
-        for(int i=0;i<list.size();i++)
-        {
-           deviceList.add(deviceDao.getDeviceById(list.get(i)));
-        }
-        String updatedDevice="";
-        for (String device:deviceList)
-        {
-            if(updatedDevice=="")
-            {
-                updatedDevice=updatedDevice+device;
-            }
-            else
-            {
-                updatedDevice=updatedDevice+";"+device;
-            }
-
-        }
-        List<Device> device=new ArrayList<>();
         Employee employee;
         if(devices==null)
         {
@@ -139,6 +119,26 @@ public class AdminService {
         }
         else
         {
+            List<Integer> list=getDeviceID(devices);
+            List<String> deviceList =new ArrayList<>();
+            for(int i=0;i<list.size();i++)
+            {
+                deviceList.add(deviceDao.getDeviceById(list.get(i)));
+            }
+            String updatedDevice="";
+            for (String device:deviceList)
+            {
+                if(updatedDevice=="")
+                {
+                    updatedDevice=updatedDevice+device;
+                }
+                else
+                {
+                    updatedDevice=updatedDevice+";"+device;
+                }
+
+            }
+            List<Device> device=new ArrayList<>();
             List<Integer> id=new ArrayList<>();
             id = getDeviceID(devices);
             for(Integer deviceId : id)
@@ -236,10 +236,10 @@ public class AdminService {
     public List<Device> getDamagedDevice(String device, String status) {
         List<Device> list=new ArrayList<>();
         list= deviceDao.getDamagedDevice(device,status);
-//        if(list.isEmpty())
-//        {
-//            throw new ResourceNotFoundException("NO_RECORDS FOUND");
-//        }
+        if(list.isEmpty())
+        {
+            throw new ResourceNotFoundException("NO_RECORDS FOUND");
+        }
 
         return list;
 
@@ -435,15 +435,15 @@ public class AdminService {
     }
 
 
-    public void saveDeviceCategory(DeviceCategory deviceCategory) {
-      if(deviceCategoryExists(deviceCategory.getCategory()))
+    public void saveDeviceCategory(DeviceCategory category) {
+      if(deviceCategoryExists(category.getCategory()))
       {
-          throw new UserAlreadyExistException("This category is already exists: "+deviceCategory.getCategory());
+          throw new UserAlreadyExistException("This category is already exists: "+category.getCategory());
       }
-        String newDeviceHistory="New Device category "+deviceCategory.getCategory()+" added";
+        String newDeviceHistory="New Device category "+category.getCategory()+" added";
         History device=new History(newDeviceHistory);
         historyDao.save(device);
-        deviceCategoryDao.save(deviceCategory);
+        deviceCategoryDao.save(category);
     }
 
     public List<DeviceCategory> getCategory() {
@@ -500,6 +500,7 @@ public class AdminService {
 
     public List<History> getHistory() {
      List<History> historyList=historyDao.findAll();
+     System.out.println(historyList);
         return historyList;
     }
 }

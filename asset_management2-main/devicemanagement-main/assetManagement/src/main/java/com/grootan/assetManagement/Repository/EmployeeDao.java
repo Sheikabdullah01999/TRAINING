@@ -19,7 +19,7 @@ public interface EmployeeDao extends JpaRepository<Employee,String> {
 
     Employee findByEmpId(String empId);
 
-    @Query(value = "select * from employee s where s.emp_name like %:keyword% or s.emp_id like %:keyword% or s.emp_department like %:keyword% or s.assign_role like %:keyword%", nativeQuery = true)
+    @Query(value = "select * from employee s where LOWER(s.emp_name) like %:keyword% or UPPER(s.emp_name) like %:keyword% or  UPPER(s.emp_id) like %:keyword% or LOWER(s.emp_id) like %:keyword% or  UPPER(s.emp_department) like %:keyword% or LOWER(s.emp_department) like %:keyword% or UPPER(s.assign_role) like %:keyword% or LOWER(s.assign_role) like %:keyword% or UPPER(s.email) like %:keyword% or LOWER(s.email) like %:keyword%", nativeQuery = true)
     List<Employee> findByKeyword(@Param("keyword") String keyword);
 
     @Transactional

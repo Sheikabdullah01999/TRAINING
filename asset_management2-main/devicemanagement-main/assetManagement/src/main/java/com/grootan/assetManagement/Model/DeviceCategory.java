@@ -3,6 +3,7 @@ package com.grootan.assetManagement.Model;
 import javax.persistence.*;
 
 @Entity
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = "category"))
 public class DeviceCategory {
 
     @Id
