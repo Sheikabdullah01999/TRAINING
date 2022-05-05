@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface DeviceCategoryDao extends JpaRepository<DeviceCategory,Integer> {
+public interface DeviceCategoryDao extends JpaRepository<DeviceCategory,String> {
 
     @Query("SELECT u from DeviceCategory u where u.category=?1")
     DeviceCategory findByDeviceCategory(String category);

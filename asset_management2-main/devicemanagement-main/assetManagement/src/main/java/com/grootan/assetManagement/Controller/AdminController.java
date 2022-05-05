@@ -103,26 +103,48 @@ public class AdminController {
     }
 
 
-    @GetMapping("/device")
-    public String getDeviceDetails(@RequestParam String device,Model model)
-    {
-
-        List<Device> deviceList =adminService.getDevice(device);
-        model.addAttribute("Device_details",deviceList);
-        return "DeviceDetails";
-    }
     @GetMapping("/damaged")
     public String getDamagedDeviceDetails(@RequestParam String device,@RequestParam String status, Model model)
     {
-        List<Device> deviceList =adminService.getDamagedDevice(device,status);
-        try{
-            model.addAttribute("Device_details",deviceList);
-            return "DeviceDetails";
-        }
-        catch(UserAlreadyExistException e)
+        if(status.isEmpty())
         {
-            model.addAttribute("errorMessage",e.getMessage());
-            return "DeviceDetails";
+            List<Device> deviceList =adminService.getDevice(device);
+            try
+            {
+                model.addAttribute("Device_details",deviceList);
+                return "DeviceDetails";
+            }
+            catch(ResourceNotFoundException e)
+            {
+                LocalDateTime dateTime = LocalDateTime.now();
+                DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+                String formattedDate = dateTime.format(dateTimeFormatter);
+                model.addAttribute("timestamp",formattedDate);
+                HttpStatus httpStatus = HttpStatus.NOT_FOUND;
+                model.addAttribute("status",httpStatus);
+                model.addAttribute("message",e.getMessage());
+                return "Error";
+            }
+        }
+        else
+        {
+            List<Device> deviceList =adminService.getDamagedDevice(device,status);
+            try
+            {
+                model.addAttribute("Device_details",deviceList);
+                return "DeviceDetails";
+            }
+            catch(ResourceNotFoundException e)
+            {
+                LocalDateTime dateTime = LocalDateTime.now();
+                DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+                String formattedDate = dateTime.format(dateTimeFormatter);
+                model.addAttribute("timestamp",formattedDate);
+                HttpStatus httpStatus = HttpStatus.NOT_FOUND;
+                model.addAttribute("status",httpStatus);
+                model.addAttribute("message",e.getMessage());
+                return "Error";
+            }
         }
     }
 

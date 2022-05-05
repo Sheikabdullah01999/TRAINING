@@ -43,23 +43,14 @@
 <br>
 <div class="container">
     <h1>Admin Service</h1>
-    <form th:action="@{/device}">
-        <label class="control-label"> Device Details </label>
-
-        <select th:name="device">
-            <option th:each="device:${List_Of_Devices}" th:value="${device}" th:text="${device}"></option>
-        </select>
-
-        <button type="submit">submit</button>
-    </form>
-
     <form th:action="@{/damaged}">
-        <label class="control-label"> Damaged Device Details </label>
+        <label class="control-label"> Device Details </label>
         <select th:name="device">
             <option th:each="device:${List_Of_Devices}" th:value="${device}" th:text="${device}"></option>
         </select>
 
         <select th:name="status">
+            <option value=""></option>
             <option value="damaged" th:name="damaged" >Damaged</option>
             <option value="new" th:name="damaged" >New</option>
             <option value="working" th:name="damaged" >Working</option>

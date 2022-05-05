@@ -1,16 +1,16 @@
 package com.grootan.assetManagement.Model;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = "category"))
 public class DeviceCategory {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-
+    @Id
     private String category;
 
     public String getCategory() {
@@ -20,13 +20,13 @@ public class DeviceCategory {
     public void setCategory(String category) {
         this.category = category;
     }
-
-
-//    public String getDeviceCategory() {
-//        return deviceCategory;
-//    }
-//
-//    public void setDeviceCategory(String deviceCategory) {
-//        this.deviceCategory = deviceCategory;
-//    }
+    @ManyToMany(fetch = FetchType.LAZY,
+            cascade = {
+                    CascadeType.PERSIST,
+                    CascadeType.MERGE
+            })
+    @JoinTable(name = "DeviceName_DeviceCategory",
+            joinColumns = { @JoinColumn(name = "device_category") },
+            inverseJoinColumns = { @JoinColumn(name = "device_name") })
+    private Set<DeviceName> deviceName = new HashSet<>();
 }

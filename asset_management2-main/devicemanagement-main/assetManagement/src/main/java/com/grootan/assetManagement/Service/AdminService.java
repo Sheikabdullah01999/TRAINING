@@ -1,19 +1,19 @@
 package com.grootan.assetManagement.Service;
 
-import com.grootan.assetManagement.Exception.FieldEmptyException;
 import com.grootan.assetManagement.Model.*;
 import com.grootan.assetManagement.Repository.*;
 import com.grootan.assetManagement.Exception.ResourceNotFoundException;
 import com.grootan.assetManagement.Exception.UserAlreadyExistException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -196,9 +196,6 @@ public class AdminService {
         String history="New employee with Id:"+employeeDetails.getEmpId()+","
                 + "  Name: "+employeeDetails.getEmpName()+","
                 + "  employee Device Id:"+employeeDetails.getEmpDevices()+" has been registered ";
-        LocalDateTime date=LocalDateTime.now();
-        DateTimeFormatter time=DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
-        String formatedDate=date.format(time);
         History newHistory=new History(history);
         historyDao.save(newHistory);
 
@@ -235,7 +232,6 @@ public class AdminService {
         {
             throw new ResourceNotFoundException("NO_RECORDS FOUND");
         }
-
         return list;
 
     }
@@ -540,15 +536,7 @@ public class AdminService {
 
     public List<History> getHistory() {
      List<History> historyList=historyDao.findAll();
-<<<<<<< HEAD
      return historyList;
-=======
-     System.out.println(historyList);
-     System.out.print("/n");
-     getCurrentUser();
-     System.out.println();
-        return historyList;
->>>>>>> c171cbabd6ab6506f5645f14c20ea930a78596db
     }
 }
 
