@@ -55,8 +55,6 @@ public class AdminService {
     public Authentication getCurrentUser() {
         Authentication authentication =
                 SecurityContextHolder.getContext().getAuthentication();
-        String s=authentication.getName();
-        System.out.println(s);
         return authentication;
     }
 
@@ -111,6 +109,10 @@ public class AdminService {
     private boolean deviceCategoryExists(final String category)
     {
         return deviceCategoryDao.findByDeviceCategory(category)!=null;
+    }
+    private boolean departmentExists(final String department)
+    {
+        return employeeDepartmentDao.findByDepartmentName(department)!=null;
     }
     public static boolean isValid(String email)
     {
@@ -475,13 +477,16 @@ public class AdminService {
 
 
     public void saveDeviceCategory(DeviceCategory category) {
-      if(deviceCategoryExists(category.getCategory()))
+        String lower = category.getCategory();
+        String i = lower.toLowerCase();
+      if(deviceCategoryExists(i))
       {
           throw new UserAlreadyExistException("This category is already exists: "+category.getCategory());
       }
         String newDeviceHistory="New Device category "+category.getCategory()+" added";
         History device=new History(newDeviceHistory);
         historyDao.save(device);
+        category.setCategory(i);
         deviceCategoryDao.save(category);
     }
 
@@ -493,14 +498,17 @@ public class AdminService {
 
     public void saveDeviceName(DeviceName deviceName)
     {
-        if(deviceNameExists(deviceName.getName()))
+        String lower = deviceName.getName();
+        String i = lower.toLowerCase();
+        if(deviceNameExists(i))
         {
             throw new UserAlreadyExistException("This Product Name is Already Exists: "+deviceName.getName());
         }
         String newDeviceHistory="New Device with name "+deviceName.getName()+" has been added";
         History device=new History(newDeviceHistory);
         historyDao.save(device);
-     deviceNameDao.save(deviceName);
+        deviceName.setName(i);
+        deviceNameDao.save(deviceName);
     }
 
     public List<DeviceName> getName()
@@ -538,15 +546,21 @@ public class AdminService {
 
 
     public List<History> getHistory() {
-     List<History> historyList=historyDao.findAll();
-     System.out.println(historyList);
-     System.out.print("/n");
-     getCurrentUser();
-     System.out.println();
+        List<History> historyList = historyDao.findAll();
         return historyList;
     }
 
     public void saveEmpDepartment(EmployeeDepartment employeeDepartment) {
+        String lower = employeeDepartment.getDepartment();
+        String i = lower.toLowerCase();
+        if(departmentExists(i))
+        {
+            throw new UserAlreadyExistException("Department Name  Already Exists: "+employeeDepartment.getDepartment());
+        }
+        String newDeviceHistory="New Device with name "+employeeDepartment.getDepartment()+" has been added";
+        History device=new History(newDeviceHistory);
+        historyDao.save(device);
+        employeeDepartment.setDepartment(i);
         employeeDepartmentDao.save(employeeDepartment);
     }
 

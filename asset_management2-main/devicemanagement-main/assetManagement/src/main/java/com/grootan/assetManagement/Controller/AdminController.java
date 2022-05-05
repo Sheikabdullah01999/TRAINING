@@ -8,6 +8,7 @@ import com.grootan.assetManagement.Repository.EmployeeDao;
 import com.grootan.assetManagement.Service.AdminService;
 import com.grootan.assetManagement.Service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -31,6 +32,9 @@ public class AdminController {
     public String home(Model model) {
         List<String> deviceList=adminService.getAllDevices();
         model.addAttribute("List_Of_Devices",deviceList);
+        Authentication authentication=adminService.getCurrentUser();
+        String currentUser=authentication.getName();
+        model.addAttribute("user",currentUser);
         return "index";
     }
     @GetMapping("/login")
@@ -125,7 +129,7 @@ public class AdminController {
         catch(UserAlreadyExistException e)
         {
             model.addAttribute("errorMessage",e.getMessage());
-            return "AddDeviceDetails";
+            return "DeviceDetails";
         }
     }
 
