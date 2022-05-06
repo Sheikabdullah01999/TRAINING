@@ -12,7 +12,7 @@
 
         h1
         {
-        color:#CAF0F8;
+        color:black;
         padding:20px;
         font-family: 'Orelega One', cursive;
         }
@@ -47,19 +47,21 @@
             <th scope="col">id</th>
             <th scope="col">Created By</th>
             <th scope="col">created Date</th>
-            <th scope="col">Last modified by</th>
-            <th scope="col">Last modified Date</th>
+<!--            <th scope="col">Last modified by</th>-->
+<!--            <th scope="col">Last modified Date</th>-->
             <th scope="col">History</th>
+            <th scope="col">Action</th>
         </tr>
         </thead>
         <tbody>
         <tr th:each="history:${maintain_history}">
             <th scope="row" th:text="${history.id}"></th>
-            <td th:text="${history.createdBy}"></td>
+           <td th:text="${history.createdBy}"></td>
             <td th:text="${history.creationDate}"></td>
-            <td th:text="${history.lastModifiedBy}"></td>
-            <td th:text="${history.lastModifiedDate}"></td>
+<!--            <td th:text="${history.lastModifiedBy}"></td>-->
+<!--            <td th:text="${history.lastModifiedDate}"></td>-->
             <td th:text="${history.history}"></td>
+            <td th:text="${history.action}"></td>
 
         </tr>
         </tbody>

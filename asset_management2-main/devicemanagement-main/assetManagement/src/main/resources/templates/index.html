@@ -62,7 +62,7 @@
     </form>
 
     <form th:action="@{/damaged}">
-        <label class="control-label"> Damaged Device Details </label>
+        <label class="control-label"> Device Details </label>
         <select th:name="device">
             <option th:each="device:${List_Of_Devices}" th:value="${device}" th:text="${device}"></option>
         </select>

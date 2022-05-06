@@ -176,7 +176,7 @@ public class AdminController {
     }
 
     @GetMapping("/delete/{id}")
-    public String deleteDetails(@PathVariable(name="id") Integer id)
+    public String deleteDeviceDetails(@PathVariable(name="id") Integer id)
     {
         Device device=deviceDao.findById(id).orElseThrow(()-> new ResourceNotFoundException("no record found"));
         String category="redirect:/device?device="+device.getCategory();
@@ -229,21 +229,21 @@ public class AdminController {
     }
 
     @GetMapping("/delete/employee/{id}")
-    public String deleteEmpDetails(@PathVariable(name="id") String id)
-    {
-        adminService.deleteEmpDetails(id);
-        return "redirect:/List_Of_Employees";
-    }
+    public String deleteEmpDetails(@PathVariable(name="id") String id,Model model) {
 
-    @GetMapping("/List_Of_EmployeesById")
-    public String list_of_employeeById(Model model)
-    {
-        model.addAttribute("List_Of_EmployeesById",adminService.getEmployeeById());
-        return "ListOfEmployeesById";
-    }
+            adminService.deleteEmpDetails(id);
+            return "redirect:/List_Of_Employees";
 
-    @GetMapping("/search")
-    public String home(Employee employee, Model model, String keyword) {
+    }
+        @GetMapping("/List_Of_EmployeesById")
+        public String list_of_employeeById(Model model)
+        {
+            model.addAttribute("List_Of_EmployeesById",adminService.getEmployeeById());
+            return "ListOfEmployeesById";
+        }
+
+        @GetMapping("/search")
+        public String home(Employee employee, Model model, String keyword) {
         if(keyword!=null) {
             List<Employee> list = adminService.getByKeyword(keyword);
             model.addAttribute("List_Of_Employees", list);
@@ -252,7 +252,6 @@ public class AdminController {
             model.addAttribute("List_Of_Employees", list);}
         return "ListOfEmployees";
     }
-
     @PostMapping("/saveDeviceCategory")
     public String saveDeviceCategory(@ModelAttribute("deviceCategory") DeviceCategory deviceCategory,Model model)
     {
