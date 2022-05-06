@@ -78,7 +78,6 @@
         </div>
         <div class="form-group">
           <label class="control-label" > EmployeeDepartment </label>
-
          <select class="form-control"  th:field="*{empDepartment}" required>
           <option th:each="department:${ListOfEmpDepartment}" th:value="${department.department}" th:text="${department.department}"></option>
           </select>

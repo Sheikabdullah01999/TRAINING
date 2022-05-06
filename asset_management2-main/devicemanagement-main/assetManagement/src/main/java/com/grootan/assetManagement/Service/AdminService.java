@@ -120,93 +120,113 @@ public class AdminService {
             return false;
         return pat.matcher(email).matches();
     }
+
+    public String currentTimeAndDate()
+    {
+        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy hh.mm aa");
+        return dateFormat.format(new Date()).toString();
+    }
+
     public String currentUser()
     {
         Authentication authentication=getCurrentUser();
        return  authentication.getName();
     }
-    public Employee saveEmployee(Employee employeeDetails) {
-        Authentication authentication=getCurrentUser();
-        String currentUser=authentication.getName();
+
+    public Boolean validate(Employee employeeDetails)
+    {
         Boolean validEmail=isValid(employeeDetails.getEmail());
         if(!validEmail)
         {
             throw new UserAlreadyExistException("Incorrect email: "+employeeDetails.getEmail());
         }
+
         if(emailExists(employeeDetails.getEmail()))
         {
             throw new UserAlreadyExistException("There is an account with that email address: "+employeeDetails.getEmail());
         }
+
         if(employeeIdExists(employeeDetails.getEmpId()))
         {
             throw new UserAlreadyExistException("There is an account with that EmployeeId: "+employeeDetails.getEmpId());
         }
+
         if(employeeDevicesExists(employeeDetails.getEmpDevices()))
         {
             throw new UserAlreadyExistException("These devices are already assigned: "+employeeDetails.getEmpDevices());
         }
-
+        return true;
+    }
+    public Employee saveEmpDetails(Employee employeeDetails)
+    {
+        String employeeDevices="";
         String devices= employeeDetails.getEmpDevices();
-        Employee employee;
-        if(devices==null)
+
+        List<Device> device=new ArrayList<>();
+
+        if(employeeDetails.getEmpDevices()==null)
         {
-            List<Device> devices1=new ArrayList<>();
-            employee = new Employee(employeeDetails.getEmpId(),
-                    employeeDetails.getEmpName(), employeeDetails.getEmail(),
-                    passwordEncoder.encode(employeeDetails.getEmpPassword()),
-                    employeeDetails.getEmpDepartment(),
-                    "", employeeDetails.getAssignRole(),
-                    Arrays.asList(new Role(employeeDetails.getAssignRole())),devices1);
+            employeeDevices="";
+            device=new ArrayList<>();
         }
         else
         {
-            List<Integer> list=getDeviceID(devices);
-            List<String> deviceList =new ArrayList<>();
-            for(int i=0;i<list.size();i++)
+            List<Integer> id=getDeviceID(devices);
+            String deviceList=empDevice(employeeDetails);
+            employeeDevices=deviceList;
+            for(int i=0;i<id.size();i++)
             {
-                deviceList.add(deviceDao.getDeviceById(list.get(i)));
+                deviceDao.updateAssignStatus(id.get(i));
             }
-            String updatedDevice="";
-            for (String device:deviceList)
-            {
-                if(updatedDevice=="")
-                {
-                    updatedDevice=updatedDevice+device;
-                    updatedDevice=device;
-                }
-                else
-                {
-                    updatedDevice=updatedDevice+";"+device;
-                }
 
-            }
-            List<Device> device=new ArrayList<>();
-            List<Integer> id=new ArrayList<>();
-            id = getDeviceID(devices);
             for(Integer deviceId : id)
             {
                 device.add(new Device(deviceId));
             }
 
-                    employee = new Employee(employeeDetails.getEmpId(),
-                    employeeDetails.getEmpName(), employeeDetails.getEmail(),
-                    passwordEncoder.encode(employeeDetails.getEmpPassword()),
-                    employeeDetails.getEmpDepartment(),
-                    updatedDevice, employeeDetails.getAssignRole(),
-                    Arrays.asList(new Role(employeeDetails.getAssignRole())),device);
-
-            for(int i=0;i<id.size();i++)
-            {
-                deviceDao.updateAssignStatus(id.get(i));
-            }
         }
+
+        Employee employee = new Employee(employeeDetails.getEmpId(),
+                employeeDetails.getEmpName(), employeeDetails.getEmail(),
+                passwordEncoder.encode(employeeDetails.getEmpPassword()),
+                employeeDetails.getEmpDepartment(),employeeDevices,
+                employeeDetails.getAssignRole(),
+                Arrays.asList(new Role(employeeDetails.getAssignRole())),device);
+
+        return employee;
+    }
+
+    public String empDevice(Employee employee)
+    {
+        String devices=employee.getEmpDevices();
+        List<Integer> list=getDeviceID(devices);
+        List<String> deviceList =new ArrayList<>();
+        for(int i=0;i<list.size();i++)
+        {
+            deviceList.add(deviceDao.getDeviceById(list.get(i)));
+        }
+        String updatedDevice="";
+        for (String device:deviceList) {
+            if (updatedDevice == "") {
+                updatedDevice = updatedDevice + device;
+                updatedDevice = device;
+            } else {
+                updatedDevice = updatedDevice + ";" + device;
+            }
+
+        }
+        return updatedDevice;
+    }
+
+
+    public Employee saveEmployee(Employee employeeDetails) {
+
+        Employee employee=saveEmpDetails(employeeDetails);
+
 
         String history="New employee  Id:"+employeeDetails.getEmpId()+","
                 + "  Name: "+employeeDetails.getEmpName();
-        String userName=currentUser();
-        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy hh.mm aa");
-        String dateString = dateFormat.format(new Date()).toString();
-        History newHistory=new History(userName,ADD,history,dateString);
+        History newHistory=new History(currentUser(),ADD,history,currentTimeAndDate());
         historyDao.save(newHistory);
 
         return employeeDao.save(employee);
@@ -217,11 +237,8 @@ public class AdminService {
         {
             throw new UserAlreadyExistException("role exists: "+role.getRoleName());
         }
-        String roleHistory="New role "+role.getRoleName()+"Added ";
-        String userName=currentUser();
-        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy hh.mm aa");
-        String dateString = dateFormat.format(new Date()).toString();
-        History history=new History(userName,ADD,roleHistory,dateString);
+        String roleHistory="New role "+role.getRoleName();
+        History history=new History(currentUser(),ADD,roleHistory,currentTimeAndDate());
         historyDao.save(history);
         return roleDao.save(role);
     }
@@ -234,7 +251,6 @@ public class AdminService {
     {
         return (List<Role>) roleDao.findAll();
     }
-
 
 
     public List<Device> getDevice(String device)
@@ -258,10 +274,7 @@ public class AdminService {
       }
       String deviceHistory="New device  name:  "+device.getDeviceName()+","
               +"  device manufacture id:"+device.getManufacturedId();
-        String userName=currentUser();
-        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy hh.mm aa");
-        String dateString = dateFormat.format(new Date()).toString();
-        History history=new History(userName,ADD,deviceHistory,dateString);
+        History history=new History(currentUser(),ADD,deviceHistory,currentTimeAndDate());
       historyDao.save(history);
       deviceDao.save(device);
     }
@@ -274,7 +287,7 @@ public class AdminService {
         String userName=currentUser();
         DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy hh.mm aa");
         String dateString = dateFormat.format(new Date()).toString();
-        History history=new History(userName,UPDATED,deviceHistory,dateString);
+        History history=new History(currentUser(),UPDATED,deviceHistory,currentTimeAndDate());
         historyDao.save(history);
         deviceDao.save(device);
     }
@@ -310,41 +323,34 @@ public class AdminService {
 
       Device device=deviceDao.findById(id).orElseThrow(()-> new ResourceNotFoundException("no record found") );
       String empDevices = device.getId()+","+device.getDeviceName()+","+device.getCategory();
-      System.out.println(empDevices);
       String empId = deviceDao.getEmpId(id);
-      System.out.println(empId);
       String empDevicesById = employeeDao.getEmpDevices(empId);
-      System.out.println(empDevicesById);
+
       if(empDevicesById!=null)
       {
           String [] empDevicesByIds = empDevicesById.split(";");
-          for(int j=0;j<empDevicesByIds.length;j++)
-          {
-              System.out.println(empDevicesByIds[j]);
-          }
-          String temp="";
+
+          String newDevice="";
           for(int i=0;i<empDevicesByIds.length;i++)
           {
               if(empDevices.equals(empDevicesByIds[i]))
               {
-                  temp=temp+"";
+                  newDevice=newDevice+"";
               }
               else
               {
-                  temp=temp+empDevicesByIds[i];
+                  newDevice=newDevice+empDevicesByIds[i];
               }
           }
-          employeeDao.updateEmployeeByEmpDevice(empId,temp);
+          employeeDao.updateEmployeeByEmpDevice(empId,newDevice);
           String deviceDeleteHistory="device id:"+device.getId()+","
                   +"device name: "+device.getDeviceName();
-          String userName=currentUser();
-          DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy hh.mm aa");
-          String dateString = dateFormat.format(new Date()).toString();
-          History history=new History(userName,DELETE,deviceDeleteHistory,dateString);
+          History history=new History(currentUser(),DELETE,deviceDeleteHistory,currentTimeAndDate());
 
-          historyDao.save(history);
+
           deviceDao.deleteForiegnKey(id);
           deviceDao.deleteById(id);
+          historyDao.save(history);
       }
       else
       {
@@ -461,7 +467,7 @@ public class AdminService {
         return employeeDao.save(employee);
     }
 
-    public void deleteEmpDetails(String id)
+    public void currentLoggedInUserValidation(String  id)
     {
         String currentUser=employeeDao.getEmployeeMail(id);
         if(currentUser.equals(currentUser()))
@@ -472,6 +478,11 @@ public class AdminService {
         {
             throw new UserAlreadyExistException("cannot delete default admin account ");
         }
+    }
+
+    public void deleteEmpDetails(String id)
+    {
+        currentLoggedInUserValidation(id);
 
         Employee employee = employeeDao.findByEmpId(id);
         String s=employee.getEmpDevices();

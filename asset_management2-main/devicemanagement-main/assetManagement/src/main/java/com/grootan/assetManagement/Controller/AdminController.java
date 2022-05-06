@@ -89,7 +89,7 @@ public class AdminController {
     {
         Role role = new Role();
         model.addAttribute("roles",role);
-        return "roles";
+        return "Roles";
     }
 
     @PostMapping("/saveRoles")
@@ -209,6 +209,8 @@ public class AdminController {
         List<String> deviceList=adminService.getAllDevicesByName();
         model.addAttribute("List_Of_Devices",deviceList);
         Employee employee = adminService.findEmployeeById(empId);
+        List<EmployeeDepartment> employeeDepartmentList=adminService.getAllEmpDepartments();
+        model.addAttribute("ListOfEmpDepartment",employeeDepartmentList);
         editView.addObject("employee",employee);
         return editView;
     }

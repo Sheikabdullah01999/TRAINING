@@ -39,6 +39,16 @@ public class Employee {
         this.devices = devices;
     }
 
+    public Employee(String empId, String empName, String email, String empPassword, String empDepartment,  String assignRole,Collection<Role> role ,List<Device> devices) {
+        this.email = email;
+        this.empId = empId;
+        this.empName = empName;
+        this.empPassword = empPassword;
+        this.empDepartment = empDepartment;
+        this.assignRole = assignRole;
+        this.role = role;
+        this.devices = devices;
+    }
 
     public String getEmail() {
         return email;
