@@ -53,6 +53,8 @@ public class AdminController {
         model.addAttribute("List_Of_Roles",roles);
         List<String> deviceList=adminService.getAllDevicesByName();
         model.addAttribute("List_Of_Devices",deviceList);
+        List<EmployeeDepartment> employeeDepartmentList=adminService.getAllEmpDepartments();
+        model.addAttribute("ListOfEmpDepartment",employeeDepartmentList);
         Employee employee = new Employee();
         model.addAttribute("employee",employee);
         return "Registration";
@@ -79,6 +81,13 @@ public class AdminController {
         return "ListOfEmployees";
     }
 
+    @GetMapping("/ListOfEmpDepartment")
+    public String listOfDepartment(Model model)
+    {
+        model.addAttribute("ListOfDepartment",adminService.getAllEmpDepartments());
+        return "ListOfEmployees";
+    }
+
     @GetMapping("/registration_roles")
     public String showRolesRegistrationForm(Model model)
     {
@@ -102,6 +111,28 @@ public class AdminController {
         return "ListOfRoles";
     }
 
+
+    @GetMapping("/device")
+    public String getDeviceDetails(@RequestParam String device,Model model)
+    {
+        System.out.println(device);
+        getDeviceDetailsByName(device,model);
+        return "AddDeviceDetails";
+    }
+
+    @GetMapping("/device_detailsName")
+    public String getDeviceDetailsByName(String device,Model model)
+    {
+        System.out.println(device);
+        List<DeviceCategory> devices1 = adminService.getCategory();
+        model.addAttribute("ListOfDeviceCategory",devices1);
+        String devices = device;
+        List<String> deviceList =adminService.getDeviceNames(devices);
+        model.addAttribute("Device_details",deviceList);
+        model.addAttribute("category",devices);
+        model.addAttribute("device",new Device());
+        return "AddDeviceDetails";
+    }
 
     @GetMapping("/damaged")
     public String getDamagedDeviceDetails(@RequestParam String device,@RequestParam String status, Model model)
@@ -154,8 +185,6 @@ public class AdminController {
     {
         List<DeviceCategory> devices = adminService.getCategory();
         model.addAttribute("ListOfDeviceCategory",devices);
-        List<DeviceName> devicesList = adminService.getName();
-        model.addAttribute("ListOfDeviceName",devicesList);
         model.addAttribute("device",new Device());
         return "AddDeviceDetails";
     }
@@ -286,9 +315,30 @@ public class AdminController {
     @GetMapping("/category")
     public String addCategory(Model model)
     {
-        DeviceCategory deviceCategory=new DeviceCategory();
-        model.addAttribute("deviceCategory",deviceCategory);
+        model.addAttribute("deviceCategory",new DeviceCategory());
         return "AddDeviceCategory";
+    }
+    @PostMapping("/saveEmpDepartment")
+    public String saveEmpDepartment(@ModelAttribute("employeeDepartment") EmployeeDepartment employeeDepartment,Model model)
+    {
+        try{
+            adminService.saveEmpDepartment(employeeDepartment);
+            return "redirect:/department?success";
+        }
+        catch(UserAlreadyExistException e)
+        {
+            model.addAttribute("errorMessage",e.getMessage());
+            return "AddEmployeeDepartment";
+        }
+
+    }
+
+    @GetMapping("/department")
+    public String addDepartment(Model model)
+    {
+        EmployeeDepartment employeeDepartment=new EmployeeDepartment();
+        model.addAttribute("employeeDepartment",employeeDepartment);
+        return "AddEmployeeDepartment";
     }
 
     @PostMapping("/saveDeviceName")
@@ -309,9 +359,12 @@ public class AdminController {
     @GetMapping("/DeviceName")
     public String addName(Model model)
     {
+        List<DeviceCategory> devices = adminService.getCategory();
+        model.addAttribute("ListOfDeviceCategory",devices);
         DeviceName deviceName=new DeviceName();
         model.addAttribute("deviceName",deviceName);
         return "AddDeviceName";
     }
+
 
 }

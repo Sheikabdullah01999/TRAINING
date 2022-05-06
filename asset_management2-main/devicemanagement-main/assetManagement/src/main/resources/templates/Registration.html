@@ -11,9 +11,13 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Orelega+One&display=swap" rel="stylesheet">
   <style type="text/css">
+  body
+  {
+  background-color: #CAF0F8;
+  }
     h1
     {
-    color:red;
+    color:#48CAE4;
     text-align:center;
     padding:20px;
     font-family: 'Orelega One', cursive;
@@ -50,14 +54,14 @@
       <form th:action="@{/saveEmployee}" method="post" th:object="${employee}">
         <div class="form-group">
           <label class="control-label"> EmployeeId </label>
-          <input id="firstName" class="form-control" th:field="*{empId}" placeholder="Enter EmployeeId"
+          <input id="empId" class="form-control" th:field="*{empId}" placeholder="Enter EmployeeId"
                  required autofocus="autofocus" />
 <!--          autocomplete="off"-->
         </div>
 
         <div class="form-group">
-          <label class="control-label" for="lastName"> EmployeeName </label>
-          <input id="lastName" class="form-control" th:field="*{empName}" placeholder="Enter EmployeeName"
+          <label class="control-label" > EmployeeName </label>
+          <input id="Name" class="form-control" th:field="*{empName}" placeholder="Enter EmployeeName"
                  required autofocus="autofocus" />
         </div>
 
@@ -73,9 +77,11 @@
                  th:field="*{empPassword}" required autofocus="autofocus" />
         </div>
         <div class="form-group">
-          <label class="control-label" for="department"> EmployeeDepartment </label>
-          <input id="department" class="form-control" placeholder="Enter Department"
-                 th:field="*{empDepartment}" required autofocus="autofocus" />
+          <label class="control-label" > EmployeeDepartment </label>
+
+         <select class="form-control"  th:field="*{empDepartment}" required>
+          <option th:each="department:${ListOfEmpDepartment}" th:value="${department.department}" th:text="${department.department}"></option>
+          </select>
         </div>
         <div class="form-group">
           <label class="control-label"> EmployeeDevices </label>
@@ -100,7 +106,7 @@
         </div>
         <div class="form-group">
           <button type="submit" class="btn btn-success">Register</button>
-          <button type="submit" class="btn btn-primary"><a href="/"th:href="@{/}" style="color:white";>Back</a></button>
+          <a th:href="@{/}" class="btn btn-primary">Back</a>
         </div>
       </form>
     </div>

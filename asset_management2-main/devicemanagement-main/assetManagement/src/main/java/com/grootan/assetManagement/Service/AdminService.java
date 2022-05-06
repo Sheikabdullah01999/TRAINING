@@ -48,6 +48,9 @@ public class AdminService {
     @Autowired
     private DeviceNameDao deviceNameDao;
 
+    @Autowired
+    private EmployeeDepartmentDao employeeDepartmentDao;
+
     //@Secured({ "ROLE_RUN_AS_REPORTER" })
     public Authentication getCurrentUser() {
         Authentication authentication =
@@ -106,6 +109,10 @@ public class AdminService {
     private boolean deviceCategoryExists(final String category)
     {
         return deviceCategoryDao.findByDeviceCategory(category)!=null;
+    }
+    private boolean departmentExists(final String department)
+    {
+        return employeeDepartmentDao.findByDepartmentName(department)!=null;
     }
     public static boolean isValid(String email)
     {
@@ -234,6 +241,13 @@ public class AdminService {
         }
         return list;
 
+    }
+
+    public List<String> getDeviceNames(String device)
+    {
+        List<String> list = new ArrayList<>();
+        list = deviceNameDao.getDeviceNames(device);
+        return list;
     }
 
     public void addDeviceDetails(Device device) {
@@ -476,7 +490,7 @@ public class AdminService {
         History device=new History(newDeviceHistory);
         historyDao.save(device);
         category.setCategory(i);
-        deviceCategoryDao.save(category);
+       deviceCategoryDao.save(category);
     }
 
     public List<DeviceCategory> getCategory() {
@@ -487,6 +501,7 @@ public class AdminService {
 
     public void saveDeviceName(DeviceName deviceName)
     {
+        DeviceCategory deviceCategory = deviceName.getDeviceCategory();
         String lower = deviceName.getName();
         String i = lower.toLowerCase();
         if(deviceNameExists(i))
@@ -497,7 +512,8 @@ public class AdminService {
         History device=new History(newDeviceHistory);
         historyDao.save(device);
         deviceName.setName(i);
-        deviceNameDao.save(deviceName);
+        DeviceName deviceName1 = new DeviceName(i,deviceCategory);
+        deviceNameDao.save(deviceName1);
     }
 
     public List<DeviceName> getName()
@@ -505,6 +521,12 @@ public class AdminService {
         List<DeviceName> list=deviceNameDao.findAll();
         return list;
     }
+
+//    public List<String> getDeviceName()
+//    {
+//        List<String> list = deviceNameDao.getDeviceName();
+//        return list;
+//    }
 
     public List<Integer> getDeviceID(String device) {
         List<String> list = null;
@@ -534,9 +556,28 @@ public class AdminService {
     }
 
 
-    public List<History> getHistory() {
+    public List<History> getHistory(){
      List<History> historyList=historyDao.findAll();
      return historyList;
+    }
+
+    public void saveEmpDepartment(EmployeeDepartment employeeDepartment) {
+        String lower = employeeDepartment.getDepartment();
+        String i = lower.toLowerCase();
+        if(departmentExists(i))
+        {
+            throw new UserAlreadyExistException("Department Name  Already Exists: "+employeeDepartment.getDepartment());
+        }
+        String newDeviceHistory="New Device with name "+employeeDepartment.getDepartment()+" has been added";
+        History device=new History(newDeviceHistory);
+        historyDao.save(device);
+        employeeDepartment.setDepartment(i);
+        employeeDepartmentDao.save(employeeDepartment);
+    }
+
+    public List<EmployeeDepartment> getAllEmpDepartments() {
+        List<EmployeeDepartment> list=employeeDepartmentDao.findAll();
+        return list;
     }
 }
 

@@ -11,9 +11,13 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Orelega+One&display=swap" rel="stylesheet">
     <style type="text/css">
+    body
+  {
+  background-color: #CAF0F8;
+  }
     h1
     {
-    color:red;
+    color:#48CAE4;
     text-align:center;
     padding:20px;
     font-family: 'Orelega One', cursive;
@@ -22,6 +26,9 @@
     {
     font-style:italic;
     font-size:18px;
+    }
+    select {
+	appearance: none;
     }
   </style>
 </head>
@@ -44,30 +51,42 @@
             </div>
             <h1>Device Registration</h1>
 
+            <form th:action="@{/device}">
+                <div class="form-group">
+                    <label class="control-label"> Device Category </label>
+                    <select class="form-control"  th:name="device">
+                        <option th:each="device:${ListOfDeviceCategory}" th:value="${device.category}" th:text="${device.category}"></option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="submit">
+                </div>
+            </form>
+
             <form th:action="@{/device_details}" method="post" th:object="${device}">
-                <div>
-               <label class="control-label"> Device Category </label>
-               <select class="form-control"  th:field="*{category}">
-                   <option th:each="device:${ListOfDeviceCategory}" th:value="${device.category}" th:text="${device.category}"></option>
-               </select>
-           </div>
+                <div class="form-group">
+                    <label class="control-label" hidden="hidden"> Device Category </label>
+                    <select class="form-control"  th:field="*{category}">
+                        <option th:value="${category}" th:text="${category}"></option>
+                    </select>
+                </div>
                 <div class="form-group">
                     <label class="control-label"> Device Name </label>
                     <select class="form-control"  th:field="*{deviceName}">
-                        <option th:each="device:${ListOfDeviceName}" th:value="${device.name}" th:text="${device.name}"></option>
+                        <option th:each="device:${Device_details}" th:value="${device}" th:text="${device}"></option>
                     </select>
                 </div>
 
                 <div class="form-group">
                     <label class="control-label" for="manufacture"> Manufacture Id </label>
-                    <input id="manufacture" class="form-control" th:field="*{manufacturedId}" required
+                    <input id="manufacture" class="form-control" th:field="*{manufacturedId}" placeholder="Enter manufactured id" required
                            autofocus="autofocus" />
                 </div>
 
                 <div class="form-group">
                     <label class="control-label" for="department"> DevicePurchaseDate </label>
                     <input id="department" class="form-control" type="date"
-                           th:field="*{devicePurchaseDate}" required autofocus="autofocus" />
+                           th:field="*{devicePurchaseDate}" placeholder="Enter Password" required autofocus="autofocus" />
                 </div>
                 <div class="form-group">
                     <label class="control-label" > AssignStatus </label>
@@ -89,7 +108,7 @@
 
                 <div class="form-group">
                     <button type="submit" class="btn btn-success">Register</button>
-                    <button type="submit" class="btn btn-primary"><a href="/"th:href="@{/}" style="color:white";>Back</a></button>
+                    <a th:href="@{/}" class="btn btn-primary">Back</a>
                 </div>
             </form>
         </div>

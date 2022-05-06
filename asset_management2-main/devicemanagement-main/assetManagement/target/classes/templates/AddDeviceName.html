@@ -11,9 +11,13 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Orelega+One&display=swap" rel="stylesheet">
     <style type="text/css">
+    body
+  {
+  background-color: #CAF0F8;
+  }
     h1
     {
-    color:red;
+    color:#48CAE4;
     text-align:center;
     padding:20px;
     font-family: 'Orelega One', cursive;
@@ -49,10 +53,15 @@
                     <input id="sample1" class="form-control" th:field="*{name}" placeholder="deviceName"
                            required autofocus="autofocus" />
                 </div>
-
+                <div class="form-group">
+                    <label class="control-label"> Device Category </label>
+                    <select class="form-control"  th:name="device" th:field="*{deviceCategory}">
+                        <option th:each="device:${ListOfDeviceCategory}" th:value="${device.category}" th:text="${device.category}"></option>
+                    </select>
+                </div>
                 <div class="form-group">
                     <button type="submit" class="btn btn-success">ADD</button>
-                    <button type="submit" class="btn btn-primary"><a href="/"th:href="@{/}" style="color:white";>Back</a></button>
+                    <a th:href="@{/}" class="btn btn-primary">Back</a>
                 </div>
             </form>
 </body>

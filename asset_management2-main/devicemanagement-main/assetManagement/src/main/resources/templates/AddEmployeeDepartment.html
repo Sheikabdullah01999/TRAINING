@@ -43,22 +43,21 @@
             <div th:if="${errorMessage!=null}">
                 <div class="alert alert-info">[[${errorMessage}]]</div>
             </div>
-            <h1>Device category</h1>
+            <h1>Employee department</h1>
 
-<form th:action="@{/saveDeviceCategory}" method="post" th:object="${deviceCategory}">
-
-
-    <div class="form-group">
-        <label class="control-label" for="sample"> Device Category </label>
-        <input id="sample" class="form-control" th:field="*{category}" placeholder="deviceCategory"
-               required autofocus="autofocus" />
-    </div>
+            <form th:action="@{/saveEmpDepartment}" method="post" th:object="${employeeDepartment}">
 
 
-<div class="form-group">
-    <button type="submit" class="btn btn-success">ADD</button>
-    <a th:href="@{/}" class="btn btn-primary">Back</a>
-</div>
-</form>
+                <div class="form-group">
+                    <label class="control-label" for="sample"> Employee Department </label>
+                    <input id="sample" class="form-control" th:field="*{department}" placeholder="EmployeeDepartment"
+                           required autofocus="autofocus" />
+                </div>
+
+                <div class="form-group">
+                    <button type="submit" class="btn btn-success">ADD</button>
+                    <a th:href="@{/}" class="btn btn-primary">Back</a>
+                </div>
+            </form>
 </body>
 </html>
