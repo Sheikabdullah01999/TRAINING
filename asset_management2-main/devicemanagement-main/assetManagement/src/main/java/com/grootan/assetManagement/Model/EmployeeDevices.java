@@ -6,7 +6,7 @@ import java.util.Date;
 
 
 @NoArgsConstructor
-public class Response {
+public class EmployeeDevices {
     private String empId;
     private Integer id;
     private String deviceName;
@@ -14,7 +14,7 @@ public class Response {
     private String category;
 
 
-    public Response(String empId, String deviceName, Integer id, Date devicePurchaseDate, String category) {
+    public EmployeeDevices(String empId, String deviceName, Integer id, Date devicePurchaseDate, String category) {
         this.empId = empId;
         this.deviceName = deviceName;
         this.id = id;

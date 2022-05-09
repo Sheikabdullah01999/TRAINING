@@ -148,7 +148,7 @@ public class AdminController {
     @GetMapping("/user_devices")
     public String userDevices(Model model)
     {
-        List<Response> userDevices = adminService.getUserDevices();
+        List<EmployeeDevices> userDevices = adminService.getUserDevices();
         model.addAttribute("user_devices",userDevices);
         return "UserDetails";
     }
@@ -161,7 +161,7 @@ public class AdminController {
     }
 
     @PostMapping("/device_details")
-    public String saveDevice(@ModelAttribute("Device") Device device,Model model)
+    public String saveDevice(@ModelAttribute("device") Device device,Model model)
     {
         try{
             adminService.addDeviceDetails(device);
