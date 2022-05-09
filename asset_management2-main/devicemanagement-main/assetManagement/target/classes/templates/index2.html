@@ -8,14 +8,6 @@
 
     <!----===== Boxicons CSS ===== -->
     <link href='https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css' rel='stylesheet'>
-    <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-
-    <!-- Optional theme -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
-
-    <!-- Latest compiled and minified JavaScript -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
     <style>
         /* Google Font Import - Poppins */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
@@ -332,7 +324,7 @@ body.dark .home .text{
 
     <!--<title>Dashboard Sidebar Menu</title>-->
 </head>
-<body>
+<body class="white">
 <nav class="sidebar close">
     <header>
         <div class="image-text">
@@ -389,6 +381,13 @@ body.dark .home .text{
                 </li>
 
                 <li class="nav-link">
+                    <a th:href="@{/index}">
+                        <i class='bx bx-list-ul icon' ></i>
+                        <span class="text nav-text">List Of DeviceDetails</span>
+                    </a>
+                </li>
+
+                <li class="nav-link">
                     <a th:href="@{/user_devices}">
                         <i class='bx bx-heart icon' ></i>
                         <span class="text nav-text">List User Devices</span>
@@ -422,29 +421,14 @@ body.dark .home .text{
                         <span class="text nav-text">Add Employee Department</span>
                     </a>
                 </li>
+
+                <li class="" sec:authorize="isAuthenticated()">
+                    <a th:href="@{/logout}">
+                        <i class='bx bx-log-out icon' ></i>
+                        <span class="text nav-text">Logout</span>
+                    </a>
+                </li>
             </ul>
-        </div>
-
-        <div class="bottom-content">
-            <li class="" sec:authorize="isAuthenticated()">
-                <a th:href="@{/logout}">
-                    <i class='bx bx-log-out icon' ></i>
-                    <span class="text nav-text">Logout</span>
-                </a>
-            </li>
-
-            <li class="mode">
-                <div class="sun-moon">
-                    <i class='bx bx-moon icon moon'></i>
-                    <i class='bx bx-sun icon sun'></i>
-                </div>
-                <span class="mode-text text">Dark mode</span>
-
-                <div class="toggle-switch">
-                    <span class="switch"></span>
-                </div>
-            </li>
-
         </div>
     </div>
 
@@ -452,21 +436,6 @@ body.dark .home .text{
 
 <section class="home">
     <div class="text">Dashboard</div>
-    <form th:action="@{/damaged}">
-        <label class="control-label text"> Device Details </label>
-        <select th:name="device">
-            <option th:each="device:${List_Of_Devices}" th:value="${device}" th:text="${device}"></option>
-        </select>
-
-        <select th:name="status">
-            <option value=""></option>
-            <option value="new" th:name="damaged" >New</option>
-            <option value="damaged" th:name="damaged" >Damaged</option>
-            <option value="working" th:name="damaged" >Working</option>
-        </select>
-
-        <button type="submit">submit</button>
-    </form>
 </section>
 
 <script>

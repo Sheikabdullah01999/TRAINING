@@ -32,11 +32,15 @@ public class AdminController {
     @Autowired
     private RoleService roleService;
 
-
-    @GetMapping("/")
-    public String home(Model model) {
+    @GetMapping("/index")
+    public String index(Model model)
+    {
         List<String> deviceList=adminService.getAllDevices();
         model.addAttribute("List_Of_Devices",deviceList);
+        return "index";
+    }
+    @GetMapping("/")
+    public String home(Model model) {
         Authentication authentication=adminService.getCurrentUser();
         String currentUser=authentication.getName();
         model.addAttribute("user",currentUser);

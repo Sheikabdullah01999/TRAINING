@@ -18,41 +18,9 @@
   </style>
 </head>
 <body>
-<nav class="navbar navbar-inverse navbar-fixed-top">
-    <div class="container">
-        <div class="navbar-header">
-            <div id="dp-container"  style="'background-image:url(' + ${2799132.jpeg} + ');'">
-                <button type="button" class="navbar-toggle collapsed"
-                        data-toggle="collapse" data-target="#navbar" aria-expanded="false"
-                        aria-controls="navbar">
-                    <span class="sr-only">Toggle navigation</span> <span
-                        class="icon-bar"></span> <span class="icon-bar"></span> <span
-                        class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" href="#" th:href="@{/}">Registration and
-                    Login Module</a>
-            </div>
-            <div id="navbar" class="collapse navbar-collapse">
-                    <div th:if="${user!=null}">
-                        <ul class="nav navbar-nav">
-                            <li sec:authorize="isAuthenticated()"><a th:href="@{/logout}">Logout</a></li>
-                        </ul>
-                        <span style="color:white; margin-left:1000px;">[[${user}]]</span>
-                    </div>
-            </div>
-        </div>
-    </div>
-</nav>
-<!--<img src="images/2799132.jpeg" alt="It is a image">-->
-
-<br>
-<br>
-<br>
-<br>
 <div class="container">
-    <h1>Admin Service</h1>
+    <h3><i>Device Details</i></h3>
     <form th:action="@{/damaged}">
-        <label class="control-label"> Device Details </label>
         <select th:name="device">
             <option th:each="device:${List_Of_Devices}" th:value="${device}" th:text="${device}"></option>
         </select>
@@ -66,100 +34,6 @@
 
         <button type="submit">submit</button>
     </form>
-    <br>
-    <br>
-    <div class="row">
-        <div class="col-sm-4">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Employee Registration</h5>
-                    <p class="card-text">It registered the employee.</p>
-                    <a th:href="@{/registration_form}" class="btn btn-primary">Click here</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-sm-4">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">List Of Employees</h5>
-                    <p class="card-text">It displays the list of employees.</p>
-                    <a th:href="@{/List_Of_Employees}" class="btn btn-primary">Click here</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-sm-4">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Roles Registration</h5>
-                    <p class="card-text">It registered the roles.</p>
-                    <a th:href="@{/registration_roles}" class="btn btn-primary">Click here</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-sm-4">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">List Of Roles</h5>
-                    <p class="card-text">It displays the list of roles.</p>
-                    <a  th:href="@{/List_Of_Roles}" class="btn btn-primary">Click here</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-sm-4">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Add Device Details</h5>
-                    <p class="card-text">It adds the devices details information.</p>
-                    <a th:href="@{/add_device_details}" class="btn btn-primary">Click here</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-sm-4">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">User Devices</h5>
-                    <p class="card-text">It displays the user which device have.</p>
-                    <a th:href="@{/user_devices}" class="btn btn-primary">Click here</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-sm-4">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Category</h5>
-                    <p class="card-text">It adds the device category.</p>
-                    <a th:href="@{/category}" class="btn btn-primary">Click here</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-sm-4">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">DeviceName</h5>
-                    <p class="card-text">It adds the device name.</p>
-                    <a th:href="@{/DeviceName}" class="btn btn-primary">Click here</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-sm-4">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">History</h5>
-                    <p class="card-text">It displays the history.</p>
-                    <a th:href="@{/history}" class="btn btn-primary">Click here</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-sm-4">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Employee department</h5>
-                    <p class="card-text">It will add employee department.</p>
-                    <a th:href="@{/department}" class="btn btn-primary">Click here</a>
-                </div>
-            </div>
-        </div>
-    </div>
 </div>
 </body>
 </html>
