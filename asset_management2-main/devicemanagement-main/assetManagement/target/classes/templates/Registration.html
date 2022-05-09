@@ -13,11 +13,11 @@
   <style type="text/css">
   body
   {
-  background-color: #CAF0F8;
+  background-color: #E4E9F7;
   }
     h1
     {
-    color:#48CAE4;
+    color:#707070;
     text-align:center;
     padding:20px;
     font-family: 'Orelega One', cursive;
@@ -78,7 +78,6 @@
         </div>
         <div class="form-group">
           <label class="control-label" > EmployeeDepartment </label>
-
          <select class="form-control"  th:field="*{empDepartment}" required>
           <option th:each="department:${ListOfEmpDepartment}" th:value="${department.department}" th:text="${department.department}"></option>
           </select>

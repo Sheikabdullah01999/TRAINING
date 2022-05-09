@@ -186,7 +186,7 @@ public class AdminController {
     @GetMapping("/user_devices")
     public String userDevices(Model model)
     {
-        List<Response> userDevices = adminService.getUserDevices();
+        List<EmployeeDevices> userDevices = adminService.getUserDevices();
         if(!userDevices.isEmpty())
         {
             model.addAttribute("user_devices", userDevices);

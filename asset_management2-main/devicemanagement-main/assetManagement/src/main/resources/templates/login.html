@@ -1,3 +1,4 @@
+[5:14 pm] Sheik Abdullah  M
 <html>
 <html xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
@@ -7,11 +8,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Orelega+One&display=swap" rel="stylesheet">
     <script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script>
     <script type="text/javascript" src="/js/index.js"></script>
+
     <style>
         body{
         margin:0;
         padding:0;
-        background-image:url("images/2799132.jpeg");
+        background-image:url("images/loginbackground.png");
         background-repeat:no-repeat;
         background-size:cover;
         }
@@ -24,7 +26,7 @@
         .card
         {
         padding:60px 40px 50px 40px;
-        background:#98F5E1;
+        background:#DDE5B6;
         border-radius:10px;
         opacity:0.9;
         }
@@ -37,14 +39,14 @@
         margin-bottom:20px;
         outline:none;
         width:380px;
-        color:white;
+        color:black;
         }
         #login
         {
         border-radius:20px;
         padding:15px 20px;
-        background:white;
-        color:black;
+        background:black;
+        color:white;
         margin-top:20px;
         border:none;
         outline:none;
@@ -53,19 +55,19 @@
         }
         #login:hover
         {
-        background-color:98F5E1;
-        color:black;
+        background-color:#FF6978;
+        color:white;
         cursor:pointer;
         }
         h1
         {
-        color:dodgerblue;
+        color:black;
         font-family: 'Orelega One', cursive;
         }
         a
         {
         font-size:15px;
-        color:lightblue;
+        color:black;
         margin-left:20px;
         }
         img
@@ -82,42 +84,42 @@
         margin-left:0px;
         color:red;
         font-size:18px;
-        background-color:lightblue;
+        background-color:#F8F7FF;
         text-align:center;
         padding:20px;
         border-radius:20px;
         }
         .fas
         {
-        color:white;
+        color:black;
         }
     </style>
 </head>
 <body>
-   <div class="container">
-       <!-- error message -->
-       <div th:if="${param.error}">
-           <div class="alert alert-danger">Invalid username or
-               password.</div>
-       </div>
+<div class="container">
+    <!-- error message -->
+    <div th:if="${param.error}">
+        <div class="alert alert-danger">Invalid username or
+            password.</div>
+    </div>
 
-       <!-- logout message -->
-       <div th:if="${param.logout}">
-           <div class="alert alert-info" style="color:green;">You have been logged out.</div>
-       </div>
-       <br>
-       <br>
-       <br>
-       <img th:src="@{images/grootan.png}" height="70" width="70">
-       <div class="card">
-           <h1>Grootan Device Management</h1>
-           <form th:action="@{/login}" method="post">
-               <i class='fas fa-user-alt'></i><input type="text" id="username" name="username" class="name" placeholder="Enter EmailId" required autocomplete="off"><br>
-               <i class='fas fa-key'></i><input type="password" id="id_password" name="password" class="name" placeholder="Enter Password" required><i class="far fa-eye" id="togglePassword" style="margin-left: -30px; cursor: pointer;" onclick="toggle()"></i><br>
-               <a href="#">Forgot Password?</a><br>
-               <input type="submit" id="login" name="login" value="Log In">
-           </form>
-       </div>
-   </div>
+    <!-- logout message -->
+    <div th:if="${param.logout}">
+        <div class="alert alert-info" style="color:green;">You have been logged out.</div>
+    </div>
+    <br>
+    <br>
+    <br>
+    <img th:src="@{images/grootan.webp}" height="70" width="70">
+    <div class="card">
+        <h1>Grootan Device Management</h1>
+        <form th:action="@{/login}" method="post">
+            <i class='fas fa-user-alt'></i><input type="text" id="username" name="username" class="name" placeholder="Enter EmailId" required autocomplete="off"><br>
+            <i class='fas fa-key'></i><input type="password" id="id_password" name="password" class="name" placeholder="Enter Password" required><i class="far fa-eye" id="togglePassword" style="margin-left: -30px; cursor: pointer;" onclick="toggle()"></i><br>
+            <a href="#">Forgot Password?</a><br>
+            <input type="submit" id="login" name="login" value="Log In">
+        </form>
+    </div>
+</div>
 </body>
 </html>

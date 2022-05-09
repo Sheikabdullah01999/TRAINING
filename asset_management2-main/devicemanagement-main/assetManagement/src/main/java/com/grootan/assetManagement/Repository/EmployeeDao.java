@@ -1,7 +1,7 @@
 package com.grootan.assetManagement.Repository;
 
 import com.grootan.assetManagement.Model.Employee;
-import com.grootan.assetManagement.Model.Response;
+import com.grootan.assetManagement.Model.EmployeeDevices;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -27,8 +27,8 @@ public interface EmployeeDao extends JpaRepository<Employee,String> {
     @Query(value="DELETE FROM Employee u where u.empId= :id")
     int deleteByEmpId(@Param("id") String empId);
 
-    @Query("SELECT new com.grootan.assetManagement.Model.Response(e.empId, d.deviceName, d.id, d.devicePurchaseDate, d.category) FROM Employee e join e.devices d")
-    List<Response> getUserDevice();
+    @Query("SELECT new com.grootan.assetManagement.Model.EmployeeDevices(e.empId, d.deviceName, d.id, d.devicePurchaseDate, d.category) FROM Employee e join e.devices d")
+    List<EmployeeDevices> getUserDevice();
 
     @Transactional
     @Modifying

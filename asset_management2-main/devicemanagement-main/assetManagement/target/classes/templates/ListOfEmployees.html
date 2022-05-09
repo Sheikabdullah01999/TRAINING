@@ -13,12 +13,13 @@
     <style type="text/css">
         h1
         {
-        color:#48CAE4;
+        color:#707070;
         padding:20px;
         font-family: 'Orelega One', cursive;
         }
         th,td
         {
+        background-color:white;
         text-align:center;
         font-size:18px;
         }
@@ -32,19 +33,9 @@
         color:black;
         text-decoration:none;
         }
-         .submit1
+        body
         {
-        background-color:#2B9348;
-        padding:5px 10px;
-        outline:none;
-        border-radius:10px;
-        }
-        .submit2
-        {
-        background-color:#DB5461;
-        padding:5px 10px;
-        outline:none;
-        border-radius:10px;
+        background-color:#E4E9F7;
         }
     </style>
 </head>
@@ -85,8 +76,8 @@
             <td th:text="${employee.empDepartment}"></td>
             <td hidden th:text="${employee.empDevices}"></td>
             <td th:text="${employee.assignRole}"></td>
-            <td><button class="submit1"><a th:href="@{'/update/employee/' +${employee.empId}}">update</a></button></td>
-            <td><button class="submit2"><a th:href="@{'/delete/employee/'+${employee.empId}}">delete</a></button></td>
+            <td><a th:href="@{'/update/employee/' +${employee.empId}}" class="btn btn-success">update</a></td>
+            <td><a th:href="@{'/delete/employee/'+${employee.empId}}" class="btn btn-danger">delete</a></td>
         </tr>
         </tbody>
     </table>

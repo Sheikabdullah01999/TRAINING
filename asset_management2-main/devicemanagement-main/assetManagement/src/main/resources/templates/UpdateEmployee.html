@@ -70,10 +70,12 @@
                     <input id="password" class="form-control" type="hidden"
                            th:field="*{empPassword}" required autofocus="autofocus"  readonly="readonly"/>
                 </div>
+
                 <div class="form-group">
-                    <label class="control-label" for="department"> EmployeeDepartment </label>
-                    <input id="department" class="form-control"
-                           th:field="*{empDepartment}" required autofocus="autofocus" />
+                    <label class="control-label" > EmployeeDepartment </label>
+                    <select class="form-control"  th:field="*{empDepartment}" required>
+                        <option th:each="department:${ListOfEmpDepartment}" th:value="${department.department}" th:text="${department.department}"></option>
+                    </select>
                 </div>
                 <div class="form-group">
                     <label class="control-label"> EmployeeDevices </label>
