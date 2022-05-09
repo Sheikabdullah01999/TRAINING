@@ -42,10 +42,13 @@ public class AdminController {
     @GetMapping("/")
     public String home(Model model) {
         Authentication authentication=adminService.getCurrentUser();
-        String currentUser=authentication.getName();
-        model.addAttribute("user",currentUser);
+        model.addAttribute("user",authentication.getName());
+        Employee employee=adminService.loginEmployeeDetails(authentication.getName());
+        model.addAttribute("empList",employee);
         return "index2";
     }
+
+
     @GetMapping("/login")
     public String login() {
         return "login";
@@ -141,24 +144,29 @@ public class AdminController {
     public String getDamagedDeviceDetails(@RequestParam String device,@RequestParam String status, Model model)
     {
         List<Device> deviceList =adminService.getDevice(device);
-        List<Device> deviceList1 =adminService.getDamagedDevice(device,status);
-        if(!deviceList.isEmpty())
+        List<Device> deviceList1 =adminService.getDamagedDevice(device,status);//
+
+        if(device!=""&&status=="")
         {
-            if(!deviceList1.isEmpty()) {
-                model.addAttribute("Device_details",deviceList);
-                return "DeviceDetails";
-            }
-            else
-            {
-                LocalDateTime dateTime = LocalDateTime.now();
-                DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
-                String formattedDate = dateTime.format(dateTimeFormatter);
-                model.addAttribute("timestamp",formattedDate);
-                HttpStatus httpStatus = HttpStatus.NOT_FOUND;
-                model.addAttribute("status",httpStatus);
-                model.addAttribute("message","RECORD_NOT_FOUND");
-                return "Error";
-            }
+            model.addAttribute("Device_details",deviceList);
+            return "DeviceDetails";
+        }
+        else if(device!=""&&status!="")
+        {
+            model.addAttribute("Device_details",deviceList1);
+            return "DeviceDetails";
+
+        }
+        else if(device.isEmpty()||deviceList1.isEmpty())
+        {
+            LocalDateTime dateTime = LocalDateTime.now();
+            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+            String formattedDate = dateTime.format(dateTimeFormatter);
+            model.addAttribute("timestamp",formattedDate);
+            HttpStatus httpStatus = HttpStatus.NOT_FOUND;
+            model.addAttribute("status",httpStatus);
+            model.addAttribute("message","RECORD_NOT_FOUND");
+            return "Error";
         }
         else
         {
@@ -273,6 +281,8 @@ public class AdminController {
         model.addAttribute("List_Of_Roles",roles);
         List<String> deviceList=adminService.getAllDevicesByName();
         model.addAttribute("List_Of_Devices",deviceList);
+        List<EmployeeDepartment> employeeDepartmentList=adminService.getAllEmpDepartments();
+        model.addAttribute("ListOfEmpDepartment",employeeDepartmentList);
         Employee employee = adminService.findEmployeeById(empId);
         editView.addObject("employee",employee);
         return editView;

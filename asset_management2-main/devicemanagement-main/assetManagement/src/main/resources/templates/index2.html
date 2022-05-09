@@ -329,7 +329,7 @@ body.dark .home .text{
     <header>
         <div class="image-text">
                 <span class="image">
-                    <img th:src="@{images/grootan.png}" alt="">
+                    <img th:src="@{images/grootan.webp}" alt="">
                 </span>
 
             <div class="text logo-text">
@@ -387,12 +387,7 @@ body.dark .home .text{
                     </a>
                 </li>
 
-                <li class="nav-link">
-                    <a th:href="@{/user_devices}">
-                        <i class='bx bx-heart icon' ></i>
-                        <span class="text nav-text">List User Devices</span>
-                    </a>
-                </li>
+
 
                 <li class="nav-link">
                     <a th:href="@{/category}">
@@ -416,6 +411,14 @@ body.dark .home .text{
                 </li>
 
                 <li class="nav-link">
+                    <a th:href="@{/user_devices}">
+                        <i class='bx bx-list-ol icon'></i>
+                        <!--                        <i class='bx bx-list-ul icon' ></i>-->
+                        <span class="text nav-text">List User Devices</span>
+                    </a>
+                </li>
+
+                <li class="nav-link">
                     <a th:href="@{/department}">
                         <i class='bx bx-wallet icon' ></i>
                         <span class="text nav-text">Add Employee Department</span>
@@ -435,7 +438,37 @@ body.dark .home .text{
 </nav>
 
 <section class="home">
-    <div class="text">Dashboard</div>
+    <div class="text">
+        <h3>welcome to grootan device management </h3>
+<!--        <h2 th:text="${user}"></h2>-->
+    </div>
+    <div class="text">
+        <table class="table table-striped table-bordered">
+<!--            <thead>-->
+<!--            <tr>-->
+<!--                <th scope="col">EmployeeName</th>-->
+<!--                <th scope="col">EmployeeEmail</th>-->
+<!--                <th scope="col">EmployeeDepartment</th>-->
+<!--            </tr>-->
+<!--            </thead>-->
+            <tr th:each="employee:${empList}">
+                <td scope="col">Id &nbsp;&nbsp;&nbsp;</td>
+                <td scope="row" th:text="${employee.empId}"></td>
+            </tr>
+            <tr th:each="employee:${empList}">
+                <td scope="col">Name &nbsp;&nbsp;&nbsp;</td>
+                <td th:text="${employee.empName}"></td>
+            </tr>
+            <tr th:each="employee:${empList}">
+                <td scope="col">Email &nbsp;&nbsp;&nbsp;</td>
+                <td th:text="${employee.email}"></td>
+            </tr>
+            <tr th:each="employee:${empList}">
+                <td scope="col">Department &nbsp;&nbsp;&nbsp;</td>
+                <td th:text="${employee.empDepartment}"></td>
+            </tr>
+        </table>
+    </div>
 </section>
 
 <script>

@@ -343,55 +343,48 @@ public class AdminService {
 
     //delete device details
     public void deleteDeviceDetails(Integer id) {
+        Device device=deviceDao.findById(id).orElseThrow(()-> new ResourceNotFoundException("no record found") );
+        String empDevices = device.getId()+","+device.getDeviceName()+","+device.getCategory();
+        String empId = deviceDao.getEmpId(id);
+        String empDevicesById = employeeDao.getEmpDevices(empId);
 
-      Device device=deviceDao.findById(id).orElseThrow(()-> new ResourceNotFoundException("no record found") );
-      String empDevices = device.getId()+","+device.getDeviceName()+","+device.getCategory();
-      System.out.println(empDevices);
-      String empId = deviceDao.getEmpId(id);
-      System.out.println(empId);
-      String empDevicesById = employeeDao.getEmpDevices(empId);
-      System.out.println(empDevicesById);
-      if(empDevicesById!=null)
-      {
-          String [] empDevicesByIds = empDevicesById.split(";");
-          for(int j=0;j<empDevicesByIds.length;j++)
-          {
-              System.out.println(empDevicesByIds[j]);
-          }
-          String newDevice="";
-          for(int i=0;i<empDevicesByIds.length;i++)
-          {
-              if(empDevices.equals(empDevicesByIds[i]))
-              {
-                  newDevice=newDevice+"";
-              }
-              else
-              {
-                  newDevice=newDevice+empDevicesByIds[i];
-              }
-          }
-          employeeDao.updateEmployeeByEmpDevice(empId,newDevice);
-          String deviceDeleteHistory="device id:"+device.getId()+","
-                  +"device name: "+device.getDeviceName();
-          History history=new History(currentUser(),DELETE,deviceDeleteHistory,DateAndTime());
+        if(empDevicesById!=null)
+        {
+            String [] empDevicesByIds = empDevicesById.split(";");
+
+            String newDevice="";
+            for(int i=0;i<empDevicesByIds.length;i++)
+            {
+                if(empDevices.equals(empDevicesByIds[i]))
+                {
+                    newDevice=newDevice+"";
+                }
+                else
+                {
+                    newDevice=newDevice+empDevicesByIds[i];
+                }
+            }
+            employeeDao.updateEmployeeByEmpDevice(empId,newDevice);
+            String deviceDeleteHistory="device id:"+device.getId()+","
+                    +"device name: "+device.getDeviceName();
+            History history=new History(currentUser(),DELETE,deviceDeleteHistory,DateAndTime());
 
 
-          deviceDao.deleteForiegnKey(id);
-          deviceDao.deleteById(id);
-          historyDao.save(history);
-      }
-      else
-      {
-          String deviceDeleteHistory="device id:"+device.getId()+","
-                  +"device name: "+device.getDeviceName();
+            deviceDao.deleteForiegnKey(id);
+            deviceDao.deleteById(id);
+            historyDao.save(history);
+        }
+        else
+        {
+            String deviceDeleteHistory="device id:"+device.getId()+","
+                    +"device name: "+device.getDeviceName();
 
-          String userName=currentUser();
-          History history=new History(userName,DELETE,deviceDeleteHistory,DateAndTime());
-          historyDao.save(history);
-          deviceDao.deleteForiegnKey(id);
-          deviceDao.deleteById(id);
-      }
-
+            String userName=currentUser();
+            History history=new History(userName,DELETE,deviceDeleteHistory,DateAndTime());
+            historyDao.save(history);
+            deviceDao.deleteForiegnKey(id);
+            deviceDao.deleteById(id);
+        }
     }
 
     //get device by device id
@@ -416,18 +409,12 @@ public class AdminService {
         return employee;
     }
 
-    public Employee updateEmployee(Employee employeeDetails)
+    //updated device
+    public String updateEmployeeDevice(Employee employeeDetails)
     {
-        List<Integer> newDeviceSize = null;
         String newDevice=employeeDetails.getEmpDevices();
-        if(newDevice!=null)
-        {
-          newDeviceSize=getDeviceID(newDevice);
-        }
-
         String updatedDevice = "";
-        String employeeId=employeeDetails.getEmpId();
-        String deviceList=deviceDao.getDevice(employeeId);
+        String deviceList=deviceDao.getDevice(employeeDetails.getEmpId());
 
         if(employeeDetails.getEmpDevices()!=null)
         {
@@ -437,6 +424,31 @@ public class AdminService {
         {
             updatedDevice=updatedDevice+deviceList;
         }
+
+        return updatedDevice;
+
+    }
+    //updated device size
+    public void updateAssignStatus(String updatedDevice)
+    {
+        List<Integer> deviceId=getDeviceID(updatedDevice);
+        for(int i=0;i<deviceId.size();i++)
+        {
+            deviceDao.updateAssignStatus(deviceId.get(i));
+        }
+    }
+
+    //update employee details
+    public Employee updateEmployee(Employee employeeDetails)
+    {
+        List<Integer> newDeviceSize = null;
+        String newDevice=employeeDetails.getEmpDevices();
+        if(newDevice!=null)
+        {
+            newDeviceSize=getDeviceID(newDevice);
+        }
+
+        String updatedDevice = updateEmployeeDevice(employeeDetails);
 
         List<Integer> deviceId=getDeviceID(updatedDevice);
         List<Device> device=new ArrayList<>();
@@ -453,13 +465,21 @@ public class AdminService {
                 employeeDetails.getAssignRole(),
                 Arrays.asList(new Role(employeeDetails.getAssignRole())),device);
 
-        for(int i=0;i<deviceId.size();i++)
-        {
-            deviceDao.updateAssignStatus(deviceId.get(i));
-        }
+        updateAssignStatus(updatedDevice);
+
+        String updatedEmployeeHistory=updatedEmployeeHistory(employeeDetails,newDeviceSize);
+        String userName=currentUser();
+        History history=new History(userName,UPDATED,updatedEmployeeHistory,DateAndTime());
+
+        historyDao.save(history);
+        return employeeDao.save(employee);
+    }
+
+    //update employee history
+    public String updatedEmployeeHistory(Employee employeeDetails,List<Integer> newDeviceSize)
+    {
+        String employeeId=employeeDetails.getEmpId();
         Employee emp=employeeDao.findByEmpId(employeeId);
-
-
         String updatedEmployeeHistory="EMP ID:"+employeeDetails.getEmpId();
 
         if(employeeDetails.getEmpDevices()!=null&&emp.getEmpDevices()!=null)
@@ -486,10 +506,9 @@ public class AdminService {
             updatedEmployeeHistory=updatedEmployeeHistory+",Employee Role changed from "
                     +  emp.getAssignRole()+"to "+employeeDetails.getAssignRole();
         }
-        String userName=currentUser();
-        History history=new History(userName,UPDATED,updatedEmployeeHistory,DateAndTime());
-        historyDao.save(history);
-        return employeeDao.save(employee);
+
+        return updatedEmployeeHistory;
+
     }
 
     //current log in user detail validation
@@ -506,17 +525,10 @@ public class AdminService {
         }
     }
 
+    //delete employee details
     public void deleteEmpDetails(String id)
     {
-        String currentUser=employeeDao.getEmployeeMail(id);
-        if(currentUser.equals(currentUser()))
-        {
-            throw new UserAlreadyExistException("cannot delete current logged in user");
-        }
-        else if(id.equals("G001"))
-        {
-            throw new UserAlreadyExistException("cannot delete default admin account ");
-        }
+        currentLoggedInUserValidation(id);
 
         Employee employee = employeeDao.findByEmpId(id);
         String s=employee.getEmpDevices();
@@ -538,7 +550,9 @@ public class AdminService {
         String userName=currentUser();
         History history=new History(userName,DELETE,newDeletedDeviceHistory,DateAndTime());
         historyDao.save(history);
+
     }
+
 
     //get employee by employe id
     public Employee getEmployeeById()
@@ -677,6 +691,11 @@ public class AdminService {
     {
         DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy hh.mm aa");
         return dateFormat.format(new Date()).toString();
+    }
+
+    public Employee loginEmployeeDetails(String name) {
+        Employee employee=employeeDao.findByEmail(name);
+        return  employee;
     }
 }
 
