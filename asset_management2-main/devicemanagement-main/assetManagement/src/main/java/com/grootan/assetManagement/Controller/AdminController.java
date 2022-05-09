@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -39,7 +40,7 @@ public class AdminController {
         Authentication authentication=adminService.getCurrentUser();
         String currentUser=authentication.getName();
         model.addAttribute("user",currentUser);
-        return "index";
+        return "index2";
     }
     @GetMapping("/login")
     public String login() {
@@ -99,53 +100,51 @@ public class AdminController {
     @PostMapping("/saveRoles")
     public String saveRoles(@ModelAttribute("roles") Role role, Model model)
     {
-        adminService.saveRoles(role);
-        model.addAttribute("List_of_Roles",adminService.getAllRoles());
-        return "ListOfRoles";
+        try{
+            adminService.saveRoles(role);
+            model.addAttribute("List_of_Roles",adminService.getAllRoles());
+            return "ListOfRoles";
+        }
+        catch(UserAlreadyExistException e)
+        {
+            model.addAttribute("errorMessage",e.getMessage());
+            return "roles";
+        }
     }
 
     @GetMapping("/List_Of_Roles")
     public String list_of_Roles(Model model)
     {
-        model.addAttribute("List_of_Roles",adminService.getAllRoles());
-        return "ListOfRoles";
-    }
-
-
-    @GetMapping("/device")
-    public String getDeviceDetails(@RequestParam String device,Model model)
-    {
-        System.out.println(device);
-        getDeviceDetailsByName(device,model);
-        return "AddDeviceDetails";
-    }
-
-    @GetMapping("/device_detailsName")
-    public String getDeviceDetailsByName(String device,Model model)
-    {
-        System.out.println(device);
-        List<DeviceCategory> devices1 = adminService.getCategory();
-        model.addAttribute("ListOfDeviceCategory",devices1);
-        String devices = device;
-        List<String> deviceList =adminService.getDeviceNames(devices);
-        model.addAttribute("Device_details",deviceList);
-        model.addAttribute("category",devices);
-        model.addAttribute("device",new Device());
-        return "AddDeviceDetails";
+        try
+        {
+            model.addAttribute("List_of_Roles",adminService.getAllRoles());
+            return "ListOfRoles";
+        }
+        catch(ResourceNotFoundException e)
+        {
+            LocalDateTime dateTime = LocalDateTime.now();
+            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+            String formattedDate = dateTime.format(dateTimeFormatter);
+            model.addAttribute("timestamp",formattedDate);
+            HttpStatus httpStatus = HttpStatus.NOT_FOUND;
+            model.addAttribute("status",httpStatus);
+            model.addAttribute("message",e.getMessage());
+            return "Error";
+        }
     }
 
     @GetMapping("/damaged")
     public String getDamagedDeviceDetails(@RequestParam String device,@RequestParam String status, Model model)
     {
-        if(status.isEmpty())
+        List<Device> deviceList =adminService.getDevice(device);
+        List<Device> deviceList1 =adminService.getDamagedDevice(device,status);
+        if(!deviceList.isEmpty())
         {
-            List<Device> deviceList =adminService.getDevice(device);
-            try
-            {
+            if(!deviceList1.isEmpty()) {
                 model.addAttribute("Device_details",deviceList);
                 return "DeviceDetails";
             }
-            catch(ResourceNotFoundException e)
+            else
             {
                 LocalDateTime dateTime = LocalDateTime.now();
                 DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
@@ -153,29 +152,20 @@ public class AdminController {
                 model.addAttribute("timestamp",formattedDate);
                 HttpStatus httpStatus = HttpStatus.NOT_FOUND;
                 model.addAttribute("status",httpStatus);
-                model.addAttribute("message",e.getMessage());
+                model.addAttribute("message","RECORD_NOT_FOUND");
                 return "Error";
             }
         }
         else
         {
-            List<Device> deviceList =adminService.getDamagedDevice(device,status);
-            try
-            {
-                model.addAttribute("Device_details",deviceList);
-                return "DeviceDetails";
-            }
-            catch(ResourceNotFoundException e)
-            {
-                LocalDateTime dateTime = LocalDateTime.now();
-                DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
-                String formattedDate = dateTime.format(dateTimeFormatter);
-                model.addAttribute("timestamp",formattedDate);
-                HttpStatus httpStatus = HttpStatus.NOT_FOUND;
-                model.addAttribute("status",httpStatus);
-                model.addAttribute("message",e.getMessage());
-                return "Error";
-            }
+            LocalDateTime dateTime = LocalDateTime.now();
+            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+            String formattedDate = dateTime.format(dateTimeFormatter);
+            model.addAttribute("timestamp",formattedDate);
+            HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
+            model.addAttribute("status",httpStatus);
+            model.addAttribute("message","INVALID_INPUT");
+            return "Error";
         }
     }
 
@@ -185,7 +175,7 @@ public class AdminController {
     {
         List<DeviceCategory> devices = adminService.getCategory();
         model.addAttribute("ListOfDeviceCategory",devices);
-        model.addAttribute("device",new Device());
+        model.addAttribute("devices",new Device());
         return "AddDeviceDetails";
     }
 
@@ -193,19 +183,46 @@ public class AdminController {
     public String userDevices(Model model)
     {
         List<Response> userDevices = adminService.getUserDevices();
-        model.addAttribute("user_devices",userDevices);
-        return "UserDetails";
+        if(!userDevices.isEmpty())
+        {
+            model.addAttribute("user_devices", userDevices);
+            return "UserDetails";
+        }
+        else
+        {
+            LocalDateTime dateTime = LocalDateTime.now();
+            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+            String formattedDate = dateTime.format(dateTimeFormatter);
+            model.addAttribute("timestamp",formattedDate);
+            HttpStatus httpStatus = HttpStatus.NOT_FOUND;
+            model.addAttribute("status",httpStatus);
+            model.addAttribute("message","NO_RECORDS_FOUND");
+            return "Error";
+        }
     }
     @GetMapping("/history")
     public String history(Model model)
     {
-        List<History> history = adminService.getHistory();
-        model.addAttribute("maintain_history",history);
-        return "HistoryDetails";
+        try {
+            List<History> history = adminService.getHistory();
+            model.addAttribute("maintain_history", history);
+            return "HistoryDetails";
+        }
+        catch(ResourceNotFoundException e)
+        {
+            LocalDateTime dateTime = LocalDateTime.now();
+            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+            String formattedDate = dateTime.format(dateTimeFormatter);
+            model.addAttribute("timestamp",formattedDate);
+            HttpStatus httpStatus = HttpStatus.NOT_FOUND;
+            model.addAttribute("status",httpStatus);
+            model.addAttribute("message",e.getMessage());
+            return "Error";
+        }
     }
 
     @PostMapping("/device_details")
-    public String saveDevice(@ModelAttribute("Device") Device device,Model model)
+    public String saveDevice(@ModelAttribute("devices") Device device,Model model)
     {
         try{
             adminService.addDeviceDetails(device);
@@ -220,7 +237,7 @@ public class AdminController {
     }
 
     @GetMapping("/delete/{id}")
-    public String deleteDetails(@PathVariable(name="id") Integer id)
+    public String deleteDeviceDetails(@PathVariable(name="id") Integer id)
     {
         Device device=deviceDao.findById(id).orElseThrow(()-> new ResourceNotFoundException("no record found"));
         String category="redirect:/device?device="+device.getCategory();
@@ -273,21 +290,33 @@ public class AdminController {
     }
 
     @GetMapping("/delete/employee/{id}")
-    public String deleteEmpDetails(@PathVariable(name="id") String id)
-    {
-        adminService.deleteEmpDetails(id);
-        return "redirect:/List_Of_Employees";
-    }
+    public String deleteEmpDetails(@PathVariable(name="id") String id,Model model) {
+        try{
+            adminService.deleteEmpDetails(id);
+            return "redirect:/List_Of_Employees";
+        }
+        catch(UserAlreadyExistException e)
+        {
+            LocalDateTime dateTime = LocalDateTime.now();
+            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+            String formattedDate = dateTime.format(dateTimeFormatter);
+            model.addAttribute("timestamp",formattedDate);
+            HttpStatus httpStatus = HttpStatus.FORBIDDEN;
+            model.addAttribute("status",httpStatus);
+            model.addAttribute("message",e.getMessage());
+            return "Error";
+        }
 
-    @GetMapping("/List_Of_EmployeesById")
-    public String list_of_employeeById(Model model)
-    {
-        model.addAttribute("List_Of_EmployeesById",adminService.getEmployeeById());
-        return "ListOfEmployeesById";
     }
+        @GetMapping("/List_Of_EmployeesById")
+        public String list_of_employeeById(Model model)
+        {
+            model.addAttribute("List_Of_EmployeesById",adminService.getEmployeeById());
+            return "ListOfEmployeesById";
+        }
 
-    @GetMapping("/search")
-    public String home(Employee employee, Model model, String keyword) {
+        @GetMapping("/search")
+        public String home(Employee employee, Model model, String keyword) {
         if(keyword!=null) {
             List<Employee> list = adminService.getByKeyword(keyword);
             model.addAttribute("List_Of_Employees", list);
@@ -296,7 +325,6 @@ public class AdminController {
             model.addAttribute("List_Of_Employees", list);}
         return "ListOfEmployees";
     }
-
     @PostMapping("/saveDeviceCategory")
     public String saveDeviceCategory(@ModelAttribute("deviceCategory") DeviceCategory deviceCategory,Model model)
     {
@@ -311,7 +339,6 @@ public class AdminController {
         }
 
     }
-
     @GetMapping("/category")
     public String addCategory(Model model)
     {
@@ -332,7 +359,6 @@ public class AdminController {
         }
 
     }
-
     @GetMapping("/department")
     public String addDepartment(Model model)
     {
@@ -340,12 +366,13 @@ public class AdminController {
         model.addAttribute("employeeDepartment",employeeDepartment);
         return "AddEmployeeDepartment";
     }
-
     @PostMapping("/saveDeviceName")
     public String saveDeviceName(@ModelAttribute("deviceName") DeviceName deviceName,Model model)
     {
         try
         {
+            List<DeviceCategory> devices = adminService.getCategory();
+            model.addAttribute("ListOfDeviceCategory",devices);
             adminService.saveDeviceName(deviceName);
             return "redirect:/DeviceName?success";
         }
@@ -355,7 +382,6 @@ public class AdminController {
             return "AddDeviceName";
         }
     }
-
     @GetMapping("/DeviceName")
     public String addName(Model model)
     {
@@ -365,6 +391,4 @@ public class AdminController {
         model.addAttribute("deviceName",deviceName);
         return "AddDeviceName";
     }
-
-
 }

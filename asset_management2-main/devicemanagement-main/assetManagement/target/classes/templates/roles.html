@@ -35,6 +35,11 @@
             <div th:if="${param.success}">
                 <div class="alert alert-info">You've successfully roles registered!</div>
             </div>
+            <br>
+            <br>
+            <div th:if="${errorMessage!=null}">
+                <div class="alert alert-info">[[${errorMessage}]]</div>
+            </div>
 
             <h1>Roles Registration</h1>
 

@@ -37,4 +37,8 @@ public interface EmployeeDao extends JpaRepository<Employee,String> {
 
     @Query(value="SELECT empDevices FROM Employee WHERE empId= :id")
     public String getEmpDevices(@Param("id") String empId);
+
+    @Query(value="SELECT email FROM Employee WHERE empId= :id")
+    public String getEmployeeMail(@Param("id") String empId);
+
 }

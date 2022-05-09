@@ -16,7 +16,7 @@ import java.util.List;
 public interface DeviceDao extends JpaRepository<Device,Integer>
 {
     @Query("SELECT u FROM Device u where u.manufacturedId=?1")
-    Device findByDeviceId(@Param("id") String id);
+    Device findByDeviceId(@Param("manufactureId") String manufacturedId);
     @Query("SELECT u from Device u Where u.category =?1")
     public List<Device> getDeviceByCategory(@Param("deviceName") String deviceName);
 

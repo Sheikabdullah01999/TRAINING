@@ -42,7 +42,7 @@
             </div>
             <h1>Update Device</h1>
 
-            <form th:action="@{/device_details}" method="post" th:object="${device}">
+            <form th:action="@{/update_device_details}" method="post" th:object="${device}">
                 <div class="form-group">
                     <label class="control-label" for="id"> DeviceId </label>
                     <input id="id" class="form-control" th:field="*{id}" readonly="readonly"
@@ -54,6 +54,12 @@
                     <select class="form-control"  th:field="*{category}">
                     <option th:each="device:${ListOfDeviceCategory}" th:value="${device.category}" th:text="${device.category}"></option>
                 </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label" for="manufacture"> Manufacture Id </label>
+                    <input id="manufacture" class="form-control" th:field="*{manufacturedId}" placeholder="Enter manufactured id" required
+                           autofocus="autofocus" />
                 </div>
 
                 <div class="form-group">
@@ -81,7 +87,7 @@
                 </div>
 
                 <div class="form-group">
-                    <button type="submit" class="btn btn-success">Register</button>
+                    <button type="submit" class="btn btn-success">update</button>
                     <a th:href="@{/}" class="btn btn-primary">Back</a>
                 </div>
             </form>

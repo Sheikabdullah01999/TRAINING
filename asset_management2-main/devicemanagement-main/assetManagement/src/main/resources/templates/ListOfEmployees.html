@@ -53,6 +53,10 @@
     <div class="row">
         <h1>List Of Employees</h1>
     </div>
+    <div th:if="${errorMessage!=null}">
+            <div class="alert alert-info">[[${errorMessage}]]</div>
+        </div>
+    </div>
     <form th:action="@{/search}" method="get">
         <input type="text" name="keyword" th:value="${keyword}" placeholder="Find by EmployeeName and EmployeeId" size="50">
         <button type="submit" class="btn btn-info" >Search</button>
