@@ -15,6 +15,9 @@ import java.util.List;
 @Repository
 public interface DeviceDao extends JpaRepository<Device,Integer>
 {
+    //or s.category ilike :keyword% or s.manufactured_id ilike :keyword% or s.device_purchase_date ilike :keyword% or s.device_name ilike :keyword%
+    @Query(value = "select * from device s where s.device_status ilike :keyword% or s.category ilike :keyword% or s.assign_status ilike :keyword% or s.device_name ilike :keyword%",nativeQuery = true)
+    List<Device> findByKeyword(@Param("keyword") String keyword);
     @Query("SELECT u FROM Device u where u.manufacturedId=?1")
     Device findByDeviceId(@Param("manufactureId") String manufacturedId);
     @Query("SELECT u from Device u Where u.category =?1")

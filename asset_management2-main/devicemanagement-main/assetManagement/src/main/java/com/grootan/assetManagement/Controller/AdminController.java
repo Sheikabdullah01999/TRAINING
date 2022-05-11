@@ -12,7 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -35,7 +34,7 @@ public class AdminController {
     @GetMapping("/index")
     public String index(Model model)
     {
-        List<String> deviceList=adminService.getAllDevices();
+        List<String> deviceList=adminService.getAllCategory();
         model.addAttribute("List_Of_Devices",deviceList);
         return "index";
     }
@@ -45,7 +44,7 @@ public class AdminController {
         model.addAttribute("user",authentication.getName());
         Employee employee=adminService.loginEmployeeDetails(authentication.getName());
         model.addAttribute("empList",employee);
-        return "index2";
+        return "index3";
     }
 
 
@@ -87,6 +86,26 @@ public class AdminController {
     {
         model.addAttribute("List_Of_Employees",adminService.getAllEmployees());
         return "ListOfEmployees";
+    }
+
+    @GetMapping("/List_Of_Devices")
+    public String list_of_devices(Model model)
+    {
+        try{
+            model.addAttribute("Device_details",adminService.getAllDevices());
+            return "DeviceDetails";
+        }
+        catch(ResourceNotFoundException e)
+        {
+            LocalDateTime dateTime = LocalDateTime.now();
+            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+            String formattedDate = dateTime.format(dateTimeFormatter);
+            model.addAttribute("timestamp",formattedDate);
+            HttpStatus httpStatus = HttpStatus.NOT_FOUND;
+            model.addAttribute("status",httpStatus);
+            model.addAttribute("message",e.getMessage());
+            return "Error";
+        }
     }
 
     @GetMapping("/ListOfEmpDepartment")
@@ -249,12 +268,26 @@ public class AdminController {
     }
 
     @GetMapping("/delete/{id}")
-    public String deleteDeviceDetails(@PathVariable(name="id") Integer id)
+    public String deleteDeviceDetails(@PathVariable(name="id") Integer id, Model model)
     {
-        Device device=deviceDao.findById(id).orElseThrow(()-> new ResourceNotFoundException("no record found"));
-        String category="redirect:/device?device="+device.getCategory();
-        adminService.deleteDeviceDetails(id);
-        return category;
+        //String category="redirect:/device?device="+device.getCategory();
+        try
+        {
+            adminService.deleteDeviceDetails(id);
+            return "redirect:/List_Of_Devices";
+        }
+        catch(UserAlreadyExistException e)
+        {
+            LocalDateTime dateTime = LocalDateTime.now();
+            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+            String formattedDate = dateTime.format(dateTimeFormatter);
+            model.addAttribute("timestamp",formattedDate);
+            HttpStatus httpStatus = HttpStatus.FORBIDDEN;
+            model.addAttribute("status",httpStatus);
+            model.addAttribute("message",e.getMessage());
+            return "Error";
+        }
+
     }
 
 
@@ -299,7 +332,22 @@ public class AdminController {
         {
 
             model.addAttribute("errorMessage",e.getMessage());
-            return "Registration";
+            return "UpdateEmployee";
+        }
+    }
+
+    @PostMapping("/update_device_details")
+    public String saveDevices(@ModelAttribute("device") Device device, Model model)
+    {
+        try
+        {
+            adminService.updateDeviceDetails(device);
+            return "redirect:/List_Of_Devices";
+        }
+        catch(UserAlreadyExistException e)
+        {
+            model.addAttribute("errorMessage",e.getMessage());
+            return "UpdateDevice";
         }
     }
 
@@ -339,6 +387,23 @@ public class AdminController {
             model.addAttribute("List_Of_Employees", list);}
         return "ListOfEmployees";
     }
+
+    @GetMapping("/searching")
+    public String search(Device device, Model model, String keyword)
+    {
+        if(keyword!=null)
+        {
+            List<Device> list = adminService.getByKeywordDevice(keyword);
+            model.addAttribute("Device_details",list);
+        }
+        else
+        {
+            List<Device> list = adminService.getAllDevices();
+            model.addAttribute("Device_details",list);
+        }
+        return "DeviceDetails";
+    }
+
     @PostMapping("/saveDeviceCategory")
     public String saveDeviceCategory(@ModelAttribute("deviceCategory") DeviceCategory deviceCategory,Model model)
     {

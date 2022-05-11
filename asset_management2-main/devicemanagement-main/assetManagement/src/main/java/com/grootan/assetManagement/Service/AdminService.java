@@ -243,11 +243,21 @@ public class AdminService {
     //save employee details after check all details are  correct
     public Employee saveEmployee(Employee employeeDetails) {
         Employee employee=saveEmpDetails(employeeDetails);
-        String history="New employee  Id:"+employeeDetails.getEmpId()+","
-                + "  Name: "+employeeDetails.getEmpName();
-        History newHistory=new History(currentUser(),ADD,history,DateAndTime());
-        historyDao.save(newHistory);
-        return employeeDao.save(employee);
+        if(employeeDetails.getAssignRole().equals("ADMIN"))
+        {
+            String history = "New employee  Id:" + employeeDetails.getEmpId() + ","
+                    + "  Name: " + employeeDetails.getEmpName();
+            History newHistory = new History(currentUser(), ADMIN_ADD, history, DateAndTime());
+            historyDao.save(newHistory);
+            return employeeDao.save(employee);
+        }
+        else {
+            String history = "New employee  Id:" + employeeDetails.getEmpId() + ","
+                    + "  Name: " + employeeDetails.getEmpName();
+            History newHistory = new History(currentUser(), USER_ADD, history, DateAndTime());
+            historyDao.save(newHistory);
+            return employeeDao.save(employee);
+        }
     }
 
     public Role saveRoles(Role role) {
@@ -256,7 +266,7 @@ public class AdminService {
             throw new UserAlreadyExistException("role exists: "+role.getRoleName());
         }
         String roleHistory="New role "+role.getRoleName();
-        History history=new History(currentUser(),ADD,roleHistory,DateAndTime());
+        History history=new History(currentUser(),ROLE_ADD,roleHistory,DateAndTime());
         historyDao.save(history);
         return roleDao.save(role);
     }
@@ -301,7 +311,7 @@ public class AdminService {
       }
         String deviceHistory="New device  name:  "+device.getDeviceName()+","
                 +"  device manufacture id:"+device.getManufacturedId();
-        History history=new History(currentUser(),ADD,deviceHistory,DateAndTime());
+        History history=new History(currentUser(),DEVICE_ADD,deviceHistory,DateAndTime());
         historyDao.save(history);
         deviceDao.save(device);
     }
@@ -310,13 +320,18 @@ public class AdminService {
     public void updateDeviceDetails(Device device) {
         String deviceHistory="New device  name:  "+device.getDeviceName()+","
                 +"  device manufacture id:"+device.getManufacturedId();
-        History history=new History(currentUser(),UPDATED,deviceHistory,DateAndTime());
+        History history=new History(currentUser(),DEVICE_UPDATED,deviceHistory,DateAndTime());
         historyDao.save(history);
         deviceDao.save(device);
     }
 
     //get all devices
-    public List<String> getAllDevices()
+    public List<Device> getAllDevices()
+    {
+        return deviceDao.findAll();
+    }
+    //get all category
+    public List<String> getAllCategory()
     {
         return (List<String>) deviceDao.getDevice();
     }
@@ -343,7 +358,7 @@ public class AdminService {
 
     //delete device details
     public void deleteDeviceDetails(Integer id) {
-        Device device=deviceDao.findById(id).orElseThrow(()-> new ResourceNotFoundException("no record found") );
+        Device device=deviceDao.findById(id).orElseThrow(()-> new ResourceNotFoundException("no record found"));
         String empDevices = device.getId()+","+device.getDeviceName()+","+device.getCategory();
         String empId = deviceDao.getEmpId(id);
         String empDevicesById = employeeDao.getEmpDevices(empId);
@@ -367,7 +382,7 @@ public class AdminService {
             employeeDao.updateEmployeeByEmpDevice(empId,newDevice);
             String deviceDeleteHistory="device id:"+device.getId()+","
                     +"device name: "+device.getDeviceName();
-            History history=new History(currentUser(),DELETE,deviceDeleteHistory,DateAndTime());
+            History history=new History(currentUser(),DEVICE_DELETE,deviceDeleteHistory,DateAndTime());
 
 
             deviceDao.deleteForiegnKey(id);
@@ -380,7 +395,7 @@ public class AdminService {
                     +"device name: "+device.getDeviceName();
 
             String userName=currentUser();
-            History history=new History(userName,DELETE,deviceDeleteHistory,DateAndTime());
+            History history=new History(userName,DEVICE_DELETE,deviceDeleteHistory,DateAndTime());
             historyDao.save(history);
             deviceDao.deleteForiegnKey(id);
             deviceDao.deleteById(id);
@@ -469,7 +484,7 @@ public class AdminService {
 
         String updatedEmployeeHistory=updatedEmployeeHistory(employeeDetails,newDeviceSize);
         String userName=currentUser();
-        History history=new History(userName,UPDATED,updatedEmployeeHistory,DateAndTime());
+        History history=new History(userName,USER_UPDATED,updatedEmployeeHistory,DateAndTime());
 
         historyDao.save(history);
         return employeeDao.save(employee);
@@ -480,7 +495,7 @@ public class AdminService {
     {
         String employeeId=employeeDetails.getEmpId();
         Employee emp=employeeDao.findByEmpId(employeeId);
-        String updatedEmployeeHistory="EMP ID:"+employeeDetails.getEmpId();
+        String updatedEmployeeHistory="EMP ID: "+employeeDetails.getEmpId();
 
         if(employeeDetails.getEmpDevices()!=null&&emp.getEmpDevices()!=null)
         {
@@ -499,12 +514,17 @@ public class AdminService {
         if(!emp.getEmpDepartment().equalsIgnoreCase(employeeDetails.getEmpDepartment()))
         {
             updatedEmployeeHistory=updatedEmployeeHistory+",Employee department changed from "
-                    + emp.getEmpDepartment()+"to"+employeeDetails.getEmpDepartment();
+                    + emp.getEmpDepartment()+" to"+employeeDetails.getEmpDepartment();
         }
         if(!emp.getAssignRole().equalsIgnoreCase(employeeDetails.getAssignRole()))
         {
             updatedEmployeeHistory=updatedEmployeeHistory+",Employee Role changed from "
-                    +  emp.getAssignRole()+"to "+employeeDetails.getAssignRole();
+                    +  emp.getAssignRole()+" to "+employeeDetails.getAssignRole();
+        }
+        if(!emp.getEmail().equalsIgnoreCase(employeeDetails.getEmail()))
+        {
+            updatedEmployeeHistory=updatedEmployeeHistory+",Employee Email changed from "
+                    +emp.getEmail()+" to "+employeeDetails.getEmail();
         }
 
         return updatedEmployeeHistory;
@@ -548,7 +568,7 @@ public class AdminService {
         }
         String newDeletedDeviceHistory="employee Id "+id+"Records deleted ";
         String userName=currentUser();
-        History history=new History(userName,DELETE,newDeletedDeviceHistory,DateAndTime());
+        History history=new History(userName,USER_DELETE,newDeletedDeviceHistory,DateAndTime());
         historyDao.save(history);
 
     }
@@ -566,6 +586,12 @@ public class AdminService {
         return employeeDao.findByKeyword(keyword);
     }
 
+    //search by keyword using ilike
+    public List<Device> getByKeywordDevice(String keyword)
+    {
+        return deviceDao.findByKeyword(keyword);
+    }
+
     //save device category
     public void saveDeviceCategory(DeviceCategory category) {
         String lower = category.getCategory();
@@ -580,7 +606,7 @@ public class AdminService {
         String userName=currentUser();
         DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy hh.mm aa");
         String dateString = dateFormat.format(new Date()).toString();
-        History history=new History(userName,ADD,newDeviceHistory,dateString);
+        History history=new History(userName,DEVICE_CATEGORY_ADD,newDeviceHistory,dateString);
         historyDao.save(history);
         category.setCategory(i);
        deviceCategoryDao.save(category);
@@ -605,7 +631,7 @@ public class AdminService {
         }
         String newDeviceHistory="New Device  Name: "+deviceName.getName();
         String userName=currentUser();
-        History history=new History(userName,ADD,newDeviceHistory,DateAndTime());
+        History history=new History(userName,DEVICE_NAME_ADD,newDeviceHistory,DateAndTime());
         historyDao.save(history);
         deviceName.setName(i);
         deviceNameDao.save(deviceName);
@@ -666,7 +692,7 @@ public class AdminService {
         }
         String newDeviceHistory="New Department Name: "+employeeDepartment.getDepartment();
         String userName=currentUser();
-        History history=new History(userName,ADD,newDeviceHistory,DateAndTime());
+        History history=new History(userName,EMP_DEPARTMENT_ADD,newDeviceHistory,DateAndTime());
         historyDao.save(history);
         employeeDepartment.setDepartment(i);
         employeeDepartmentDao.save(employeeDepartment);
