@@ -214,7 +214,7 @@ header .image-text .profession{
     </div>
     <h1>Employee Registration</h1>
 
-    <form th:action="@{/save_employee}" method="post" th:object="${employee}">
+    <form th:action="@{/saveEmployee}" method="post" th:object="${employee}">
         <div class="form-group">
             <label class="control-label"> EmployeeId </label>
             <input id="empId" class="form-control" th:field="*{empId}" placeholder="Enter EmployeeId"
