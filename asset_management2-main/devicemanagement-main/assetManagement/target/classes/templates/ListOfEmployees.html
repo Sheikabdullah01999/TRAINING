@@ -11,143 +11,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Orelega+One&display=swap" rel="stylesheet">
+    <link href='https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css' rel='stylesheet'/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <style type="text/css">
-    body {
-  font-family: "Lato", sans-serif;
-  background-color:#E4E9F7;
-}
-h3
-{
-color:#707070;
-}
-
-/* Fixed sidenav, full height */
-.sidenav {
-  height: 100%;
-  width: 300px;
-  position: fixed;
-  z-index: 1;
-  top: 0;
-  left: 0;
-  background-color: white;
-  overflow-x: hidden;
-  padding-top: 20px;
-}
-
-/* Style the sidenav links and the dropdown button */
-.sidenav a, .dropdown-btn {
-  padding: 6px 8px 6px 16px;
-  text-decoration: none;
-  font-size: 20px;
-  color: #818181;
-  display: block;
-  border: none;
-  background: none;
-  width: 100%;
-  text-align: left;
-  cursor: pointer;
-  outline: none;
-}
-
-/* On mouse-over */
-.sidenav a:hover, .dropdown-btn:hover {
-  color: #3a3b3c;
-}
-
-/* Main content */
-.main {
-  margin-left: 300px; /* Same as the width of the sidenav */
-  font-size: 20px; /* Increased text to enable scrolling */
-  padding: 0px 10px;
-}
-
-/* Add an active class to the active dropdown button */
-.active {
-  background-color: #695CFE;
-  color: #3a3b3c;
-}
-
-/* Dropdown container (hidden by default). Optional: add a lighter background color and some left padding to change the design of the dropdown content */
-.dropdown-container {
-  display: none;
-  padding-left: 8px;
-}
-
-/* Optional: Style the caret down icon */
-.fa-caret-down {
-  float: right;
-  padding-right: 8px;
-}
-
-/* Some media queries for responsiveness */
-@media screen and (max-height: 450px) {
-  .sidenav {padding-top: 15px;}
-  .sidenav a {font-size: 18px;}
-}
-.sidebar header .image
-{
-    min-width: 60px;
-    border-radius: 6px;
-}
-.sidebar header{
-    position: relative;
-}
-
-.sidebar header .image-text{
-    display: flex;
-    align-items: center;
-}
-.sidebar header .logo-text{
-    display: flex;
-    flex-direction: column;
-}
-header .image-text .name {
-    margin-top: 2px;
-    font-size: 18px;
-    font-weight: 600;
-}
-
-header .image-text .profession{
-    font-size: 16px;
-    margin-top: -2px;
-    display: block;
-}
-
-.sidebar header .image{
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-.sidebar header .image img{
-    width: 40px;
-    border-radius: 6px;
-}
-    .control-label
-    {
-    font-style:italic;
-    font-size:18px;
-    }
-    .form-control
-    {
-    width:60%;
-    }
-    h1
-    {
-    color:#707070;
-    text-align:center;
-    padding:20px;
-    font-family: 'Orelega One', cursive;
-    }
-    table,.btn1,th,td,tr,input,.pages
-    {
-    margin-left:400px;
-    }
-    .table
-    {
-    width:50%;
-    }
-  </style>
+    <link rel="stylesheet" href="/css/table.css">
 </head>
 <body>
 <div class="sidenav">
@@ -163,57 +29,55 @@ header .image-text .profession{
                     <span class="profession">Device Management</span>
                 </div>
             </div>
-
-            <i class='bx bx-chevron-right toggle'></i>
         </header>
     </nav>
     <br>
     <br>
-    <button class="dropdown-btn">Employee
+    <button class="dropdown-btn"><i class="fa fa-user" aria-hidden="true"></i>&nbsp;Employee
         <i class="fa fa-caret-down"></i>
     </button>
     <div class="dropdown-container">
-        <a th:href="@{/registration_form}">Employee Registration</a>
-        <a th:href="@{/List_Of_Employees}">List Of Employees</a>
-        <a th:href="@{/user_devices}">List Of Employee Devices</a>
-        <a th:href="@{/department}">Add Employee Department</a>
+        <a th:href="@{/registration_form}" class="row1">Employee Registration</a>
+        <a th:href="@{/List_Of_Employees}" class="row1">List Of Employees</a>
+        <a th:href="@{/user_devices}" class="row1">List Of Employee Devices</a>
+        <a th:href="@{/department}" class="row1">Add Employee Department</a>
     </div>
     <br>
-    <button class="dropdown-btn">Roles
+    <button class="dropdown-btn"><i class='fa fa-users'></i>&nbsp;Roles
         <i class="fa fa-caret-down"></i>
     </button>
     <div class="dropdown-container">
-        <a th:href="@{/registration_roles}">Roles Registration</a>
-        <a th:href="@{/List_Of_Roles}">List Of Roles</a>
+        <a th:href="@{/registration_roles}" class="row1">Roles Registration</a>
+        <a th:href="@{/List_Of_Roles}" class="row1">List Of Roles</a>
     </div>
     <br>
-    <button class="dropdown-btn">Devices
+    <button class="dropdown-btn"><i class='bx bxs-devices'></i>&nbsp;Devices
         <i class="fa fa-caret-down"></i>
     </button>
     <div class="dropdown-container">
-        <a th:href="@{/add_device_details}">Add Device Details</a>
-        <a th:href="@{/List_Of_Devices}">List Of Device Details</a>
-        <a th:href="@{/category}">Add Device Category</a>
-        <a th:href="@{/DeviceName}">Add Device Name</a>
+        <a th:href="@{/add_device_details}" class="row1">Add Device Details</a>
+        <a th:href="@{/List_Of_Devices}" class="row1">List Of Device Details</a>
+        <a th:href="@{/category}" class="row1">Add Device Category</a>
+        <a th:href="@{/DeviceName}" class="row1">Add Device Name</a>
     </div>
     <br>
-    <a th:href="@{/history}">History</a>
+    <a th:href="@{/history}" class="dropdown-btn"><i class="fa fa-history" aria-hidden="true"></i>&nbsp;History</a>
     <br>
-    <a sec:authorize="isAuthenticated()" th:href="@{/logout}" >Logout</a>
+    <a sec:authorize="isAuthenticated()" th:href="@{/logout}" class="dropdown-btn"><i class="fa fa-sign-out" aria-hidden="true"></i>&nbsp;Logout</a>
 </div>
-<div class="main">
-    <h1>List Of Employees</h1>
+<h1>List Of Employees</h1>
+<div class="listuser_main">
     <div th:if="${errorMessage!=null}">
         <div class="alert alert-info">[[${errorMessage}]]</div>
     </div>
 </div>
-<form th:action="@{/search}" method="get">
+<form th:action="@{/search}" method="get" style="margin-left:320px;">
     <input type="text" name="keyword" th:value="${keyword}" placeholder="Find by EmployeeName and EmployeeId" size="50">
     <button type="submit" class="btn btn-info" >Search</button>
 </form>
 <br>
 <br>
-<table class="table table-striped table-bordered">
+<table class="table table-striped table-bordered list_table">
     <thead>
     <tr>
         <th scope="col">EmployeeId</th>
@@ -228,7 +92,7 @@ header .image-text .profession{
     </thead>
     <tbody>
     <tr th:each="employee:${List_Of_Employees}">
-        <th scope="row" th:text="${employee.empId}"></th>
+        <td th:text="${employee.empId}"></td>
         <td th:text="${employee.empName}"></td>
         <td th:text="${employee.email}"></td>
         <td hidden th:text="${employee.empPassword}"></td>
