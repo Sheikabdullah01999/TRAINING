@@ -5,6 +5,9 @@ import com.grootan.assetManagement.Repository.*;
 import com.grootan.assetManagement.Exception.ResourceNotFoundException;
 import com.grootan.assetManagement.Exception.UserAlreadyExistException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -722,6 +725,13 @@ public class AdminService {
     public Employee loginEmployeeDetails(String name) {
         Employee employee=employeeDao.findByEmail(name);
         return  employee;
+    }
+
+    //pagination by employee table
+    public Page<History> findPaginated(int pageNo, int pageSize)
+    {
+        Pageable pageable = PageRequest.of(pageNo-1,pageSize);
+        return this.historyDao.findAll(pageable);
     }
 }
 

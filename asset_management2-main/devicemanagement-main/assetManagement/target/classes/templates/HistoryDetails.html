@@ -139,13 +139,13 @@ header .image-text .profession{
     padding:20px;
     font-family: 'Orelega One', cursive;
     }
-    table,.btn1,th,td,tr
+    table,.btn1,th,td,tr,.pages
     {
-    margin-left:150px;
+    margin-left:200px;
     }
     .table
     {
-    width:20%;
+    width:10%;
     }
   </style>
 </head>
@@ -216,7 +216,7 @@ header .image-text .profession{
         </tr>
         </thead>
         <tbody>
-        <tr th:each="history:${maintain_history}">
+        <tr th:each="history:${maintain_history}" class="pages">
             <th scope="row" th:text="${history.id}"></th>
             <td th:text="${history.createdBy}"></td>
             <td th:text="${history.creationDate}"></td>
@@ -228,8 +228,29 @@ header .image-text .profession{
         </tr>
         </tbody>
     </table>
-    <a th:href="@{/}" class="btn btn-primary btn1">Back</a>
+    <div th:if="${totalPages>1}" class="pages">
+        <div class="row col-sm-10">
+            <div class="col-sm-2">
+                TotalRows:[[${totalItems}]]
+            </div>
+            <div class="col-sm-1">
+            <span th:each="i:${#numbers.sequence(1,totalPages)}">
+                <a th:if="${currentPage!=i}" th:href="@{'/page/'+${i}}">[[${i}]]</a>
+                <span th:unless="${currentPage!=i}">[[${i}]]</span> &nbsp; &nbsp;
+            </span>
+            </div>
+            <div class="col-sm-1">
+                <a th:if="${currentPage<totalPages}" th:href="@{'/page/'+${currentPage + 1}}">Next</a>
+                <span th:unless="${currentPage<totalPages}">Next</span>
+            </div>
+            <div class="col-sm-1">
+                <a th:if="${currentPage<totalPages}" th:href="@{'/page/'+${totalPages}}">Last</a>
+                <span th:unless="${currentPage<totalPages}">Last</span>
+            </div>
+        </div>
+    </div>
 </div>
+<a th:href="@{/}" class="btn btn-primary btn1">Back</a>
 <script>
 /* Loop through all dropdown buttons to toggle between hiding and showing its dropdown content - This allows the user to have multiple dropdowns without any conflict */
 var dropdown = document.getElementsByClassName("dropdown-btn");

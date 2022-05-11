@@ -8,6 +8,7 @@ import com.grootan.assetManagement.Repository.EmployeeDao;
 import com.grootan.assetManagement.Service.AdminService;
 import com.grootan.assetManagement.Service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -235,9 +236,10 @@ public class AdminController {
     public String history(Model model)
     {
         try {
-            List<History> history = adminService.getHistory();
-            model.addAttribute("maintain_history", history);
-            return "HistoryDetails";
+//            List<History> history = adminService.getHistory();
+//            model.addAttribute("maintain_history", history);
+//            return "HistoryDetails";
+            return findPaginated(1,model);
         }
         catch(ResourceNotFoundException e)
         {
@@ -469,5 +471,17 @@ public class AdminController {
         DeviceName deviceName=new DeviceName();
         model.addAttribute("deviceName",deviceName);
         return "AddDeviceName";
+    }
+    @GetMapping("/page/{pageNo}")
+    public String findPaginated(@PathVariable(value="pageNo") int pageNo, Model model)
+    {
+        int pageSize=5;
+        Page<History> page = adminService.findPaginated(pageNo,pageSize);
+        List<History> histories = page.getContent();
+        model.addAttribute("currentPage",pageNo);
+        model.addAttribute("totalPages",page.getTotalPages());
+        model.addAttribute("totalItems",page.getTotalElements());
+        model.addAttribute("maintain_history",histories);
+        return "HistoryDetails";
     }
 }
