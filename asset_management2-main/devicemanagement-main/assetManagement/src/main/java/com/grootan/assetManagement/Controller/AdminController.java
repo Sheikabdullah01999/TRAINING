@@ -39,6 +39,7 @@ public class AdminController {
         model.addAttribute("List_Of_Devices",deviceList);
         return "index";
     }
+
     @GetMapping("/")
     public String home(Model model) {
         Authentication authentication=adminService.getCurrentUser();
@@ -47,7 +48,6 @@ public class AdminController {
         model.addAttribute("empList",employee);
         return "index3";
     }
-
 
     @GetMapping("/login")
     public String login() {
@@ -83,7 +83,7 @@ public class AdminController {
         }
     }
     @GetMapping("/List_Of_Employees")
-    public String list_of_employee(Model model)
+    public String listOfEmployee(Model model)
     {
         model.addAttribute("List_Of_Employees",adminService.getAllEmployees());
         return "ListOfEmployees";
