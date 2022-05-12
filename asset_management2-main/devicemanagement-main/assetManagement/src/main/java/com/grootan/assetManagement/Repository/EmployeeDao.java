@@ -30,10 +30,18 @@ public interface EmployeeDao extends JpaRepository<Employee,String> {
     @Query("SELECT new com.grootan.assetManagement.Model.EmployeeDevices(e.empId, d.deviceName, d.id, d.devicePurchaseDate, d.category) FROM Employee e join e.devices d")
     List<EmployeeDevices> getUserDevice();
 
+    @Query(value = "select devices_id from employee_devices where employee_emp_id= :id",nativeQuery = true)
+    int deleteByEmpDevicesId(@Param("id") String empId);
+
     @Transactional
     @Modifying
     @Query("UPDATE Employee SET empDevices= :empDevices where empId= :id")
     public void updateEmployeeByEmpDevice(@Param("id") String empId,@Param("empDevices") String empDevices);
+
+    @Transactional
+    @Modifying
+    @Query(value = "delete from employee_devices where employee_emp_id=:id",nativeQuery = true)
+    public void deleteEmployeeByEmpDevice(@Param("id") String empId);
 
     @Query(value="SELECT empDevices FROM Employee WHERE empId= :id")
     public String getEmpDevices(@Param("id") String empId);

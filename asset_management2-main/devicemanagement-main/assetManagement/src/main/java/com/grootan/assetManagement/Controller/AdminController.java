@@ -280,6 +280,13 @@ public class AdminController {
         return "redirect:/List_Of_Devices";
     }
 
+    @GetMapping("/employee_devices/delete/{id}")
+    public String deleteEmpDevices(@PathVariable(name="id") String empId, Model model)
+    {
+        adminService.deleteEmpDevices(empId);
+        return "redirect:/user_devices";
+    }
+
     @GetMapping("category/delete/{id}")
     public String deleteDeviceCategoryDetails(@PathVariable(name="id") String  id)
     {
@@ -288,7 +295,7 @@ public class AdminController {
     }
 
 
-    @GetMapping("/DeviceUpdate/{id}")
+    @GetMapping("/update/{id}")
     public ModelAndView showUpdateDevicePage(@PathVariable(name="id") int id,Model model)
     {
         ModelAndView editView = new ModelAndView("UpdateDevice");
@@ -311,6 +318,9 @@ public class AdminController {
         model.addAttribute("List_Of_Roles",roles);
         List<String> deviceList=adminService.getAllDevicesByName();
         model.addAttribute("List_Of_Devices",deviceList);
+        String deviceByEmpId=adminService.getAllDevicesById(empId);
+        List<String> ListOfEmpDevices = List.of(deviceByEmpId.split(";"));
+        model.addAttribute("List_Of_DevicesById",ListOfEmpDevices);
         List<EmployeeDepartment> employeeDepartmentList=adminService.getAllEmpDepartments();
         model.addAttribute("ListOfEmpDepartment",employeeDepartmentList);
         Employee employee = adminService.findEmployeeById(empId);

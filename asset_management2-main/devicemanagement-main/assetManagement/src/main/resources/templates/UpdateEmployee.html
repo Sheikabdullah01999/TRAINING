@@ -139,9 +139,17 @@ header .image-text .profession{
     padding:20px;
     font-family: 'Orelega One', cursive;
     }
-    input,label,.btn1,select
+    input,label,.btn1,select,p,input[type="checkbox"]
     {
     margin-left:240px;
+    }
+    p
+    {
+    font-size:14px;
+    }
+    li
+    {
+    list-style-type:none;
     }
   </style>
 </head>
@@ -245,6 +253,17 @@ header .image-text .profession{
             <ul>
                 <li th:each="device : ${List_Of_Devices}">
                     <input type="checkbox" th:field="*{empDevices}" th:value="${device}" th:text="${device}" />
+                </li>
+            </ul>
+            <label class="control-label">Using Devices</label>
+            <ul th:if="${!List_Of_DevicesById.isEmpty()}">
+                <li th:each="device1 : ${List_Of_DevicesById}">
+                    <p th:text="${device1}"></p>
+                </li>
+            </ul>
+            <ul th:if="${List_Of_DevicesById.isEmpty()}">
+                <li>
+                    <p>This employee have no device.</p>
                 </li>
             </ul>
         </div>

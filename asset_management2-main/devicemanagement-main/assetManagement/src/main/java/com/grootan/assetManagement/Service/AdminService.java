@@ -353,6 +353,12 @@ public class AdminService {
         return (List<String>) deviceDao.getDeviceByName();
     }
 
+    //get all device by employeeId
+    public String getAllDevicesById(String EmpId)
+    {
+        return employeeDao.getEmpDevices(EmpId);
+    }
+
     // list all user with devices
     public List<EmployeeDevices> getUserDevices()
     {
@@ -411,6 +417,30 @@ public class AdminService {
             deviceDao.deleteForiegnKey(id);
             deviceDao.deleteById(id);
         }
+    }
+
+    //delete empdevices by employeeId
+    public void deleteEmpDevices(String empId)
+    {
+        String empDevices = employeeDao.getEmpDevices(empId);
+        int employeeDevices = employeeDao.deleteByEmpDevicesId(empId);
+        String devices = deviceDao.getDeviceById(employeeDevices);
+        String [] empDevicesById = empDevices.split(";");
+        String newDevice="";
+        for(int i=0;i<empDevicesById.length;i++)
+        {
+            if(devices.equals(empDevicesById[i]))
+            {
+                newDevice=newDevice+"";
+            }
+            else
+            {
+                newDevice=newDevice+empDevicesById[i];
+            }
+        }
+        employeeDao.updateEmployeeByEmpDevice(empId,newDevice);
+        deviceDao.updateAssignStatusAndDeviceStatus(employeeDevices);
+        employeeDao.deleteEmployeeByEmpDevice(empId);
     }
 
     //get device by device id
