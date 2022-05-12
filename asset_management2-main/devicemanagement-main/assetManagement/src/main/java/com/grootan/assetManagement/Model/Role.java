@@ -1,37 +1,21 @@
 package com.grootan.assetManagement.Model;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 @Entity
+@Getter
+@Setter
 @Table(name = "role",uniqueConstraints = @UniqueConstraint(columnNames = {"roleName"}))
 public class Role {
     @Id
     private String roleName;
     private String roleDescription;
-
-    public Role(Long id,String roleName, String roleDescription)
-    {
-
-    }
-    public String getRoleName() {
-        return roleName;
-    }
-
-    public void setRoleName(String roleName) {
-        this.roleName = roleName;
-    }
-
-    public String getRoleDescription() {
-        return roleDescription;
-    }
-
-    public void setRoleDescription(String roleDescription) {
-        this.roleDescription = roleDescription;
-    }
-
     public Role(String roleName) {
         super();
         this.roleName = roleName;

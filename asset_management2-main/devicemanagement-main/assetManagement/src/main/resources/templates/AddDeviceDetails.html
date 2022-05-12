@@ -30,8 +30,6 @@
                     <span class="profession">Device Management</span>
                 </div>
             </div>
-
-            <i class='bx bx-chevron-right toggle'></i>
         </header>
     </nav>
     <br>
@@ -136,7 +134,7 @@ $("#category").change(function() {
         console.log(x);
         $.ajax({
 			type: 'GET',
-			url: '/demo/loadNamesByCategory/' + x,
+			url: '/loadNamesByCategory/' + x,
 			success: function(result) {
 				var result = JSON.parse(result);
 				console.log(result);

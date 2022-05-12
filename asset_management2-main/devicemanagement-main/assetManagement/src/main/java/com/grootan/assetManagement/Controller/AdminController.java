@@ -1,5 +1,6 @@
 package com.grootan.assetManagement.Controller;
 
+import com.google.gson.Gson;
 import com.grootan.assetManagement.Exception.GeneralException;
 import com.grootan.assetManagement.Model.*;
 import com.grootan.assetManagement.Repository.DeviceCategoryDao;
@@ -13,8 +14,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+
+import javax.annotation.PostConstruct;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -33,12 +37,10 @@ public class AdminController {
     @Autowired
     private DeviceCategoryDao deviceCategoryDao;
 
-    @GetMapping("/index")
-    public String index(Model model)
+    @PostConstruct
+    public void initRoleAndUser()
     {
-        List<String> deviceList=adminService.getAllCategory();
-        model.addAttribute("List_Of_Devices",deviceList);
-        return "index";
+        adminService.initRoleAndUser();
     }
 
     @GetMapping("/")
@@ -47,12 +49,12 @@ public class AdminController {
         model.addAttribute("user",authentication.getName());
         Employee employee=adminService.loginEmployeeDetails(authentication.getName());
         model.addAttribute("empList",employee);
-        return "index3";
+        return "index";
     }
 
     @GetMapping("/login")
     public String login() {
-        return "login";
+        return "Login";
     }
 
     @GetMapping("/registration_form")
@@ -69,19 +71,15 @@ public class AdminController {
         return "Registration";
     }
 
-
     @PostMapping("/saveEmployee")
-    @ResponseBody
     public String saveEmployee(@ModelAttribute("employee") Employee registrationDto,Model model)
     {
         try{
             adminService.saveEmployee(registrationDto);
-
             return "redirect:/registration_form?success";
         }
         catch(GeneralException e)
         {
-
             model.addAttribute("errorMessage",e.getMessage());
             return "Registration";
         }
@@ -165,49 +163,6 @@ public class AdminController {
             return "Error";
         }
     }
-
-
-    @GetMapping("/damaged")
-    public String getDamagedDeviceDetails(@RequestParam String device,@RequestParam String status, Model model)
-    {
-        List<Device> deviceList =adminService.getDevice(device);
-        List<Device> deviceList1 =adminService.getDamagedDevice(device,status);//
-
-        if(device!=""&&status=="")
-        {
-            model.addAttribute("Device_details",deviceList);
-            return "DeviceDetails";
-        }
-        else if(device!=""&&status!="")
-        {
-            model.addAttribute("Device_details",deviceList1);
-            return "DeviceDetails";
-
-        }
-        else if(device.isEmpty()||deviceList1.isEmpty())
-        {
-            LocalDateTime dateTime = LocalDateTime.now();
-            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
-            String formattedDate = dateTime.format(dateTimeFormatter);
-            model.addAttribute("timestamp",formattedDate);
-            HttpStatus httpStatus = HttpStatus.NOT_FOUND;
-            model.addAttribute("status",httpStatus);
-            model.addAttribute("message","RECORD_NOT_FOUND");
-            return "Error";
-        }
-        else
-        {
-            LocalDateTime dateTime = LocalDateTime.now();
-            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
-            String formattedDate = dateTime.format(dateTimeFormatter);
-            model.addAttribute("timestamp",formattedDate);
-            HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
-            model.addAttribute("status",httpStatus);
-            model.addAttribute("message","INVALID_INPUT");
-            return "Error";
-        }
-    }
-
 
     @GetMapping("/add_device_details")
     public String addDeviceDetails(Model model)
@@ -526,5 +481,18 @@ public class AdminController {
         model.addAttribute("categoryList",adminService.getAllDeviceCategory());
 
         return "ListOfDeviceCategory";
+    }
+
+    @RequestMapping(method = RequestMethod.GET)
+    public String index(ModelMap modelMap) {
+        modelMap.put("deviceCategories", adminService.findAll());
+        return "AddDeviceDetails";
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "loadNamesByCategory/{name}", method = RequestMethod.GET)
+    public String loadNamesByCategory(@PathVariable("name") String name) {
+        Gson gson = new Gson();
+        return gson.toJson(adminService.findByCategory(name));
     }
 }

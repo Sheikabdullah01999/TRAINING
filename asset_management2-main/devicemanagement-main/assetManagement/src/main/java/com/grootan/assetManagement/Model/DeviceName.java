@@ -1,9 +1,14 @@
 package com.grootan.assetManagement.Model;
 
 
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.*;
 
 @Entity
+@Getter
+@Setter
 @Table(name="deviceName",uniqueConstraints = @UniqueConstraint(columnNames = "name"))
 public class DeviceName {
 
@@ -21,21 +26,4 @@ public class DeviceName {
         this.name = name;
         this.deviceCategory = deviceCategory;
     }
-
-    public DeviceCategory getDeviceCategory() {
-        return deviceCategory;
-    }
-
-    public void setDeviceCategory(DeviceCategory deviceCategory) {
-        this.deviceCategory = deviceCategory;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
 }
