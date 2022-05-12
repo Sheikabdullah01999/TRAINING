@@ -400,8 +400,7 @@ public class AdminService {
             String deviceDeleteHistory=DEVICE_ID+device.getId()+","
                     +"device name: "+device.getDeviceName();
             History history=new History(currentUser(),DEVICE_DELETE,deviceDeleteHistory,DateAndTime());
-
-
+            deleteEmpDevices(id);
             deviceDao.deleteForiegnKey(id);
             deviceDao.deleteById(id);
             historyDao.save(history);
@@ -420,11 +419,11 @@ public class AdminService {
     }
 
     //delete empdevices by employeeId
-    public void deleteEmpDevices(String empId)
+    public void deleteEmpDevices(int id)
     {
-        String empDevices = employeeDao.getEmpDevices(empId);
-        int employeeDevices = employeeDao.deleteByEmpDevicesId(empId);
-        String devices = deviceDao.getDeviceById(employeeDevices);
+        String employeeDevices = employeeDao.deleteByEmpDevicesId(id);
+        String empDevices = employeeDao.getEmpDevices(employeeDevices);
+        String devices = deviceDao.getDeviceById(id);
         String [] empDevicesById = empDevices.split(";");
         String newDevice="";
         for(int i=0;i<empDevicesById.length;i++)
@@ -435,12 +434,20 @@ public class AdminService {
             }
             else
             {
-                newDevice=newDevice+empDevicesById[i];
+                if(newDevice=="")
+                {
+                    newDevice=newDevice+empDevicesById[i];
+                }
+                else
+                {
+                    newDevice = newDevice + ";" + empDevicesById[i];
+                }
+
             }
         }
-        employeeDao.updateEmployeeByEmpDevice(empId,newDevice);
-        deviceDao.updateAssignStatusAndDeviceStatus(employeeDevices);
-        employeeDao.deleteEmployeeByEmpDevice(empId);
+        employeeDao.updateEmployeeByEmpDevice(employeeDevices,newDevice);
+        deviceDao.updateAssignStatusAndDeviceStatus(id);
+        employeeDao.deleteEmployeeByEmpDevice(id);
     }
 
     //get device by device id

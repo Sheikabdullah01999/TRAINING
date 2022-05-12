@@ -84,7 +84,7 @@
             <td th:text="${device.id}" class="row"></td>
             <td th:text="${device.devicePurchaseDate}" class="row"></td>
             <td th:text="${device.category}" class="row"></td>
-            <td class="row"><button class="submit2"><a th:href="@{'/employee_devices/delete/'+${device.empId}}">delete</a></button></td>
+            <td class="row"><button class="submit2"><a th:href="@{'/employee_devices/delete/'+${device.id}}">delete</a></button></td>
         </tr>
         </tbody>
     </table>

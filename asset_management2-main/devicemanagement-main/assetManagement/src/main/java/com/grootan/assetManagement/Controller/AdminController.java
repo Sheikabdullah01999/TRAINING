@@ -71,10 +71,12 @@ public class AdminController {
 
 
     @PostMapping("/saveEmployee")
+    @ResponseBody
     public String saveEmployee(@ModelAttribute("employee") Employee registrationDto,Model model)
     {
         try{
             adminService.saveEmployee(registrationDto);
+
             return "redirect:/registration_form?success";
         }
         catch(GeneralException e)
@@ -281,9 +283,9 @@ public class AdminController {
     }
 
     @GetMapping("/employee_devices/delete/{id}")
-    public String deleteEmpDevices(@PathVariable(name="id") String empId, Model model)
+    public String deleteEmpDevices(@PathVariable(name="id") int id, Model model)
     {
-        adminService.deleteEmpDevices(empId);
+        adminService.deleteEmpDevices(id);
         return "redirect:/user_devices";
     }
 
@@ -368,7 +370,7 @@ public class AdminController {
     }
 
     @PostMapping("/update_device_category")
-    public String updateDevicesCategory(@ModelAttribute("device") DeviceCategory deviceCategory, Model model)
+    public String updateDevicesCategory(@ModelAttribute("device") DeviceCategory deviceCategory,Model model)
     {
         try
         {
