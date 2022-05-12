@@ -1,8 +1,8 @@
 package com.grootan.assetManagement.Controller;
 
-import com.grootan.assetManagement.Exception.ResourceNotFoundException;
-import com.grootan.assetManagement.Exception.UserAlreadyExistException;
+import com.grootan.assetManagement.Exception.GeneralException;
 import com.grootan.assetManagement.Model.*;
+import com.grootan.assetManagement.Repository.DeviceCategoryDao;
 import com.grootan.assetManagement.Repository.DeviceDao;
 import com.grootan.assetManagement.Repository.EmployeeDao;
 import com.grootan.assetManagement.Service.AdminService;
@@ -15,7 +15,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
-
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -31,6 +30,8 @@ public class AdminController {
     private AdminService adminService;
     @Autowired
     private RoleService roleService;
+    @Autowired
+    private DeviceCategoryDao deviceCategoryDao;
 
     @GetMapping("/index")
     public String index(Model model)
@@ -68,6 +69,7 @@ public class AdminController {
         return "Registration";
     }
 
+
     @PostMapping("/saveEmployee")
     public String saveEmployee(@ModelAttribute("employee") Employee registrationDto,Model model)
     {
@@ -75,13 +77,14 @@ public class AdminController {
             adminService.saveEmployee(registrationDto);
             return "redirect:/registration_form?success";
         }
-        catch(UserAlreadyExistException e)
+        catch(GeneralException e)
         {
 
             model.addAttribute("errorMessage",e.getMessage());
             return "Registration";
         }
     }
+
     @GetMapping("/List_Of_Employees")
     public String listOfEmployee(Model model)
     {
@@ -96,7 +99,7 @@ public class AdminController {
             model.addAttribute("Device_details",adminService.getAllDevices());
             return "DeviceDetails";
         }
-        catch(ResourceNotFoundException e)
+        catch(GeneralException e)
         {
             LocalDateTime dateTime = LocalDateTime.now();
             DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
@@ -116,6 +119,7 @@ public class AdminController {
         return "ListOfEmployees";
     }
 
+
     @GetMapping("/registration_roles")
     public String showRolesRegistrationForm(Model model)
     {
@@ -132,7 +136,7 @@ public class AdminController {
             model.addAttribute("List_of_Roles",adminService.getAllRoles());
             return "ListOfRoles";
         }
-        catch(UserAlreadyExistException e)
+        catch(GeneralException e)
         {
             model.addAttribute("errorMessage",e.getMessage());
             return "roles";
@@ -147,7 +151,7 @@ public class AdminController {
             model.addAttribute("List_of_Roles",adminService.getAllRoles());
             return "ListOfRoles";
         }
-        catch(ResourceNotFoundException e)
+        catch(GeneralException e)
         {
             LocalDateTime dateTime = LocalDateTime.now();
             DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
@@ -159,6 +163,7 @@ public class AdminController {
             return "Error";
         }
     }
+
 
     @GetMapping("/damaged")
     public String getDamagedDeviceDetails(@RequestParam String device,@RequestParam String status, Model model)
@@ -232,16 +237,15 @@ public class AdminController {
             return "Error";
         }
     }
+
     @GetMapping("/history")
     public String history(Model model)
     {
-        try {
-//            List<History> history = adminService.getHistory();
-//            model.addAttribute("maintain_history", history);
-//            return "HistoryDetails";
+        try
+        {
             return findPaginated(1,model);
         }
-        catch(ResourceNotFoundException e)
+        catch(GeneralException e)
         {
             LocalDateTime dateTime = LocalDateTime.now();
             DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
@@ -254,6 +258,7 @@ public class AdminController {
         }
     }
 
+
     @PostMapping("/device_details")
     public String saveDevice(@ModelAttribute("devices") Device device,Model model)
     {
@@ -261,39 +266,29 @@ public class AdminController {
             adminService.addDeviceDetails(device);
             return "redirect:/add_device_details?success";
         }
-        catch(UserAlreadyExistException e)
+        catch(GeneralException e)
         {
             model.addAttribute("errorMessage",e.getMessage());
             return "AddDeviceDetails";
         }
-
     }
 
     @GetMapping("/delete/{id}")
     public String deleteDeviceDetails(@PathVariable(name="id") Integer id, Model model)
     {
-        //String category="redirect:/device?device="+device.getCategory();
-        try
-        {
-            adminService.deleteDeviceDetails(id);
-            return "redirect:/List_Of_Devices";
-        }
-        catch(UserAlreadyExistException e)
-        {
-            LocalDateTime dateTime = LocalDateTime.now();
-            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
-            String formattedDate = dateTime.format(dateTimeFormatter);
-            model.addAttribute("timestamp",formattedDate);
-            HttpStatus httpStatus = HttpStatus.FORBIDDEN;
-            model.addAttribute("status",httpStatus);
-            model.addAttribute("message",e.getMessage());
-            return "Error";
-        }
+        adminService.deleteDeviceDetails(id);
+        return "redirect:/List_Of_Devices";
+    }
 
+    @GetMapping("category/delete/{id}")
+    public String deleteDeviceCategoryDetails(@PathVariable(name="id") String  id)
+    {
+        adminService.deleteDeviceCategory(id);
+        return "redirect:/getAllDeviceCategory";
     }
 
 
-    @GetMapping("/update/{id}")
+    @GetMapping("/DeviceUpdate/{id}")
     public ModelAndView showUpdateDevicePage(@PathVariable(name="id") int id,Model model)
     {
         ModelAndView editView = new ModelAndView("UpdateDevice");
@@ -326,13 +321,13 @@ public class AdminController {
     @PostMapping("/updateEmployee")
     public String save(@ModelAttribute("employee") Employee registrationDto,Model model)
     {
-        try{
+        try
+        {
             adminService.updateEmployee(registrationDto);
             return "redirect:/List_Of_Employees?success";
         }
-        catch(UserAlreadyExistException e)
+        catch(GeneralException e)
         {
-
             model.addAttribute("errorMessage",e.getMessage());
             return "UpdateEmployee";
         }
@@ -346,20 +341,45 @@ public class AdminController {
             adminService.updateDeviceDetails(device);
             return "redirect:/List_Of_Devices";
         }
-        catch(UserAlreadyExistException e)
+        catch(GeneralException e)
         {
             model.addAttribute("errorMessage",e.getMessage());
             return "UpdateDevice";
         }
     }
 
+    @GetMapping("/CategoryUpdate/{category}")
+    public ModelAndView showUpdateDeviceCategoryPage(@PathVariable(name="category") DeviceCategory category,Model model)
+    {
+        ModelAndView editView = new ModelAndView("UpdateDeviceCategory");
+        DeviceCategory deviceCategory=deviceCategoryDao.findByDeviceCategory(category.getCategory());
+        editView.addObject("device",deviceCategory);
+        return editView;
+    }
+
+    @PostMapping("/update_device_category")
+    public String updateDevicesCategory(@ModelAttribute("device") DeviceCategory deviceCategory, Model model)
+    {
+        try
+        {
+            adminService.updateDeviceCategory(deviceCategory);
+            return "redirect:/getAllDeviceCategory";
+        }
+        catch(GeneralException e)
+        {
+            model.addAttribute("errorMessage",e.getMessage());
+            return "UpdateDeviceCategory";
+        }
+    }
+
     @GetMapping("/delete/employee/{id}")
     public String deleteEmpDetails(@PathVariable(name="id") String id,Model model) {
-        try{
+        try
+        {
             adminService.deleteEmpDetails(id);
             return "redirect:/List_Of_Employees";
         }
-        catch(UserAlreadyExistException e)
+        catch(GeneralException e)
         {
             LocalDateTime dateTime = LocalDateTime.now();
             DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
@@ -413,7 +433,7 @@ public class AdminController {
             adminService.saveDeviceCategory(deviceCategory);
             return "redirect:/category?success";
         }
-        catch(UserAlreadyExistException e)
+        catch(GeneralException e)
         {
             model.addAttribute("errorMessage",e.getMessage());
             return "AddDeviceCategory";
@@ -426,6 +446,7 @@ public class AdminController {
         model.addAttribute("deviceCategory",new DeviceCategory());
         return "AddDeviceCategory";
     }
+
     @PostMapping("/saveEmpDepartment")
     public String saveEmpDepartment(@ModelAttribute("employeeDepartment") EmployeeDepartment employeeDepartment,Model model)
     {
@@ -433,13 +454,14 @@ public class AdminController {
             adminService.saveEmpDepartment(employeeDepartment);
             return "redirect:/department?success";
         }
-        catch(UserAlreadyExistException e)
+        catch(GeneralException e)
         {
             model.addAttribute("errorMessage",e.getMessage());
             return "AddEmployeeDepartment";
         }
 
     }
+
     @GetMapping("/department")
     public String addDepartment(Model model)
     {
@@ -447,6 +469,7 @@ public class AdminController {
         model.addAttribute("employeeDepartment",employeeDepartment);
         return "AddEmployeeDepartment";
     }
+
     @PostMapping("/saveDeviceName")
     public String saveDeviceName(@ModelAttribute("deviceName") DeviceName deviceName,Model model)
     {
@@ -457,7 +480,7 @@ public class AdminController {
             adminService.saveDeviceName(deviceName);
             return "redirect:/DeviceName?success";
         }
-        catch(UserAlreadyExistException e)
+        catch(GeneralException e)
         {
             model.addAttribute("errorMessage",e.getMessage());
             return "AddDeviceName";
@@ -483,5 +506,13 @@ public class AdminController {
         model.addAttribute("totalItems",page.getTotalElements());
         model.addAttribute("maintain_history",histories);
         return "HistoryDetails";
+    }
+
+    @GetMapping("/getAllDeviceCategory")
+    public String getAllDeviceCategory(Model model)
+    {
+        model.addAttribute("categoryList",adminService.getAllDeviceCategory());
+
+        return "ListOfDeviceCategory";
     }
 }

@@ -3,7 +3,7 @@
 <html lang="en" xmlns:th="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="ISO-8859-1">
-    <title>Device Registration</title>
+    <title>Update Device</title>
     <link rel="stylesheet"
           href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
           integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
@@ -11,9 +11,139 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Orelega+One&display=swap" rel="stylesheet">
-    <link href='https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css' rel='stylesheet'/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="/css/style.css">
+    <style type="text/css">
+    body {
+  font-family: "Lato", sans-serif;
+  background-color:#E4E9F7;
+}
+h3
+{
+color:#707070;
+}
+
+/* Fixed sidenav, full height */
+.sidenav {
+  height: 100%;
+  width: 300px;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  background-color: white;
+  overflow-x: hidden;
+  padding-top: 20px;
+}
+
+/* Style the sidenav links and the dropdown button */
+.sidenav a, .dropdown-btn {
+  padding: 6px 8px 6px 16px;
+  text-decoration: none;
+  font-size: 20px;
+  color: #818181;
+  display: block;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  outline: none;
+}
+
+/* On mouse-over */
+.sidenav a:hover, .dropdown-btn:hover {
+  color: #3a3b3c;
+}
+
+/* Main content */
+.main {
+  margin-left: 300px; /* Same as the width of the sidenav */
+  font-size: 20px; /* Increased text to enable scrolling */
+  padding: 0px 10px;
+}
+
+/* Add an active class to the active dropdown button */
+.active {
+  background-color: #695CFE;
+  color: #3a3b3c;
+}
+
+/* Dropdown container (hidden by default). Optional: add a lighter background color and some left padding to change the design of the dropdown content */
+.dropdown-container {
+  display: none;
+  padding-left: 8px;
+}
+
+/* Optional: Style the caret down icon */
+.fa-caret-down {
+  float: right;
+  padding-right: 8px;
+}
+
+/* Some media queries for responsiveness */
+@media screen and (max-height: 450px) {
+  .sidenav {padding-top: 15px;}
+  .sidenav a {font-size: 18px;}
+}
+.sidebar header .image
+{
+    min-width: 60px;
+    border-radius: 6px;
+}
+.sidebar header{
+    position: relative;
+}
+
+.sidebar header .image-text{
+    display: flex;
+    align-items: center;
+}
+.sidebar header .logo-text{
+    display: flex;
+    flex-direction: column;
+}
+header .image-text .name {
+    margin-top: 2px;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+header .image-text .profession{
+    font-size: 16px;
+    margin-top: -2px;
+    display: block;
+}
+
+.sidebar header .image{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.sidebar header .image img{
+    width: 40px;
+    border-radius: 6px;
+}
+    .control-label
+    {
+    font-style:italic;
+    font-size:18px;
+    }
+    .form-control
+    {
+    width:60%;
+    }
+    h1
+    {
+    color:#707070;
+    text-align:center;
+    padding:20px;
+    font-family: 'Orelega One', cursive;
+    }
+    input,label,.btn1,select
+    {
+    margin-left:240px;
+    }
+  </style>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 </head>
 <body>
@@ -36,7 +166,7 @@
     </nav>
     <br>
     <br>
-    <button class="dropdown-btn"><i class="fa fa-user" aria-hidden="true"></i>&nbsp;Employee
+    <button class="dropdown-btn">Employee
         <i class="fa fa-caret-down"></i>
     </button>
     <div class="dropdown-container">
@@ -44,10 +174,9 @@
         <a th:href="@{/List_Of_Employees}">List Of Employees</a>
         <a th:href="@{/user_devices}">List Of Employee Devices</a>
         <a th:href="@{/department}">Add Employee Department</a>
-        <a th:href="@{/getAllDeviceCategory}">listOfDeviceCategory</a>
     </div>
     <br>
-    <button class="dropdown-btn"><i class='fa fa-users'></i>&nbsp;Roles
+    <button class="dropdown-btn">Roles
         <i class="fa fa-caret-down"></i>
     </button>
     <div class="dropdown-container">
@@ -55,7 +184,7 @@
         <a th:href="@{/List_Of_Roles}">List Of Roles</a>
     </div>
     <br>
-    <button class="dropdown-btn"><i class='bx bxs-devices'></i>&nbsp;Devices
+    <button class="dropdown-btn">Devices
         <i class="fa fa-caret-down"></i>
     </button>
     <div class="dropdown-container">
@@ -63,74 +192,39 @@
         <a th:href="@{/List_Of_Devices}">List Of Device Details</a>
         <a th:href="@{/category}">Add Device Category</a>
         <a th:href="@{/DeviceName}">Add Device Name</a>
+        <a th:href="@{/getAllDeviceCategory}">listOfDeviceCategory</a>
     </div>
     <br>
-    <a th:href="@{/history}"class="dropdown-btn"><i class="fa fa-history" aria-hidden="true"></i>&nbsp;History</a>
+    <a th:href="@{/history}">History</a>
     <br>
-    <a sec:authorize="isAuthenticated()" th:href="@{/logout}" class="dropdown-btn"><i class="fa fa-sign-out" aria-hidden="true"></i>&nbsp;Logout</a>
+    <a sec:authorize="isAuthenticated()" th:href="@{/logout}" >Logout</a>
 </div>
 <div class="main">
+    <!-- success message -->
     <div th:if="${param.success}">
-        <div class="alert alert-info">You've successfully registered
-            to Grootan Asset Management website!</div>
+        <div class="alert alert-info">You've successfully updated!</div>
     </div>
     <br>
     <br>
-    <div th:if="${errorMessage!=null}">
-        <div class="alert alert-info">[[${errorMessage}]]</div>
+    <div th:if="${param.error}">
+        <div class="alert alert-info"><span th:if="${errorMessage != null}" th:text="${errorMessage}"></span></div>
     </div>
+    <h1>Update Device Category</h1>
 
-    <form th:action="@{/device_details}" method="post" th:object="${devices}">
-        <h1>Device Registration</h1>
+    <form th:action="@{/update_device_category}" method="post" th:object="${device}">
         <div class="form-group">
-            <label class="control-label"> Device Category </label>
-            <select class="form-control" id="category"  th:name="device" th:field="*{category}">
-                <option value="please select a category">Please Select a Device Category</option>
-                <option th:each="device:${ListOfDeviceCategory}" th:value="${device.category}" th:text="${device.category}"></option>
-            </select>
+            <label class="control-label" > category </label>
+            <input id="lastName" class="form-control" th:field="*{category}"
+                   required autofocus="autofocus" />
         </div>
         <div class="form-group">
-            <label class="control-label">Device Name</label>
-            <select id="deviceName" class="form-control" th:field="*{deviceName}"></select>
-        </div>
-        <div class="form-group">
-            <label class="control-label" for="manufacture"> Manufacture Id </label>
-            <input id="manufacture" class="form-control" th:field="*{manufacturedId}" placeholder="Enter manufactured id" required
-                   autofocus="autofocus" />
-        </div>
-
-        <div class="form-group">
-            <label class="control-label" for="department"> DevicePurchaseDate </label>
-            <input id="department" class="form-control" type="date"
-                   th:field="*{devicePurchaseDate}" placeholder="Enter Password" required autofocus="autofocus" />
-        </div>
-        <div class="form-group">
-            <label class="control-label" > AssignStatus </label>
-
-            <select class="form-control" th:field="*{assignStatus}">
-                <option th:value="unassigned">Unassigned</option>
-            </select>
-        </div>
-
-        <div class="form-group">
-            <label class="control-label" > DeviceStatus  </label>
-            <select class="form-control" th:field="*{deviceStatus}">
-                <option th:value="new">New</option>
-                <option th:value="damaged">Damaged</option>
-            </select>
-
-        </div>
-
-        <div class="form-group">
-            <button type="submit" class="btn btn-success btn1">Register</button>
+            <button type="submit" class="btn btn-success btn1">update</button>
             <a th:href="@{/}" class="btn btn-primary btn2">Back</a>
         </div>
+
     </form>
 </div>
-</div>
-</div>
-</div>
-<script type="text/javascript">
+<script>
 $("#category").change(function() {
         var x = $("#category").val();
         console.log(x);

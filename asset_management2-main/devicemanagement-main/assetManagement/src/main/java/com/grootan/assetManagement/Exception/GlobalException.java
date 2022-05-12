@@ -13,26 +13,6 @@ import java.util.List;
 
 @RestControllerAdvice
 public class GlobalException {
-    @ExceptionHandler(UserAlreadyExistException.class)
-    public ResponseEntity<Object> handleUserAlreadyExistException(UserAlreadyExistException exception)
-    {
-        String msg = exception.getMessage();
-        List<String> details = new ArrayList<>();
-        details.add("User Already Exists");
-        HttpStatus status = HttpStatus.CONFLICT;
-        ApiErrors errors = new ApiErrors(msg,details,status, LocalDateTime.now());
-        return ResponseEntity.status(status).body(errors);
-    }
-    @ExceptionHandler(IdAlreadyException.class)
-    public ResponseEntity<Object> handleIdAlreadyException(UserAlreadyExistException exception)
-    {
-        String msg = exception.getMessage();
-        List<String> details = new ArrayList<>();
-        details.add("Id Already Exists");
-        HttpStatus status = HttpStatus.CONFLICT;
-        ApiErrors errors = new ApiErrors(msg,details,status, LocalDateTime.now());
-        return ResponseEntity.status(status).body(errors);
-    }
     @ExceptionHandler(TypeMismatchException.class)
     public ResponseEntity<Object> handleTypeMismatchException(TypeMismatchException exception)
     {
@@ -43,18 +23,9 @@ public class GlobalException {
         ApiErrors errors = new ApiErrors(msg,details,status,LocalDateTime.now());
         return ResponseEntity.status(status).body(errors);
     }
-    @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<Object> handleResourceNotFoundException(ResourceNotFoundException exception)
-    {
-        String msg=exception.getMessage();
-        List<String> details=new ArrayList<>();
-        details.add("NO records found");
-        HttpStatus status=HttpStatus.NOT_FOUND;
-        ApiErrors errors=new ApiErrors(msg, details, status, LocalDateTime.now());
-        return ResponseEntity.status(status).body(errors);
-    }
-    @ExceptionHandler(FieldEmptyException.class)
-    public ResponseEntity<Object> handleFieldEmptyException(FieldEmptyException exception)
+
+    @ExceptionHandler(GeneralException.class)
+    public ResponseEntity<Object> handleFieldEmptyException(GeneralException exception)
     {
         String msg=exception.getMessage();
         List<String> details=new ArrayList<>();

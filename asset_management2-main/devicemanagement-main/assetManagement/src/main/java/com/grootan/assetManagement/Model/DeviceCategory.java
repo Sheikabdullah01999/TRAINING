@@ -20,6 +20,10 @@ public class DeviceCategory {
     }
 
 
+    public DeviceCategory(String category) {
+        this.category = category;
+    }
+
     public DeviceCategory()
     {
 

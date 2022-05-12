@@ -3,7 +3,7 @@
 <html lang="en" xmlns:th="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="ISO-8859-1">
-    <title>Update Employee</title>
+    <title>Device Details</title>
     <link rel="stylesheet"
           href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
           integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
@@ -139,9 +139,13 @@ header .image-text .profession{
     padding:20px;
     font-family: 'Orelega One', cursive;
     }
-    input,label,.btn1,select
+    table,.btn1,input
     {
-    margin-left:240px;
+    margin-left:200px;
+    }
+    .table
+    {
+    width:50%;
     }
   </style>
 </head>
@@ -191,6 +195,7 @@ header .image-text .profession{
         <a th:href="@{/List_Of_Devices}">List Of Device Details</a>
         <a th:href="@{/category}">Add Device Category</a>
         <a th:href="@{/DeviceName}">Add Device Name</a>
+        <a th:href="@{/getAllDeviceCategory}">listOfDeviceCategory</a>
     </div>
     <br>
     <a th:href="@{/history}">History</a>
@@ -198,69 +203,30 @@ header .image-text .profession{
     <a sec:authorize="isAuthenticated()" th:href="@{/logout}" >Logout</a>
 </div>
 <div class="main">
-    <!-- success message -->
-    <div th:if="${param.success}">
-        <div class="alert alert-info">You've successfully updated!</div>
-    </div>
-    <br>
-    <br>
-    <div th:if="${errorMessage!=null}">
-        <div class="alert alert-info">[[${errorMessage}]]</div>
-    </div>
-    <h1>Employee Updation</h1>
-
-    <form th:action="@{/updateEmployee}" method="post" th:object="${employee}">
-        <div class="form-group">
-            <label class="control-label" for="firstName"> EmployeeId </label>
-            <input id="firstName" class="form-control" th:field="*{empId}"
-                   required autofocus="autofocus" readonly="readonly" />
-        </div>
-
-        <div class="form-group">
-            <label class="control-label" for="lastName"> EmployeeName </label>
-            <input id="lastName" class="form-control" th:field="*{empName}"
-                   required autofocus="autofocus" />
-        </div>
-
-        <div class="form-group">
-            <label class="control-label" for="email"> EmployeeEmail </label>
-            <input id="email" class="form-control" th:field="*{email}"
-                   autofocus="autofocus" />
-        </div>
-
-        <div class="form-group">
-            <label class="control-label" for="password" hidden> EmployeePassword </label>
-            <input id="password" class="form-control" type="hidden"
-                   th:field="*{empPassword}" required autofocus="autofocus"  readonly="readonly"/>
-        </div>
-
-        <div class="form-group">
-            <label class="control-label" > EmployeeDepartment </label>
-            <select class="form-control"  th:field="*{empDepartment}" required>
-                <option th:each="department:${ListOfEmpDepartment}" th:value="${department.department}" th:text="${department.department}"></option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label class="control-label"> EmployeeDevices </label>
-            <ul>
-                <li th:each="device : ${List_Of_Devices}">
-                    <input type="checkbox" th:field="*{empDevices}" th:value="${device}" th:text="${device}" />
-                </li>
-            </ul>
-        </div>
-        <div class="form-group">
-            <label class="control-label"> EmployeeRole </label>
-            <!--          <input id="role" class="form-control"-->
-            <!--                 th:field="*{assignRole}" required autofocus="autofocus" />-->
-            <select class="form-control"  th:field="*{assignRole}">
-                <option th:each="role:${List_Of_Roles}" th:value="${role.roleName}" th:text="${role.roleName}"></option>
-            </select>
-        </div>
-        <div class="form-group">
-            <button type="submit" class="btn btn-success btn1">update</button>
-            <a th:href="@{/}" class="btn btn-primary btn2">Back</a>
-        </div>
+    <h1>Device List</h1>
+    <form th:action="@{/searching}" method="get">
+        <input type="text" name="keyword" th:value="${keyword}" placeholder="Find by Category and DeviceStatus" size="50">
+        <button type="submit" class="btn btn-info" >Search</button>
     </form>
+    <br>
+    <br>
+    <table class="table table-stripped table-bordered">
+        <thead>
+        <tr>
+            <th scope="col">category</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="device:${categoryList}">
+            <td th:text="${device.category}"></td>
+
+            <td><button class="submit1"><a th:href="@{'/CategoryUpdate/' +${device.category}}">update</a></button></td>
+            <td><button class="submit2"><a th:href="@{'/category/delete/'+${device.category}}">delete</a></button></td>
+
+        </tr>
+        </tbody>
+    </table>
+    <a th:href="@{/}" class="btn btn-primary btn1">Back</a>
 </div>
 <script>
 /* Loop through all dropdown buttons to toggle between hiding and showing its dropdown content - This allows the user to have multiple dropdowns without any conflict */

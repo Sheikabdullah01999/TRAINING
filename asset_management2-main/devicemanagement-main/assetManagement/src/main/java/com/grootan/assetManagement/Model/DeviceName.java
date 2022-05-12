@@ -17,7 +17,6 @@ public class DeviceName {
     {
 
     }
-
     public DeviceName(String name, DeviceCategory deviceCategory) {
         this.name = name;
         this.deviceCategory = deviceCategory;

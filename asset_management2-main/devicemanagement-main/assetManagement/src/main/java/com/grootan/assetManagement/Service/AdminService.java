@@ -1,9 +1,8 @@
 package com.grootan.assetManagement.Service;
 
+import com.grootan.assetManagement.Exception.GeneralException;
 import com.grootan.assetManagement.Model.*;
 import com.grootan.assetManagement.Repository.*;
-import com.grootan.assetManagement.Exception.ResourceNotFoundException;
-import com.grootan.assetManagement.Exception.UserAlreadyExistException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -161,22 +160,22 @@ public class AdminService {
         Boolean validEmail=isValid(employeeDetails.getEmail());
         if(!validEmail)
         {
-            throw new UserAlreadyExistException("Incorrect email: "+employeeDetails.getEmail());
+            throw new GeneralException(INCORRECT_EMAIL+employeeDetails.getEmail());
         }
 
         if(emailExists(employeeDetails.getEmail()))
         {
-            throw new UserAlreadyExistException("There is an account with that email address: "+employeeDetails.getEmail());
+            throw new GeneralException(EMP_EMAIL_EXISTS+employeeDetails.getEmail());
         }
 
         if(employeeIdExists(employeeDetails.getEmpId()))
         {
-            throw new UserAlreadyExistException("There is an account with that EmployeeId: "+employeeDetails.getEmpId());
+            throw new GeneralException(EMP_ID_EXISTS+employeeDetails.getEmpId());
         }
 
         if(employeeDevicesExists(employeeDetails.getEmpDevices()))
         {
-            throw new UserAlreadyExistException("These devices are already assigned: "+employeeDetails.getEmpDevices());
+            throw new GeneralException(DEVICE_ASSIGNED+employeeDetails.getEmpDevices());
         }
         return true;
     }
@@ -248,15 +247,15 @@ public class AdminService {
         Employee employee=saveEmpDetails(employeeDetails);
         if(employeeDetails.getAssignRole().equals("ADMIN"))
         {
-            String history = "New employee  Id:" + employeeDetails.getEmpId() + ","
-                    + "  Name: " + employeeDetails.getEmpName();
+            String history = NEW_EMP_ID + employeeDetails.getEmpId() + ","
+                    + EMP_NAME + employeeDetails.getEmpName();
             History newHistory = new History(currentUser(), ADMIN_ADD, history, DateAndTime());
             historyDao.save(newHistory);
             return employeeDao.save(employee);
         }
         else {
-            String history = "New employee  Id:" + employeeDetails.getEmpId() + ","
-                    + "  Name: " + employeeDetails.getEmpName();
+            String history = NEW_EMP_ID + employeeDetails.getEmpId() + ","
+                    + EMP_NAME+ employeeDetails.getEmpName();
             History newHistory = new History(currentUser(), USER_ADD, history, DateAndTime());
             historyDao.save(newHistory);
             return employeeDao.save(employee);
@@ -266,9 +265,9 @@ public class AdminService {
     public Role saveRoles(Role role) {
         if(roleExists(role.getRoleName()))
         {
-            throw new UserAlreadyExistException("role exists: "+role.getRoleName());
+            throw new GeneralException(R0LE_EXISTS+role.getRoleName());
         }
-        String roleHistory="New role "+role.getRoleName();
+        String roleHistory=NEW_ROLE+role.getRoleName();
         History history=new History(currentUser(),ROLE_ADD,roleHistory,DateAndTime());
         historyDao.save(history);
         return roleDao.save(role);
@@ -280,7 +279,7 @@ public class AdminService {
         List<Employee> employeeList = employeeDao.findAll();
         if(employeeList.isEmpty())
         {
-            throw new ResourceNotFoundException("RECORD_NOT_FOUND");
+            throw new GeneralException("RECORD_NOT_FOUND");
         }
         return employeeList;
     }
@@ -291,12 +290,12 @@ public class AdminService {
         List<Role> roles = (List<Role>) roleDao.findAll();
         if(roles.isEmpty())
         {
-            throw new ResourceNotFoundException("NO_RECORDS_FOUND");
+            throw new GeneralException("NO_RECORDS_FOUND");
         }
         return roles;
     }
 
-    //get device from data base
+    //get device from database
     public List<Device> getDevice(String device)
     {
         List<Device> list=new ArrayList<>();
@@ -310,10 +309,10 @@ public class AdminService {
 
       if(deviceIdExists(device.getManufacturedId()))
       {
-          throw new UserAlreadyExistException("There is an product with that ManufactureId: "+device.getManufacturedId());
+          throw new GeneralException(PRODUCT_ID_EXISTS+device.getManufacturedId());
       }
-        String deviceHistory="New device  name:  "+device.getDeviceName()+","
-                +"  device manufacture id:"+device.getManufacturedId();
+        String deviceHistory=NEW_DEVICE_NAME+device.getDeviceName()+","
+                +NEW_DEVICE_MANUFACTURE_ID+device.getManufacturedId();
         History history=new History(currentUser(),DEVICE_ADD,deviceHistory,DateAndTime());
         historyDao.save(history);
         deviceDao.save(device);
@@ -321,11 +320,20 @@ public class AdminService {
 
     //update device details
     public void updateDeviceDetails(Device device) {
-        String deviceHistory="New device  name:  "+device.getDeviceName()+","
-                +"  device manufacture id:"+device.getManufacturedId();
+        String deviceHistory=NEW_DEVICE_NAME+device.getDeviceName()+","
+                +NEW_DEVICE_MANUFACTURE_ID+device.getManufacturedId();
         History history=new History(currentUser(),DEVICE_UPDATED,deviceHistory,DateAndTime());
         historyDao.save(history);
         deviceDao.save(device);
+    }
+
+    //update device category
+    public void updateDeviceCategory(DeviceCategory deviceCategory) {
+        System.out.println(deviceCategory.getCategory());
+        String deviceHistory=DEVICE_CATEGORY+deviceCategory.getCategory();
+        History history=new History(currentUser(),DEVICE_UPDATED,deviceHistory,DateAndTime());
+        historyDao.save(history);
+        deviceCategoryDao.save(deviceCategory);
     }
 
     //get all devices
@@ -361,7 +369,7 @@ public class AdminService {
 
     //delete device details
     public void deleteDeviceDetails(Integer id) {
-        Device device=deviceDao.findById(id).orElseThrow(()-> new ResourceNotFoundException("no record found"));
+        Device device=deviceDao.findById(id).orElseThrow(()-> new GeneralException("no record found"));
         String empDevices = device.getId()+","+device.getDeviceName()+","+device.getCategory();
         String empId = deviceDao.getEmpId(id);
         String empDevicesById = employeeDao.getEmpDevices(empId);
@@ -383,7 +391,7 @@ public class AdminService {
                 }
             }
             employeeDao.updateEmployeeByEmpDevice(empId,newDevice);
-            String deviceDeleteHistory="device id:"+device.getId()+","
+            String deviceDeleteHistory=DEVICE_ID+device.getId()+","
                     +"device name: "+device.getDeviceName();
             History history=new History(currentUser(),DEVICE_DELETE,deviceDeleteHistory,DateAndTime());
 
@@ -411,7 +419,7 @@ public class AdminService {
         Optional<Device> device = deviceDao.findById(id);
         if(device.isEmpty())
         {
-            throw new ResourceNotFoundException("No Records Found");
+            throw new GeneralException("No Records Found");
         }
         return device;
     }
@@ -422,7 +430,7 @@ public class AdminService {
         Employee employee = employeeDao.findByEmpId(id);
         if(employee.getEmpId()==null)
         {
-            throw new ResourceNotFoundException("No Records Found");
+            throw new GeneralException("No Records Found");
         }
         return employee;
     }
@@ -540,11 +548,11 @@ public class AdminService {
         String currentUser=employeeDao.getEmployeeMail(id);
         if(currentUser.equals(currentUser()))
         {
-            throw new UserAlreadyExistException("cannot delete current logged in user");
+            throw new GeneralException("cannot delete current logged in user");
         }
         else if(id.equals("G001"))
         {
-            throw new UserAlreadyExistException("cannot delete default admin account ");
+            throw new GeneralException("cannot delete default admin account ");
         }
     }
 
@@ -560,7 +568,7 @@ public class AdminService {
 
         if(employee.getEmpId()==null)
         {
-            throw new ResourceNotFoundException("No Records Found");
+            throw new GeneralException("No Records Found");
         }
 
         employeeDao.deleteByEmpId(id);
@@ -601,7 +609,7 @@ public class AdminService {
         String i = lower.toLowerCase();
       if(deviceCategoryExists(i))
       {
-          throw new UserAlreadyExistException("This category is already exists: "+category.getCategory());
+          throw new GeneralException("This category is already exists: "+category.getCategory());
       }
         String newDeviceHistory="New Device category: "+category.getCategory();
         LocalDateTime now=LocalDateTime.now();
@@ -630,7 +638,7 @@ public class AdminService {
         String i = lower.toLowerCase();
         if(deviceNameExists(i))
         {
-            throw new UserAlreadyExistException("This Product Name is Already Exists: "+deviceName.getName());
+            throw new GeneralException("This Product Name is Already Exists: "+deviceName.getName());
         }
         String newDeviceHistory="New Device  Name: "+deviceName.getName();
         String userName=currentUser();
@@ -680,7 +688,7 @@ public class AdminService {
         List<History> historyList=historyDao.findAll();
         if(historyList.isEmpty())
         {
-            throw new ResourceNotFoundException("RECORD_NOT_FOUND");
+            throw new GeneralException("RECORD_NOT_FOUND");
         }
         return historyList;
     }
@@ -691,7 +699,7 @@ public class AdminService {
         String i = lower.toLowerCase();
         if(departmentExists(i))
         {
-            throw new UserAlreadyExistException("Department Name  Already Exists: "+employeeDepartment.getDepartment());
+            throw new GeneralException("Department Name  Already Exists: "+employeeDepartment.getDepartment());
         }
         String newDeviceHistory="New Department Name: "+employeeDepartment.getDepartment();
         String userName=currentUser();
@@ -732,6 +740,15 @@ public class AdminService {
     {
         Pageable pageable = PageRequest.of(pageNo-1,pageSize);
         return this.historyDao.findAll(pageable);
+    }
+
+    public List<DeviceCategory> getAllDeviceCategory()
+    {
+        return deviceCategoryDao.findAll();
+    }
+
+    public void deleteDeviceCategory(String id) {
+        deviceCategoryDao.deleteById(id);
     }
 }
 
