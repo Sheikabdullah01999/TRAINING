@@ -15,8 +15,6 @@ public interface EmployeeDao extends JpaRepository<Employee,String> {
 
     Employee findByEmail(String email);
 
-    Employee findByEmpDevices(String empDevices);
-
     Employee findByEmpId(String empId);
 
     @Query(value = "select * from employee s where s.emp_name ilike :keyword% or s.emp_id ilike :keyword% or s.emp_department ilike :keyword%  or s.assign_role ilike :keyword%  or s.email ilike :keyword%", nativeQuery = true)
@@ -38,16 +36,8 @@ public interface EmployeeDao extends JpaRepository<Employee,String> {
 
     @Transactional
     @Modifying
-    @Query("UPDATE Employee SET empDevices= :empDevices where empId= :id")
-    public void updateEmployeeByEmpDevice(@Param("id") String empId,@Param("empDevices") String empDevices);
-
-    @Transactional
-    @Modifying
     @Query(value = "delete from employee_devices where devices_id=:id",nativeQuery = true)
     public void deleteEmployeeByEmpDevice(@Param("id") int id);
-
-    @Query(value="SELECT empDevices FROM Employee WHERE empId= :id")
-    public String getEmpDevices(@Param("id") String empId);
 
     @Query(value="SELECT email FROM Employee WHERE empId= :id")
     public String getEmployeeMail(@Param("id") String empId);

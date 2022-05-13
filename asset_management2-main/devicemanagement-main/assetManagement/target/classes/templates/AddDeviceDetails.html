@@ -69,8 +69,8 @@
 </div>
 <div class="main">
     <div th:if="${param.success}">
-        <div class="alert alert-info">You've successfully registered
-            to Grootan Asset Management website!</div>
+        <div class="alert alert-info">You've successfully added new device
+            </div>
     </div>
     <br>
     <br>
@@ -82,14 +82,14 @@
         <h1>Device Registration</h1>
         <div class="form-group">
             <label class="control-label"> Device Category </label>
-            <select class="form-control" id="category"  th:name="device" th:field="*{category}">
-                <option value="please select a category">Please Select a Device Category</option>
-                <option th:each="device:${ListOfDeviceCategory}" th:value="${device.category}" th:text="${device.category}"></option>
+            <select class="form-control" id="category"  th:name="device" th:field="*{category}" required>
+                <option value="please select a category">Select a Device Category</option>
+                <option th:each="device:${ListOfDeviceCategory}" th:value="${device.category}" th:text="${device.category}" required></option>
             </select>
         </div>
         <div class="form-group">
             <label class="control-label">Device Name</label>
-            <select id="deviceName" class="form-control" th:field="*{deviceName}"></select>
+            <select id="deviceName" class="form-control" th:field="*{deviceName}" required></select>
         </div>
         <div class="form-group">
             <label class="control-label" for="manufacture"> Manufacture Id </label>

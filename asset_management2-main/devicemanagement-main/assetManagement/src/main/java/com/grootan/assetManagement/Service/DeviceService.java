@@ -67,14 +67,6 @@ public class DeviceService {
         return deviceCategoryDao.findByDeviceCategory(category)!=null;
     }
 
-    //get device from database
-    public List<Device> getDevice(String device)
-    {
-        List<Device> list=new ArrayList<>();
-        list= deviceDao.getDeviceByCategory(device);
-        return list;
-
-    }
 
     //Add device details
     public void addDeviceDetails(Device device) {
@@ -113,63 +105,24 @@ public class DeviceService {
     {
         return deviceDao.findAll();
     }
+
     //get all category
     public List<String> getAllCategory()
     {
         return (List<String>) deviceDao.getDevice();
     }
 
-
-    //get all damaged device
-    public List<Device> getDamagedDevice(String device, String status) {
-        List<Device> list=new ArrayList<>();
-        list= deviceDao.getDamagedDevice(device,status);
-        return list;
-    }
-
     //delete device details
     public void deleteDeviceDetails(Integer id) {
         Device device=deviceDao.findById(id).orElseThrow(()-> new GeneralException("no record found"));
-        String empDevices = device.getId()+","+device.getDeviceName()+","+device.getCategory();
-        String empId = deviceDao.getEmpId(id);
-        String empDevicesById = employeeDao.getEmpDevices(empId);
 
-        if(empDevicesById!=null)
-        {
-            String [] empDevicesByIds = empDevicesById.split(";");
-
-            String newDevice="";
-            for(int i=0;i<empDevicesByIds.length;i++)
-            {
-                if(empDevices.equals(empDevicesByIds[i]))
-                {
-                    newDevice=newDevice+"";
-                }
-                else
-                {
-                    newDevice=newDevice+empDevicesByIds[i];
-                }
-            }
-            employeeDao.updateEmployeeByEmpDevice(empId,newDevice);
-            String deviceDeleteHistory=DEVICE_ID+device.getId()+","
+        String deviceDeleteHistory=DEVICE_ID+device.getId()+","
                     +"device name: "+device.getDeviceName();
-            History history=new History(service.currentUser(),DEVICE_DELETE,deviceDeleteHistory,service.DateAndTime());
-            employeeService.deleteEmpDevices(id);
-            deviceDao.deleteForiegnKey(id);
-            deviceDao.deleteById(id);
-            historyDao.save(history);
-        }
-        else
-        {
-            String deviceDeleteHistory="device id:"+device.getId()+","
-                    +"device name: "+device.getDeviceName();
-
             String userName=service.currentUser();
-            History history=new History(userName,DEVICE_DELETE,deviceDeleteHistory,service.DateAndTime());
-            historyDao.save(history);
+            History history1=new History(userName,DEVICE_DELETE,deviceDeleteHistory,service.DateAndTime());
+            historyDao.save(history1);
             deviceDao.deleteForiegnKey(id);
             deviceDao.deleteById(id);
-        }
     }
 
     //get device by device id
@@ -182,15 +135,6 @@ public class DeviceService {
         }
         return device;
     }
-
-    //get employee by employe id
-    public Employee getEmployeeById()
-    {
-       Employee employee = employeeDao.findByEmail(UserName);
-       return employee;
-    }
-
-
 
     //search by keyword using ilike
     public List<Device> getByKeywordDevice(String keyword)

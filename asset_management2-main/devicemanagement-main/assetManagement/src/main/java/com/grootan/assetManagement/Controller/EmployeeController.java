@@ -112,9 +112,6 @@ public class EmployeeController {
         model.addAttribute("List_Of_Roles",roles);
         List<String> deviceList=deviceService.getAllDevicesByName();
         model.addAttribute("List_Of_Devices",deviceList);
-        String deviceByEmpId=employeeService.getAllDevicesById(empId);
-        List<String> ListOfEmpDevices = List.of(deviceByEmpId.split(";"));
-        model.addAttribute("List_Of_DevicesById",ListOfEmpDevices);
         List<EmployeeDepartment> employeeDepartmentList=employeeService.getAllEmpDepartments();
         model.addAttribute("ListOfEmpDepartment",employeeDepartmentList);
         Employee employee = employeeService.findEmployeeById(empId);

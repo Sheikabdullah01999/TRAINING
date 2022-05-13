@@ -233,12 +233,12 @@ header .image-text .profession{
 
         <div class="form-group">
             <label class="control-label" > DeviceName </label>
-            <select id="deviceName" class="form-control" th:field="*{deviceName}"></select>
+            <select id="deviceName" class="form-control" th:field="*{deviceName}" required></select>
         </div>
 
         <div class="form-group">
             <label class="control-label" for="department"> DevicePurchaseDate </label>
-            <input id="department" class="form-control"
+            <input id="department" class="form-control" type="date"
                    th:field="*{devicePurchaseDate}" required autofocus="autofocus" />
         </div>
         <div class="form-group">

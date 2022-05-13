@@ -6,14 +6,12 @@ import com.grootan.assetManagement.Repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
-
 import static com.grootan.assetManagement.Model.Constants.*;
-import static com.grootan.assetManagement.Model.Constants.USER_ADD;
+
 
 @Service
 public class EmployeeService {
@@ -51,21 +49,12 @@ public class EmployeeService {
 
     public Employee saveEmpDetails(Employee employeeDetails)
     {
-        String employeeDevices="";
+
         String devices= employeeDetails.getEmpDevices();
 
         List<Device> device=new ArrayList<>();
 
-        if(employeeDetails.getEmpDevices()==null)
-        {
-            employeeDevices="";
-            device=new ArrayList<>();
-        }
-        else
-        {
             List<Integer> id=getDeviceID(devices);
-            String deviceList=empDevice(employeeDetails);
-            employeeDevices=deviceList;
             for(int i=0;i<id.size();i++)
             {
                 deviceDao.updateAssignStatus(id.get(i));
@@ -76,12 +65,10 @@ public class EmployeeService {
                 device.add(new Device(deviceId));
             }
 
-        }
-
         Employee employee = new Employee(employeeDetails.getEmpId(),
                 employeeDetails.getEmpName(), employeeDetails.getEmail(),
                 passwordEncoder.encode(employeeDetails.getEmpPassword()),
-                employeeDetails.getEmpDepartment(),employeeDevices,
+                employeeDetails.getEmpDepartment(),
                 employeeDetails.getAssignRole(),
                 Arrays.asList(new Role(employeeDetails.getAssignRole())),device);
 
@@ -89,47 +76,25 @@ public class EmployeeService {
     }
 
 
-    public String empDevice(Employee employee)
-    {
-        String devices=employee.getEmpDevices();
-        List<Integer> list=getDeviceID(devices);
-        List<String> deviceList =new ArrayList<>();
-        for(int i=0;i<list.size();i++)
-        {
-            deviceList.add(deviceDao.getDeviceById(list.get(i)));
-        }
-        String updatedDevice="";
-        for (String device:deviceList) {
-            if (updatedDevice == "") {
-                updatedDevice = updatedDevice + device;
-                updatedDevice = device;
-            } else {
-                updatedDevice = updatedDevice + ";" + device;
-            }
-
-        }
-        return updatedDevice;
-    }
-
     //save employee details after check all details are  correct
     public Employee saveEmployee(Employee employeeDetails) {
         Employee employee=saveEmpDetails(employeeDetails);
+        String history = NEW_EMP_ID + employeeDetails.getEmpId() + ","
+                + EMP_NAME + employeeDetails.getEmpName();
+        History newHistory;
+
         if(employeeDetails.getAssignRole().equals("ADMIN"))
         {
-            String history = NEW_EMP_ID + employeeDetails.getEmpId() + ","
-                    + EMP_NAME + employeeDetails.getEmpName();
-            History newHistory = new History(service.currentUser(), ADMIN_ADD, history, service.DateAndTime());
-            historyDao.save(newHistory);
-            return employeeDao.save(employee);
+            newHistory = new History(service.currentUser(), ADMIN_ADD, history, service.DateAndTime());
         }
         else {
-            String history = NEW_EMP_ID + employeeDetails.getEmpId() + ","
-                    + EMP_NAME+ employeeDetails.getEmpName();
-            History newHistory = new History(service.currentUser(), USER_ADD, history, service.DateAndTime());
-            historyDao.save(newHistory);
-            return employeeDao.save(employee);
+            newHistory = new History(service.currentUser(), USER_ADD, history, service.DateAndTime());
         }
+        historyDao.save(newHistory);
+        return employeeDao.save(employee);
     }
+
+
 
     //get device by device id
     public List<Integer> getDeviceID(String device) {
@@ -185,13 +150,7 @@ public class EmployeeService {
         return employeeDao.findByEmpId(empId)!=null;
     }
 
-    //to check employee devices exists or not
-    private boolean employeeDevicesExists(final String empDevices)
-    {
-        return employeeDao.findByEmpDevices(empDevices)!=null;
-    }
 
-    //to check department name already exits or not
     private boolean departmentExists(final String department)
     {
         return employeeDepartmentDao.findByDepartmentName(department)!=null;
@@ -216,10 +175,6 @@ public class EmployeeService {
             throw new GeneralException(EMP_ID_EXISTS+employeeDetails.getEmpId());
         }
 
-        if(employeeDevicesExists(employeeDetails.getEmpDevices()))
-        {
-            throw new GeneralException(DEVICE_ASSIGNED+employeeDetails.getEmpDevices());
-        }
         return true;
     }
 
@@ -228,12 +183,6 @@ public class EmployeeService {
     {
         List<EmployeeDevices> userDevices = employeeDao.getUserDevice();
         return userDevices;
-    }
-
-    //get all device by employeeId
-    public String getAllDevicesById(String EmpId)
-    {
-        return employeeDao.getEmpDevices(EmpId);
     }
 
     //find employee by employee id
@@ -252,19 +201,9 @@ public class EmployeeService {
     {
         currentLoggedInUserValidation(id);
 
-        Employee employee = employeeDao.findByEmpId(id);
-        String s=employee.getEmpDevices();
-
-        List<Integer> deviceId=getDeviceID(s);
-
-        if(employee.getEmpId()==null)
-        {
-            throw new GeneralException("No Records Found");
-        }
-
+        List<Integer> empDevice=deviceDao.deviceId(id);
         employeeDao.deleteByEmpId(id);
-
-        for(Integer dId:deviceId)
+        for(Integer dId:empDevice)
         {
             deviceDao.updateAssignStatusAndDeviceStatus(dId);
         }
@@ -310,54 +249,25 @@ public class EmployeeService {
         employeeDepartmentDao.save(employeeDepartment);
     }
 
-    //delete empdevices by employeeId
-    public void deleteEmpDevices(int id)
-    {
-        String employeeDevices = employeeDao.deleteByEmpDevicesId(id);
-        String empDevices = employeeDao.getEmpDevices(employeeDevices);
-        String devices = deviceDao.getDeviceById(id);
-        String [] empDevicesById = empDevices.split(";");
-        String newDevice="";
-        for(int i=0;i<empDevicesById.length;i++)
-        {
-            if(devices.equals(empDevicesById[i]))
-            {
-                newDevice=newDevice+"";
-            }
-            else
-            {
-                if(newDevice=="")
-                {
-                    newDevice=newDevice+empDevicesById[i];
-                }
-                else
-                {
-                    newDevice = newDevice + ";" + empDevicesById[i];
-                }
-
-            }
-        }
-        employeeDao.updateEmployeeByEmpDevice(employeeDevices,newDevice);
-        deviceDao.updateAssignStatusAndDeviceStatus(id);
-        employeeDao.deleteEmployeeByEmpDevice(id);
-    }
-
     //update employee details
     public Employee updateEmployee(Employee employeeDetails)
     {
-        List<Integer> newDeviceSize = null;
+        List<Integer> updatedDeviceList = null;
         String newDevice=employeeDetails.getEmpDevices();
         if(newDevice!=null)
         {
-            newDeviceSize=getDeviceID(newDevice);
+            updatedDeviceList=getDeviceID(newDevice);
         }
 
-        String updatedDevice = updateEmployeeDevice(employeeDetails);
+        List<Integer> existingDevice=deviceDao.deviceId(employeeDetails.getEmpId());
+        for(Integer id:existingDevice)
+        {
+            updatedDeviceList.add(id);
+        }
 
-        List<Integer> deviceId=getDeviceID(updatedDevice);
         List<Device> device=new ArrayList<>();
 
-        for(Integer Id : deviceId)
+        for(Integer Id : updatedDeviceList)
         {
             device.add(new Device(Id));
         }
@@ -365,13 +275,13 @@ public class EmployeeService {
 
         Employee employee = new Employee(employeeDetails.getEmpId(),
                 employeeDetails.getEmpName(), employeeDetails.getEmail(),
-                employeeDetails.getEmpPassword(), employeeDetails.getEmpDepartment(), updatedDevice,
+                employeeDetails.getEmpPassword(), employeeDetails.getEmpDepartment(),
                 employeeDetails.getAssignRole(),
                 Arrays.asList(new Role(employeeDetails.getAssignRole())),device);
 
-        updateAssignStatus(updatedDevice);
+        updateAssignStatus(updatedDeviceList);
 
-        String updatedEmployeeHistory=updatedEmployeeHistory(employeeDetails,newDeviceSize);
+        String updatedEmployeeHistory=updatedEmployeeHistory(employeeDetails,updatedDeviceList);
         String userName=service.currentUser();
         History history=new History(userName,USER_UPDATED,updatedEmployeeHistory,service.DateAndTime());
 
@@ -380,12 +290,11 @@ public class EmployeeService {
     }
 
     //updated device size
-    public void updateAssignStatus(String updatedDevice)
+    public void updateAssignStatus(List<Integer> updatedDevice)
     {
-        List<Integer> deviceId=getDeviceID(updatedDevice);
-        for(int i=0;i<deviceId.size();i++)
+        for(int i=0;i<updatedDevice.size();i++)
         {
-            deviceDao.updateAssignStatus(deviceId.get(i));
+            deviceDao.updateAssignStatus(updatedDevice.get(i));
         }
     }
 
@@ -430,25 +339,11 @@ public class EmployeeService {
 
     }
 
-    //updated device
-    public String updateEmployeeDevice(Employee employeeDetails)
+    //delete employee devices by employeeId
+    public void deleteEmpDevices(int id)
     {
-        String newDevice=employeeDetails.getEmpDevices();
-        String updatedDevice = "";
-        String deviceList=deviceDao.getDevice(employeeDetails.getEmpId());
-
-        if(employeeDetails.getEmpDevices()!=null)
-        {
-            updatedDevice=newDevice+";"+deviceList;
-        }
-        else
-        {
-            updatedDevice=updatedDevice+deviceList;
-        }
-
-        return updatedDevice;
-
+        deviceDao.updateAssignStatusAndDeviceStatus(id);
+        employeeDao.deleteEmployeeByEmpDevice(id);
     }
-
 
 }

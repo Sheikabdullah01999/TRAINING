@@ -75,7 +75,6 @@ public class CommonService {
         adminUser.setEmail("grootan@gmail.com");
         adminUser.setEmpPassword(getEncodedPassword("gr00tan"));
         adminUser.setEmpDepartment("admin");
-        adminUser.setEmpDevices("");
         adminUser.setAssignRole(adminRole.getRoleName());
         Collection<Role> adminRoles = new ArrayList<>();
         adminRoles.add(adminRole);

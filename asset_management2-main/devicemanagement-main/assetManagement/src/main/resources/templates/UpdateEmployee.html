@@ -255,17 +255,17 @@ header .image-text .profession{
                     <input type="checkbox" th:field="*{empDevices}" th:value="${device}" th:text="${device}" />
                 </li>
             </ul>
-            <label class="control-label">Using Devices</label>
-            <ul th:if="${!List_Of_DevicesById.isEmpty()}">
-                <li th:each="device1 : ${List_Of_DevicesById}">
-                    <p th:text="${device1}"></p>
-                </li>
-            </ul>
-            <ul th:if="${List_Of_DevicesById.isEmpty()}">
-                <li>
-                    <p>This employee have no device.</p>
-                </li>
-            </ul>
+<!--            <label class="control-label">Using Devices</label>-->
+<!--            <ul th:if="${!List_Of_DevicesById.isEmpty()}">-->
+<!--                <li th:each="device1 : ${List_Of_DevicesById}">-->
+<!--                    <p th:text="${device1}"></p>-->
+<!--                </li>-->
+<!--            </ul>-->
+<!--            <ul th:if="${List_Of_DevicesById.isEmpty()}">-->
+<!--                <li>-->
+<!--                    <p>This employee have no device.</p>-->
+<!--                </li>-->
+<!--            </ul>-->
         </div>
         <div class="form-group">
             <label class="control-label"> EmployeeRole </label>
