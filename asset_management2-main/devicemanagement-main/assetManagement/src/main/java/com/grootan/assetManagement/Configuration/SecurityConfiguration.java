@@ -1,7 +1,7 @@
 package com.grootan.assetManagement.Configuration;
 
 import com.grootan.assetManagement.Model.Employee;
-import com.grootan.assetManagement.Service.AdminService;
+import com.grootan.assetManagement.Service.DeviceService;
 import com.grootan.assetManagement.Service.UserDetailsServiceImp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -29,7 +29,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Autowired
     DataSource dataSource;
     @Autowired
-    private AdminService adminService;
+    private DeviceService deviceService;
     @Autowired
     private Employee employee;
     @Autowired

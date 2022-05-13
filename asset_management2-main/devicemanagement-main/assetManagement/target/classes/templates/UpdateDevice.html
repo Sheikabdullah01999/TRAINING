@@ -259,13 +259,13 @@ header .image-text .profession{
         </div>
     </form>
 </div>
-<script>
+<script type="text/javascript">
 $("#category").change(function() {
         var x = $("#category").val();
         console.log(x);
         $.ajax({
 			type: 'GET',
-			url: '/demo/loadNamesByCategory/' + x,
+			url: '/loadNamesByCategory/' + x,
 			success: function(result) {
 				var result = JSON.parse(result);
 				console.log(result);
