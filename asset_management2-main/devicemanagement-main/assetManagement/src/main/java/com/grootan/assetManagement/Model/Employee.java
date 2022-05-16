@@ -21,20 +21,12 @@ public class Employee {
     private String empPassword;
     private String empDepartment;
     private String assignRole;
+
     @Transient
     private String empDevices;
 
 
-//    public Employee(String empId, String empName, String email, String empPassword, String empDepartment,  String assignRole,Collection<Role> role ,List<Device> devices) {
-//        this.email = email;
-//        this.empId = empId;
-//        this.empName = empName;
-//        this.empPassword = empPassword;
-//        this.empDepartment = empDepartment;
-//        this.assignRole = assignRole;
-//        this.role = role;
-//        this.devices = devices;
-//    }
+
     @ManyToMany
     @JoinTable(name = "user_role",
             joinColumns = {
@@ -45,8 +37,8 @@ public class Employee {
             }
     )
     private Collection<Role> role;
-
-    @OneToMany()
+    //@org.hibernate.annotations.Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
+    @OneToMany(cascade = CascadeType.PERSIST)
     private List<Device> devices;
 
     public Employee()
@@ -54,7 +46,8 @@ public class Employee {
 
     }
 
-    public Employee(String empId, String empName, String email, String empPassword, String empDepartment, String assignRole, Collection<Role> role, List<Device> devices) {
+    public Employee(String empId, String empName, String email, String empPassword, String empDepartment, String assignRole, Collection<Role> role, List<Device> devices)
+    {
         this.empId = empId;
         this.empName = empName;
         this.email = email;

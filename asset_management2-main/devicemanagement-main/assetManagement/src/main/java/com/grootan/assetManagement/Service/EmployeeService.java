@@ -54,6 +54,8 @@ public class EmployeeService {
 
         List<Device> device=new ArrayList<>();
 
+        if(devices!=null)
+        {
             List<Integer> id=getDeviceID(devices);
             for(int i=0;i<id.size();i++)
             {
@@ -64,6 +66,11 @@ public class EmployeeService {
             {
                 device.add(new Device(deviceId));
             }
+        }
+        else
+        {
+            device.add(new Device());
+        }
 
         Employee employee = new Employee(employeeDetails.getEmpId(),
                 employeeDetails.getEmpName(), employeeDetails.getEmail(),
@@ -97,9 +104,11 @@ public class EmployeeService {
 
 
     //get device by device id
-    public List<Integer> getDeviceID(String device) {
+    public List<Integer> getDeviceID(String device)
+    {
         List<String> list = null;
-        if (device != null) {
+        if (device != null)
+        {
 
             list = Arrays.asList(device.split(","));
         }
@@ -107,18 +116,26 @@ public class EmployeeService {
         List<Integer> deviceId = new ArrayList<>();
         if(!list.isEmpty())
         {
-            for (String empId : list) {
+            for (String empId : list)
+            {
 
                 String temp = "";
-                for (int i = 0; i < empId.length(); i++) {
-                    if (Character.isDigit(empId.charAt(i))) {
+                for (int i = 0; i < empId.length(); i++)
+                {
+                    if (Character.isDigit(empId.charAt(i)))
+                    {
                         temp = temp + String.valueOf(empId.charAt(i));
                     }
                 }
-                if (temp != "") {
+                if (temp != "")
+                {
                     deviceId.add(Integer.parseInt(temp));
                 }
             }
+        }
+        else
+        {
+
         }
 
         return deviceId;
@@ -197,17 +214,17 @@ public class EmployeeService {
     }
 
     //delete employee details
-    public void deleteEmpDetails(String id)
+    public void deleteEmpDetails(String empID)
     {
-        currentLoggedInUserValidation(id);
+        currentLoggedInUserValidation(empID);
 
-        List<Integer> empDevice=deviceDao.deviceId(id);
-        employeeDao.deleteByEmpId(id);
+        List<Integer> empDevice=deviceDao.deviceId(empID);
+        employeeDao.deleteByEmpId(empID);
         for(Integer dId:empDevice)
         {
             deviceDao.updateAssignStatusAndDeviceStatus(dId);
         }
-        String newDeletedDeviceHistory="employee Id "+id+"Records deleted ";
+        String newDeletedDeviceHistory="employee Id "+empID+"Records deleted ";
         String userName=service.currentUser();
         History history=new History(userName,USER_DELETE,newDeletedDeviceHistory,service.DateAndTime());
         historyDao.save(history);
@@ -253,25 +270,28 @@ public class EmployeeService {
     public Employee updateEmployee(Employee employeeDetails)
     {
         List<Integer> updatedDeviceList = null;
-        String newDevice=employeeDetails.getEmpDevices();
-        if(newDevice!=null)
-        {
-            updatedDeviceList=getDeviceID(newDevice);
-        }
-
-        List<Integer> existingDevice=deviceDao.deviceId(employeeDetails.getEmpId());
-        for(Integer id:existingDevice)
-        {
-            updatedDeviceList.add(id);
-        }
-
         List<Device> device=new ArrayList<>();
-
-        for(Integer Id : updatedDeviceList)
+        if(employeeDetails.getEmpDevices()!=null)
         {
-            device.add(new Device(Id));
-        }
 
+            String newDevice=employeeDetails.getEmpDevices();
+            if(newDevice!=null)
+            {
+                updatedDeviceList=getDeviceID(newDevice);
+            }
+
+            List<Integer> existingDevice=deviceDao.deviceId(employeeDetails.getEmpId());
+            for(Integer id:existingDevice)
+            {
+                updatedDeviceList.add(id);
+            }
+
+            for(Integer Id : updatedDeviceList)
+            {
+                device.add(new Device(Id));
+            }
+            updateAssignStatus(updatedDeviceList);
+        }
 
         Employee employee = new Employee(employeeDetails.getEmpId(),
                 employeeDetails.getEmpName(), employeeDetails.getEmail(),
@@ -279,7 +299,7 @@ public class EmployeeService {
                 employeeDetails.getAssignRole(),
                 Arrays.asList(new Role(employeeDetails.getAssignRole())),device);
 
-        updateAssignStatus(updatedDeviceList);
+
 
         String updatedEmployeeHistory=updatedEmployeeHistory(employeeDetails,updatedDeviceList);
         String userName=service.currentUser();
@@ -319,11 +339,11 @@ public class EmployeeService {
                     +emp.getEmpName()+" to "
                     +employeeDetails.getEmpName();
         }
-        if(!emp.getEmpDepartment().equalsIgnoreCase(employeeDetails.getEmpDepartment()))
-        {
-            updatedEmployeeHistory=updatedEmployeeHistory+",Employee department changed from "
-                    + emp.getEmpDepartment()+" to"+employeeDetails.getEmpDepartment();
-        }
+//        if(!emp.getEmpDepartment().equalsIgnoreCase(employeeDetails.getEmpDepartment()))
+//        {
+//            updatedEmployeeHistory=updatedEmployeeHistory+",Employee department changed from "
+//                    + emp.getEmpDepartment()+" to"+employeeDetails.getEmpDepartment();
+//        }
         if(!emp.getAssignRole().equalsIgnoreCase(employeeDetails.getAssignRole()))
         {
             updatedEmployeeHistory=updatedEmployeeHistory+",Employee Role changed from "

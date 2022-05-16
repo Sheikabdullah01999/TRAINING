@@ -184,18 +184,18 @@ header .image-text .profession{
     </button>
     <div class="dropdown-container">
         <a th:href="@{/registration_roles}">Roles Registration</a>
-        <a th:href="@{/List_Of_Roles}">List Of Roles</a>
+        <a th:href="@{/roles/list}">List Of Roles</a>
     </div>
     <br>
     <button class="dropdown-btn">Devices
         <i class="fa fa-caret-down"></i>
     </button>
     <div class="dropdown-container">
-        <a th:href="@{/add_device_details}">Add Device Details</a>
-        <a th:href="@{/List_Of_Devices}">List Of Device Details</a>
-        <a th:href="@{/category}">Add Device Category</a>
-        <a th:href="@{/DeviceName}">Add Device Name</a>
-        <a th:href="@{/getAllDeviceCategory}">listOfDeviceCategory</a>
+        <a th:href="@{/device/add}">Add Device Details</a>
+        <a th:href="@{/device/list}">List Of Device Details</a>
+        <a th:href="@{/device/add/category}">Add Device Category</a>
+        <a th:href="@{/device/add/name}">Add Device Name</a>
+<!--        <a th:href="@{/getAllDeviceCategory}">listOfDeviceCategory</a>-->
     </div>
     <br>
     <a th:href="@{/history}">History</a>
@@ -204,7 +204,7 @@ header .image-text .profession{
 </div>
 <div class="main">
     <h1>Device List</h1>
-    <form th:action="@{/searching}" method="get">
+    <form th:action="@{/device/searching}" method="get">
         <input type="text" name="keyword" th:value="${keyword}" placeholder="Find by Category and DeviceStatus" size="50">
         <button type="submit" class="btn btn-info" >Search</button>
     </form>

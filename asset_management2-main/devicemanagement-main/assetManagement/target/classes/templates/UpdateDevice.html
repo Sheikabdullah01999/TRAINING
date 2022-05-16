@@ -170,28 +170,28 @@ header .image-text .profession{
         <i class="fa fa-caret-down"></i>
     </button>
     <div class="dropdown-container">
-        <a th:href="@{/registration_form}">Employee Registration</a>
-        <a th:href="@{/List_Of_Employees}">List Of Employees</a>
-        <a th:href="@{/user_devices}">List Of Employee Devices</a>
-        <a th:href="@{/department}">Add Employee Department</a>
+        <a th:href="@{/employee/registration}">Employee Registration</a>
+        <a th:href="@{/employee/list}">List Of Employees</a>
+        <a th:href="@{/employee/user/device}">List Of Employee Devices</a>
+        <a th:href="@{/employee/department}">Add Employee Department</a>
     </div>
     <br>
     <button class="dropdown-btn">Roles
         <i class="fa fa-caret-down"></i>
     </button>
     <div class="dropdown-container">
-        <a th:href="@{/registration_roles}">Roles Registration</a>
-        <a th:href="@{/List_Of_Roles}">List Of Roles</a>
+        <a th:href="@{/role/registration}">Roles Registration</a>
+        <a th:href="@{/roles/list}">List Of Roles</a>
     </div>
     <br>
     <button class="dropdown-btn">Devices
         <i class="fa fa-caret-down"></i>
     </button>
     <div class="dropdown-container">
-        <a th:href="@{/add_device_details}">Add Device Details</a>
-        <a th:href="@{/List_Of_Devices}">List Of Device Details</a>
-        <a th:href="@{/category}">Add Device Category</a>
-        <a th:href="@{/DeviceName}">Add Device Name</a>
+        <a th:href="@{/device/add}">Add Device Details</a>
+        <a th:href="@{/device/list}">List Of Device Details</a>
+        <a th:href="@{/device/add/category}">Add Device Category</a>
+        <a th:href="@{/device/add/name}">Add Device Name</a>
     </div>
     <br>
     <a th:href="@{/history}">History</a>
@@ -210,7 +210,7 @@ header .image-text .profession{
     </div>
     <h1>Update Device</h1>
 
-    <form th:action="@{/update_device_details}" method="post" th:object="${device}">
+    <form th:action="@{/device/update}" method="post" th:object="${device}">
         <div class="form-group">
             <label class="control-label" for="id"> DeviceId </label>
             <input id="id" class="form-control" th:field="*{id}" readonly="readonly"
@@ -255,7 +255,7 @@ header .image-text .profession{
 
         <div class="form-group">
             <button type="submit" class="btn btn-success btn1">update</button>
-            <a th:href="@{/List_Of_Devices}" class="btn btn-primary btn2">Back</a>
+            <a th:href="@{/device/list}" class="btn btn-primary btn2">Back</a>
         </div>
     </form>
 </div>

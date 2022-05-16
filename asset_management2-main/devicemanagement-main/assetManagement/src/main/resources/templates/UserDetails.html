@@ -37,28 +37,28 @@
         <i class="fa fa-caret-down"></i>
     </button>
     <div class="dropdown-container">
-        <a th:href="@{/registration_form}" class="row1">Employee Registration</a>
-        <a th:href="@{/List_Of_Employees}" class="row1">List Of Employees</a>
-        <a th:href="@{/user_devices}" class="row1">List Of Employee Devices</a>
-        <a th:href="@{/department}" class="row1">Add Employee Department</a>
+        <a th:href="@{/employee/registration}" class="row1">Employee Registration</a>
+        <a th:href="@{/employee/list}" class="row1">List Of Employees</a>
+        <a th:href="@{/employee/user/device}" class="row1">List Of Employee Devices</a>
+        <a th:href="@{/employee/department}" class="row1">Add Employee Department</a>
     </div>
     <br>
     <button class="dropdown-btn"><i class='fa fa-users'></i>&nbsp;Roles
         <i class="fa fa-caret-down"></i>
     </button>
     <div class="dropdown-container">
-        <a th:href="@{/registration_roles}" class="row1">Roles Registration</a>
-        <a th:href="@{/List_Of_Roles}" class="row1">List Of Roles</a>
+        <a th:href="@{/role/registration}" class="row1">Roles Registration</a>
+        <a th:href="@{/roles/list}" class="row1">List Of Roles</a>
     </div>
     <br>
     <button class="dropdown-btn"><i class='bx bxs-devices'></i>&nbsp;Devices
         <i class="fa fa-caret-down"></i>
     </button>
     <div class="dropdown-container">
-        <a th:href="@{/add_device_details}" class="row1">Add Device Details</a>
-        <a th:href="@{/List_Of_Devices}" class="row1">List Of Device Details</a>
-        <a th:href="@{/category}" class="row1">Add Device Category</a>
-        <a th:href="@{/DeviceName}" class="row1">Add Device Name</a>
+        <a th:href="@{/device/add}" class="row1">Add Device Details</a>
+        <a th:href="@{/device/list}" class="row1">List Of Device Details</a>
+        <a th:href="@{/device/add/category}" class="row1">Add Device Category</a>
+        <a th:href="@{/device/add/name}" class="row1">Add Device Name</a>
     </div>
     <br>
     <a th:href="@{/history}" class="dropdown-btn"><i class="fa fa-history" aria-hidden="true"></i>&nbsp;History</a>
@@ -78,7 +78,7 @@
         </tr>
         </thead>
         <tbody>
-        <tr th:each="device:${user_devices}">
+        <tr th:each="device:${userDevices}">
             <td  th:text="${device.empId}" class="row"></td>
             <td th:text="${device.deviceName}" class="row"></td>
             <td th:text="${device.id}" class="row"></td>

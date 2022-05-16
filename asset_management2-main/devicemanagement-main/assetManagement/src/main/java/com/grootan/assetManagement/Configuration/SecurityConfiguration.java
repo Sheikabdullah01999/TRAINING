@@ -26,13 +26,13 @@ import javax.sql.DataSource;
         securedEnabled = true,
         jsr250Enabled = true)
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
-    @Autowired
-    DataSource dataSource;
-    @Autowired
-    private DeviceService deviceService;
-    @Autowired
-    private Employee employee;
-    @Autowired
+////    @Autowired
+////   // DataSource dataSource;
+////    @Autowired
+////    private DeviceService deviceService;
+////    @Autowired
+////    private Employee employee;
+//    @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
     @Autowired
     private PasswordEncoder passwordEncoder;

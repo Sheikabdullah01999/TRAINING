@@ -11,7 +11,14 @@ import javax.persistence.*;
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = "department"))
 public class EmployeeDepartment {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer id;
     private String department;
+
+    public EmployeeDepartment() {
+
+    }
+    public EmployeeDepartment(String dep)
+    {
+        this.department=dep;
+    }
+
 }

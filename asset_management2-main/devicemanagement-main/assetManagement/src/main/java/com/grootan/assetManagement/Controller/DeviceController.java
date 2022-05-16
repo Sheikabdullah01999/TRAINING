@@ -13,14 +13,11 @@ import com.grootan.assetManagement.Service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
-
-import javax.annotation.PostConstruct;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -43,7 +40,7 @@ public class DeviceController {
     @Autowired
     private CommonService service;
 
-    @GetMapping("/add_device_details")
+    @GetMapping("/device/add")
     public String addDeviceDetails(Model model)
     {
         List<DeviceCategory> devices = deviceService.getCategory();
@@ -52,12 +49,12 @@ public class DeviceController {
         return "AddDeviceDetails";
     }
 
-    @PostMapping("/device_details")
+    @PostMapping("/device/add/details")
     public String saveDevice(@ModelAttribute("devices") Device device,Model model)
     {
         try{
             deviceService.addDeviceDetails(device);
-            return "redirect:/add_device_details?success";
+            return "redirect:/device/add?success";
         }
         catch(GeneralException e)
         {
@@ -66,11 +63,11 @@ public class DeviceController {
         }
     }
 
-    @GetMapping("/List_Of_Devices")
+    @GetMapping("/device/list")
     public String list_of_devices(Model model)
     {
         try{
-            model.addAttribute("Device_details", deviceService.getAllDevices());
+            model.addAttribute("DeviceDetails", deviceService.getAllDevices());
             return "DeviceDetails";
         }
         catch(GeneralException e)
@@ -86,13 +83,13 @@ public class DeviceController {
         }
     }
 
-    @GetMapping("/searching")
+    @GetMapping("/device/searching")
     public String search(Device device, Model model, String keyword)
     {
         if(keyword!=null)
         {
             List<Device> list = deviceService.getByKeywordDevice(keyword);
-            model.addAttribute("Device_details",list);
+            model.addAttribute("DeviceDetails",list);
         }
         else
         {
@@ -115,28 +112,28 @@ public class DeviceController {
         return gson.toJson(deviceService.findByCategory(name));
     }
 
-    @GetMapping("/update/{id}")
+    @GetMapping("/device/update/{id}")
     public ModelAndView showUpdateDevicePage(@PathVariable(name="id") int id,Model model)
     {
         ModelAndView editView = new ModelAndView("UpdateDevice");
         Device device=new Device();
         model.addAttribute("devices",device);
-        List<DeviceCategory> devices = deviceService.getCategory();
-        model.addAttribute("ListOfDeviceCategory",devices);
-        List<DeviceName> devicesList = deviceService.getName();
-        model.addAttribute("ListOfDeviceName",devicesList);
+        List<DeviceCategory> devicesCategory = deviceService.getCategory();
+        model.addAttribute("ListOfDeviceCategory",devicesCategory);
+        List<DeviceName> devicesNameList = deviceService.getDeviceName();
+        model.addAttribute("ListOfDeviceName",devicesNameList);
         Optional<Device> allDevice = deviceService.findDeviceById(id);
         editView.addObject("device",allDevice);
         return editView;
     }
 
-    @PostMapping("/update_device_details")
+    @PostMapping("/device/update")
     public String saveDevices(@ModelAttribute("device") Device device, Model model)
     {
         try
         {
             deviceService.updateDeviceDetails(device);
-            return "redirect:/List_Of_Devices";
+            return "redirect:/device/list";
         }
         catch(GeneralException e)
         {
@@ -145,26 +142,26 @@ public class DeviceController {
         }
     }
 
-    @GetMapping("/delete/{id}")
+    @GetMapping("/device/delete/{id}")
     public String deleteDeviceDetails(@PathVariable(name="id") Integer id, Model model)
     {
         deviceService.deleteDeviceDetails(id);
         return "redirect:/List_Of_Devices";
     }
 
-    @GetMapping("/category")
+    @GetMapping("/device/add/category")
     public String addCategory(Model model)
     {
         model.addAttribute("deviceCategory",new DeviceCategory());
         return "AddDeviceCategory";
     }
 
-    @PostMapping("/saveDeviceCategory")
+    @PostMapping("/device/save/category")
     public String saveDeviceCategory(@ModelAttribute("deviceCategory") DeviceCategory deviceCategory,Model model)
     {
         try{
             deviceService.saveDeviceCategory(deviceCategory);
-            return "redirect:/category?success";
+            return "redirect:/device/add/category?success";
         }
         catch(GeneralException e)
         {
@@ -174,7 +171,7 @@ public class DeviceController {
 
     }
 
-    @GetMapping("/DeviceName")
+    @GetMapping("/device/add/name")
     public String addName(Model model)
     {
         List<DeviceCategory> devices = deviceService.getCategory();
@@ -184,7 +181,7 @@ public class DeviceController {
         return "AddDeviceName";
     }
 
-    @PostMapping("/saveDeviceName")
+    @PostMapping("/device/save/name")
     public String saveDeviceName(@ModelAttribute("deviceName") DeviceName deviceName,Model model)
     {
         try
@@ -192,7 +189,7 @@ public class DeviceController {
             List<DeviceCategory> devices = deviceService.getCategory();
             model.addAttribute("ListOfDeviceCategory",devices);
             deviceService.saveDeviceName(deviceName);
-            return "redirect:/DeviceName?success";
+            return "redirect:/device/add/name?success";
         }
         catch(GeneralException e)
         {
@@ -230,7 +227,7 @@ public class DeviceController {
         model.addAttribute("currentPage",pageNo);
         model.addAttribute("totalPages",page.getTotalPages());
         model.addAttribute("totalItems",page.getTotalElements());
-        model.addAttribute("maintain_history",histories);
+        model.addAttribute("maintainHistory",histories);
         return "HistoryDetails";
     }
 
@@ -251,7 +248,7 @@ public class DeviceController {
         return editView;
     }
 
-    @PostMapping("/update_device_category")
+    @PostMapping("/device/update/category")
     public String updateDevicesCategory(@ModelAttribute("device") DeviceCategory deviceCategory,Model model) {
         try {
             deviceService.updateDeviceCategory(deviceCategory);
@@ -262,7 +259,7 @@ public class DeviceController {
         }
     }
 
-    @GetMapping("/getAllDeviceCategory")
+    @GetMapping("/device/get/category")
     public String getAllDeviceCategory(Model model)
     {
         model.addAttribute("categoryList", deviceService.getAllDeviceCategory());

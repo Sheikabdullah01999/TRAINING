@@ -158,10 +158,10 @@ a
         <i class="fa fa-caret-down"></i>
     </button>
     <div class="dropdown-container">
-        <a th:href="@{/registration_form}">Employee Registration</a>
-        <a th:href="@{/List_Of_Employees}">List Of Employees</a>
-        <a th:href="@{/user_devices}">List Of Employee Devices</a>
-        <a th:href="@{/department}">Add Employee Department</a>
+        <a th:href="@{/employee/registration}">Employee Registration</a>
+        <a th:href="@{/employee/list}">List Of Employees</a>
+        <a th:href="@{/employee/user/device}">List Of Employee Devices</a>
+        <a th:href="@{/employee/department}">Add Employee Department</a>
 
     </div>
     <br>
@@ -169,18 +169,18 @@ a
         <i class="fa fa-caret-down"></i>
     </button>
     <div class="dropdown-container">
-        <a th:href="@{/registration_roles}">Roles Registration</a>
-        <a th:href="@{/List_Of_Roles}">List Of Roles</a>
+        <a th:href="@{/role/registration}">Roles Registration</a>
+        <a th:href="@{/roles/list}">List Of Roles</a>
     </div>
     <br>
     <button class="dropdown-btn"><i class='bx bxs-devices'></i>&nbsp;Devices
         <i class="fa fa-caret-down"></i>
     </button>
     <div class="dropdown-container">
-        <a th:href="@{/add_device_details}">Add Device Details</a>
-        <a th:href="@{/List_Of_Devices}">List Of Device Details</a>
-        <a th:href="@{/category}">Add Device Category</a>
-        <a th:href="@{/DeviceName}">Add Device Name</a>
+        <a th:href="@{/device/add}">Add Device Details</a>
+        <a th:href="@{/device/list}">List Of Device Details</a>
+        <a th:href="@{/device/add/category}">Add Device Category</a>
+        <a th:href="@{/device/add/name}">Add Device Name</a>
     </div>
     <br>
     <a th:href="@{/history}" class="row"><i class="fa fa-history" aria-hidden="true"></i>&nbsp;History</a>

@@ -22,7 +22,7 @@ public class RoleController {
     @Autowired
     private RoleService roleService;
 
-    @GetMapping("/registration_roles")
+    @GetMapping("/role/registration")
     public String showRolesRegistrationForm(Model model)
     {
         Role role = new Role();
@@ -30,12 +30,12 @@ public class RoleController {
         return "roles";
     }
 
-    @PostMapping("/saveRoles")
+    @PostMapping("/role/save")
     public String saveRoles(@ModelAttribute("roles") Role role, Model model)
     {
         try{
             roleService.saveRoles(role);
-            model.addAttribute("List_of_Roles",roleService.getAllRoles());
+            model.addAttribute("ListOfRoles",roleService.getAllRoles());
             return "ListOfRoles";
         }
         catch(GeneralException e)
@@ -45,12 +45,12 @@ public class RoleController {
         }
     }
 
-    @GetMapping("/List_Of_Roles")
+    @GetMapping("/roles/list")
     public String list_of_Roles(Model model)
     {
         try
         {
-            model.addAttribute("List_of_Roles",roleService.getAllRoles());
+            model.addAttribute("ListOfRoles",roleService.getAllRoles());
             return "ListOfRoles";
         }
         catch(GeneralException e)

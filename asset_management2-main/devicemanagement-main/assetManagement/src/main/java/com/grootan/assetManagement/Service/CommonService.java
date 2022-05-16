@@ -2,9 +2,11 @@ package com.grootan.assetManagement.Service;
 
 import com.grootan.assetManagement.Model.Device;
 import com.grootan.assetManagement.Model.Employee;
+import com.grootan.assetManagement.Model.EmployeeDepartment;
 import com.grootan.assetManagement.Model.Role;
 import com.grootan.assetManagement.Repository.AdminDao;
 import com.grootan.assetManagement.Repository.EmployeeDao;
+import com.grootan.assetManagement.Repository.EmployeeDepartmentDao;
 import com.grootan.assetManagement.Repository.RoleDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -17,6 +19,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class CommonService {
@@ -28,6 +31,10 @@ public class CommonService {
     private RoleDao roleDao;
     @Autowired
     private AdminDao adminDao;
+
+    @Autowired
+    private EmployeeDepartmentDao employeeDepartmentDao;
+
     //password encoder
     public String getEncodedPassword(String password) {
         return passwordEncoder.encode(password);
@@ -69,16 +76,28 @@ public class CommonService {
         userRole.setRoleDescription("Default role for newly created record");
         roleDao.save(userRole);
 
+        EmployeeDepartment employeeDepartment=new EmployeeDepartment();
+        employeeDepartment.setDepartment("admin");
+        employeeDepartmentDao.save(employeeDepartment);
+
+
         Employee adminUser = new Employee();
+
         adminUser.setEmpId("G001");
         adminUser.setEmpName("grootan");
         adminUser.setEmail("grootan@gmail.com");
         adminUser.setEmpPassword(getEncodedPassword("gr00tan"));
+
+
+//        List<EmployeeDepartment> departments=new ArrayList<>();
+//        departments.add(employeeDepartment);
         adminUser.setEmpDepartment("admin");
+
         adminUser.setAssignRole(adminRole.getRoleName());
         Collection<Role> adminRoles = new ArrayList<>();
         adminRoles.add(adminRole);
         adminUser.setRole(adminRoles);
+
         adminDao.save(adminUser);
     }
 }
