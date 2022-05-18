@@ -241,15 +241,16 @@ header .image-text .profession{
             <input id="department" class="form-control" type="date"
                    th:field="*{devicePurchaseDate}" required autofocus="autofocus" />
         </div>
+<!--        readonly="readonly"-->
         <div class="form-group">
             <label class="control-label" for="laptop"> Assign Status </label>
             <input id="" class="form-control" readonly="readonly"
                    th:field="*{assignStatus}" required autofocus="autofocus" />
         </div>
-
+<!--        readonly="readonly"-->
         <div class="form-group">
             <label class="control-label" for="laptop"> DeviceStatus  </label>
-            <input id="laptop" class="form-control" readonly="readonly"
+            <input id="laptop" class="form-control"readonly="readonly"
                    th:field="*{deviceStatus}" required autofocus="autofocus" />
         </div>
 

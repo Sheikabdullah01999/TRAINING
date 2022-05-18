@@ -146,7 +146,7 @@ public class DeviceController {
     public String deleteDeviceDetails(@PathVariable(name="id") Integer id, Model model)
     {
         deviceService.deleteDeviceDetails(id);
-        return "redirect:/List_Of_Devices";
+        return "redirect:/device/list";
     }
 
     @GetMapping("/device/add/category")
@@ -170,6 +170,8 @@ public class DeviceController {
         }
 
     }
+
+
 
     @GetMapping("/device/add/name")
     public String addName(Model model)

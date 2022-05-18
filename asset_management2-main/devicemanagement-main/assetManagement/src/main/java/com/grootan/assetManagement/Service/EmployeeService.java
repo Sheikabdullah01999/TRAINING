@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import static com.grootan.assetManagement.Model.Constants.*;
 
@@ -29,6 +30,8 @@ public class EmployeeService {
     private CommonService service;
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    Logger logger = Logger.getLogger("com.grootan.assetManagement.Service");
 
     //get all departments from the table
     public List<EmployeeDepartment> getAllEmpDepartments() {
@@ -263,6 +266,8 @@ public class EmployeeService {
         History history=new History(userName,EMP_DEPARTMENT_ADD,newDeviceHistory,service.DateAndTime());
         historyDao.save(history);
         employeeDepartment.setDepartment(i);
+
+        logger.info("saved success");
         employeeDepartmentDao.save(employeeDepartment);
     }
 
@@ -339,11 +344,11 @@ public class EmployeeService {
                     +emp.getEmpName()+" to "
                     +employeeDetails.getEmpName();
         }
-//        if(!emp.getEmpDepartment().equalsIgnoreCase(employeeDetails.getEmpDepartment()))
-//        {
-//            updatedEmployeeHistory=updatedEmployeeHistory+",Employee department changed from "
-//                    + emp.getEmpDepartment()+" to"+employeeDetails.getEmpDepartment();
-//        }
+        if(!emp.getEmpDepartment().equalsIgnoreCase(employeeDetails.getEmpDepartment()))
+        {
+            updatedEmployeeHistory=updatedEmployeeHistory+",Employee department changed from "
+                    + emp.getEmpDepartment()+" to"+employeeDetails.getEmpDepartment();
+        }
         if(!emp.getAssignRole().equalsIgnoreCase(employeeDetails.getAssignRole()))
         {
             updatedEmployeeHistory=updatedEmployeeHistory+",Employee Role changed from "
