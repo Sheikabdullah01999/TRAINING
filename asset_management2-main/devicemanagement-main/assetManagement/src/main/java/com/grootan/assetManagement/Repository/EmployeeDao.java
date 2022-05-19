@@ -28,6 +28,9 @@ public interface EmployeeDao extends JpaRepository<Employee,String> {
     @Query("SELECT new com.grootan.assetManagement.Model.EmployeeDevices(e.empId, d.deviceName, d.id, d.devicePurchaseDate, d.category) FROM Employee e join e.devices d")
     List<EmployeeDevices> getUserDevice();
 
+    @Query("SELECT new com.grootan.assetManagement.Model.EmployeeDevices(e.empId, d.deviceName, d.id, d.devicePurchaseDate, d.category) FROM Employee e join e.devices d where d.id=?1")
+    EmployeeDevices getUserDevices(int id);
+
     @Query(value = "select employee_emp_id from employee_devices where devices_id= :id",nativeQuery = true)
     String deleteByEmpDevicesId(@Param("id") int id);
 
@@ -41,5 +44,8 @@ public interface EmployeeDao extends JpaRepository<Employee,String> {
 
     @Query(value="SELECT email FROM Employee WHERE empId= :id")
     public String getEmployeeMail(@Param("id") String empId);
+
+//    @Query(value= "delete from employee_department where department=:dep",nativeQuery = true)
+//    public void deleteDepartment(@Param("id") String dep);
 
 }

@@ -11,7 +11,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -19,6 +18,7 @@ import java.time.format.DateTimeFormatter;
 public class RoleController {
     @Autowired
     private EmployeeService employeeService;
+
     @Autowired
     private RoleService roleService;
 

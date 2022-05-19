@@ -25,7 +25,8 @@ public class UiController {
     }
 
     @GetMapping("/")
-    public String home(Model model) {
+    public String home(Model model)
+    {
         Authentication authentication=service.getCurrentUser();
         model.addAttribute("user",authentication.getName());
         Employee employee= service.loginEmployeeDetails(authentication.getName());

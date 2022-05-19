@@ -1,6 +1,5 @@
 package com.grootan.assetManagement.Service;
 
-import com.grootan.assetManagement.Model.Device;
 import com.grootan.assetManagement.Model.Employee;
 import com.grootan.assetManagement.Model.EmployeeDepartment;
 import com.grootan.assetManagement.Model.Role;
@@ -19,7 +18,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.List;
 
 @Service
 public class CommonService {
@@ -65,6 +63,11 @@ public class CommonService {
     }
 
     public void initRoleAndUser() {
+        EmployeeDepartment employeeDepartment=new EmployeeDepartment();
+        employeeDepartment.setDepartment("FrontEnd");
+        employeeDepartmentDao.save(employeeDepartment);
+        employeeDepartment.setDepartment("BackEnd");
+        employeeDepartmentDao.save(employeeDepartment);
 
         Role adminRole = new Role();
         adminRole.setRoleName("ADMIN");
@@ -76,9 +79,9 @@ public class CommonService {
         userRole.setRoleDescription("Default role for newly created record");
         roleDao.save(userRole);
 
-        EmployeeDepartment employeeDepartment=new EmployeeDepartment();
-        employeeDepartment.setDepartment("admin");
-        employeeDepartmentDao.save(employeeDepartment);
+        EmployeeDepartment adminEmployeeDepartment=new EmployeeDepartment();
+        adminEmployeeDepartment.setDepartment("admin");
+        employeeDepartmentDao.save(adminEmployeeDepartment);
 
 
         Employee adminUser = new Employee();

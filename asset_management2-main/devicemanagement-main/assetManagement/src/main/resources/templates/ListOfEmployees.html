@@ -111,6 +111,11 @@
 var dropdown = document.getElementsByClassName("dropdown-btn");
 var i;
 
+console.log("uthaya");
+fetch("http://localhost:9093/employee/list")
+.then(res=> res.json())
+.then(data => console.log(data));
+
 for (i = 0; i < dropdown.length; i++) {
   dropdown[i].addEventListener("click", function() {
     this.classList.toggle("active");
@@ -122,6 +127,7 @@ for (i = 0; i < dropdown.length; i++) {
     }
   });
 }
+
 </script>
 </body>
 </html>

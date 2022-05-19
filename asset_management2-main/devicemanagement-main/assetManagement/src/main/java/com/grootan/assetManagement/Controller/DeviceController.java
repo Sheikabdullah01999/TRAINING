@@ -112,7 +112,9 @@ public class DeviceController {
         return gson.toJson(deviceService.findByCategory(name));
     }
 
-    @GetMapping("/device/update/{id}")
+    @ResponseBody
+    @RequestMapping(value = "/device/update/{id}", method = RequestMethod.GET)
+   // @GetMapping("/device/update/{id}")
     public ModelAndView showUpdateDevicePage(@PathVariable(name="id") int id,Model model)
     {
         ModelAndView editView = new ModelAndView("UpdateDevice");
@@ -170,7 +172,6 @@ public class DeviceController {
         }
 
     }
-
 
 
     @GetMapping("/device/add/name")

@@ -183,7 +183,12 @@ public class EmployeeController {
             model.addAttribute("errorMessage",e.getMessage());
             return "AddEmployeeDepartment";
         }
-
     }
+
+//    @GetMapping("/employee/delete/department/{id}")
+//    public String deleteEmployeeDepartment(@PathVariable(name="id") String id)
+//    {
+//
+//    }
 
 }

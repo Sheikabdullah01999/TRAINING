@@ -1,7 +1,5 @@
 package com.grootan.assetManagement.Configuration;
 
-import com.grootan.assetManagement.Model.Employee;
-import com.grootan.assetManagement.Service.DeviceService;
 import com.grootan.assetManagement.Service.UserDetailsServiceImp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -12,12 +10,9 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-
-import javax.sql.DataSource;
 
 @Configuration
 @EnableWebSecurity
@@ -26,13 +21,7 @@ import javax.sql.DataSource;
         securedEnabled = true,
         jsr250Enabled = true)
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
-////    @Autowired
-////   // DataSource dataSource;
-////    @Autowired
-////    private DeviceService deviceService;
-////    @Autowired
-////    private Employee employee;
-//    @Autowired
+
     private BCryptPasswordEncoder bCryptPasswordEncoder;
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -64,7 +53,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.cors().and().csrf().disable().authorizeRequests()
                 .antMatchers("/login").permitAll()
-                .antMatchers("/css/**","/images/**","/js/**").permitAll()
+                .antMatchers("/css/**","/images/**","/js/**","/employee/update").permitAll()
                 .antMatchers("/User").hasAuthority("USER")
                 .antMatchers("/").hasAuthority("ADMIN")
                 .anyRequest().authenticated()
@@ -72,7 +61,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 .formLogin()
                 .successHandler(successHandler)
-                .loginPage("/login")
+               // .loginPage("/login")
                 .permitAll()
                 .and()
                 .logout()

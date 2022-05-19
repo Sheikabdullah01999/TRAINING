@@ -31,6 +31,7 @@ public class EmployeeService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+
     Logger logger = Logger.getLogger("com.grootan.assetManagement.Service");
 
     //get all departments from the table
@@ -70,10 +71,6 @@ public class EmployeeService {
                 device.add(new Device(deviceId));
             }
         }
-        else
-        {
-            device.add(new Device());
-        }
 
         Employee employee = new Employee(employeeDetails.getEmpId(),
                 employeeDetails.getEmpName(), employeeDetails.getEmail(),
@@ -104,15 +101,12 @@ public class EmployeeService {
         return employeeDao.save(employee);
     }
 
-
-
     //get device by device id
     public List<Integer> getDeviceID(String device)
     {
         List<String> list = null;
         if (device != null)
         {
-
             list = Arrays.asList(device.split(","));
         }
 
@@ -136,11 +130,6 @@ public class EmployeeService {
                 }
             }
         }
-        else
-        {
-
-        }
-
         return deviceId;
     }
 
@@ -359,9 +348,7 @@ public class EmployeeService {
             updatedEmployeeHistory=updatedEmployeeHistory+",Employee Email changed from "
                     +emp.getEmail()+" to "+employeeDetails.getEmail();
         }
-
         return updatedEmployeeHistory;
-
     }
 
     //delete employee devices by employeeId
@@ -369,6 +356,17 @@ public class EmployeeService {
     {
         deviceDao.updateAssignStatusAndDeviceStatus(id);
         employeeDao.deleteEmployeeByEmpDevice(id);
+    }
+
+    public void deleteEmployeeDepartment(String department)
+    {
+        employeeDepartmentDao.deleteDepartment(department);
+    }
+
+    public EmployeeDevices employeeDevices(int id)
+    {
+        EmployeeDevices empDevice=employeeDao.getUserDevices(id);
+        return empDevice;
     }
 
 }
