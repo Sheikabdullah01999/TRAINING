@@ -254,7 +254,7 @@ var roleDescription = $("#roleDescription").val();
 $.ajax({
 			type : "POST",
 			contentType : "application/json",
-			url : 'http://localhost:9092/role/save',
+			url : '/role/save',
 			data : JSON.stringify({roleName:roleName,roleDescription:roleDescription}),
 			dataType : 'json',
 			success : function(result) {

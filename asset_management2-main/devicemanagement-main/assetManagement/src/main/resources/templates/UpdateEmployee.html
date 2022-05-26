@@ -282,7 +282,7 @@ var assignRole = $("#assignRole").val();
 $.ajax({
 			type : "PUT",
 			contentType : "application/json",
-			url : 'http://localhost:9092/employee/update',
+			url : '/employee/update',
 			data : JSON.stringify({empId:empId,empName:empName,email:email,empPassword:empPassword,empDepartment:empDepartment,empDevices:empDevices,assignRole:assignRole}),
 			dataType : 'json',
 			success : function(result) {

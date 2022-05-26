@@ -148,7 +148,7 @@ var assignRole = $("#assignRole").val();
 $.ajax({
 			type : "POST",
 			contentType : "application/json",
-			url : 'http://localhost:9092/employee/add',
+			url : '/employee/add',
 			data : JSON.stringify({empId:empId,empName:empName,email:email,empPassword:empPassword,empDepartment:empDepartment,empDevices:empDevices,assignRole:assignRole}),
 			dataType : 'json',
 			success : function(result) {
@@ -158,7 +158,7 @@ $.ajax({
 			},
 			error : function(request,status,error) {
 				alert(request.responseText);
-				window.location.href='http://localhost:9092/employee/registration';
+				window.location.href='/employee/registration';
 			}
 		});
 		resetData();

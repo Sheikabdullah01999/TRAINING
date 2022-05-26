@@ -86,7 +86,7 @@
 <script>
 $(document).ready(function(){
 $.ajax({
-url:"http://localhost:9092/employee/user/devices/all",
+url:"/employee/user/devices/all",
 type:"GET",
 contentType : "application/json",
 dataType : 'json',
@@ -111,7 +111,7 @@ function Delete(id)
  $.ajax({
 			type : "DELETE",
 			contentType : "application/json",
-			url : 'http://localhost:9092/employee/device/delete/'+id,
+			url : '/employee/device/delete/'+id,
 			dataType : 'json',
 			success : function() {
 				alert("Deleted Successfully");

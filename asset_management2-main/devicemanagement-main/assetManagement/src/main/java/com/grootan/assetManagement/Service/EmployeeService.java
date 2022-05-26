@@ -5,6 +5,7 @@ import com.grootan.assetManagement.Exception.GeneralException;
 import com.grootan.assetManagement.Model.*;
 import com.grootan.assetManagement.Repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
@@ -244,7 +245,7 @@ public class EmployeeService {
         }
         String newDeletedDeviceHistory="employee Id "+empID+"Records deleted ";
         String userName=service.currentUser();
-        History history=new History(userName,USER_DELETE,newDeletedDeviceHistory,service.DateAndTime());
+        History history=new History(userName,USER_DELETE,new Gson().toJson(empID),service.DateAndTime());
         historyDao.save(history);
 
     }
@@ -283,7 +284,7 @@ public class EmployeeService {
         }
         String newDeviceHistory="New Department Name: "+employeeDepartment.getDepartment();
         String userName=service.currentUser();
-        History history=new History(userName,EMP_DEPARTMENT_ADD,newDeviceHistory,service.DateAndTime());
+        History history=new History(userName,EMP_DEPARTMENT_ADD,new Gson().toJson(employeeDepartment),service.DateAndTime());
         historyDao.save(history);
         employeeDepartment.setDepartment(i);
 
@@ -294,28 +295,26 @@ public class EmployeeService {
     //update employee details
     public Employee updateEmployee(Employee employeeDetails)
     {
-        List<Integer> updatedDeviceList = null;
+        List<Integer> updatedDeviceList = new ArrayList<>();
+
         List<Device> device=new ArrayList<>();
+
         if(employeeDetails.getEmpDevices()!=null)
         {
-
-            String newDevice=employeeDetails.getEmpDevices();
-            if(newDevice!=null)
-            {
-                updatedDeviceList=getDeviceID(newDevice);
-            }
+                updatedDeviceList=getDeviceID(employeeDetails.getEmpDevices());
         }
         List<Integer> existingDevice=deviceDao.deviceId(employeeDetails.getEmpId());
-        for(Integer id:existingDevice)
-        {
-            updatedDeviceList.add(id);
-        }
 
-        for(Integer Id : updatedDeviceList)
+        if(existingDevice!=null)
         {
-            device.add(new Device(Id));
+            updatedDeviceList.addAll(existingDevice);
+
+            for(Integer Id : updatedDeviceList)
+            {
+                device.add(new Device(Id));
+            }
+            updateAssignStatus(updatedDeviceList);
         }
-        updateAssignStatus(updatedDeviceList);
 
         Employee employee = new Employee(employeeDetails.getEmpId(),
                 employeeDetails.getEmpName(), employeeDetails.getEmail(),
@@ -323,11 +322,9 @@ public class EmployeeService {
                 employeeDetails.getAssignRole(),
                 Arrays.asList(new Role(employeeDetails.getAssignRole())),device);
 
-
-
         String updatedEmployeeHistory=updatedEmployeeHistory(employeeDetails,updatedDeviceList);
         String userName=service.currentUser();
-        History history=new History(userName,USER_UPDATED,updatedEmployeeHistory,service.DateAndTime());
+        History history=new History(userName,USER_UPDATED,new Gson().toJson(employeeDetails),service.DateAndTime());
 
         historyDao.save(history);
         return employeeDao.save(employee);

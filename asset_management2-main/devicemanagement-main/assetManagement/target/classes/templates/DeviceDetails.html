@@ -124,15 +124,15 @@ function Delete(id)
  $.ajax({
 			type : "DELETE",
 			contentType : "application/json",
-			url : 'http://localhost:9092/device/delete/'+id,
+			url : '/device/delete/'+id,
 			dataType : 'json',
 			success : function() {
 				alert("Deleted Successfully");
-				window.location.href='http://localhost:9092/device/list';
+				window.location.href='/device/list';
 			},
 			error : function(request,status,error) {
 				alert(request.responseText);
-				window.location.href='http://localhost:9092/device/list';
+				window.location.href='/device/list';
 			}
 		});
 }

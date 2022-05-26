@@ -101,7 +101,7 @@ var department = $("#department").val();
 $.ajax({
 			type : "POST",
 			contentType : "application/json",
-			url : 'http://localhost:9092/employee/department/save',
+			url : '/employee/department/save',
 			data : JSON.stringify({department:department}),
 			dataType : 'json',
 			success : function(result) {

@@ -102,7 +102,7 @@ var deviceCategory = $("#deviceCategory").val();
 $.ajax({
 			type : "POST",
 			contentType : "application/json",
-			url : 'http://localhost:9092/device/name/add',
+			url : '/device/name/add',
 			data : JSON.stringify({name:name,deviceCategory:deviceCategory}),
 			dataType : 'json',
 			success : function(result) {

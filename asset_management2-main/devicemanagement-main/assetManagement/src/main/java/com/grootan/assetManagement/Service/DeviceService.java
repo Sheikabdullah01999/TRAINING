@@ -1,5 +1,6 @@
 package com.grootan.assetManagement.Service;
 
+import com.google.gson.Gson;
 import com.grootan.assetManagement.Exception.GeneralException;
 import com.grootan.assetManagement.Model.*;
 import com.grootan.assetManagement.Repository.*;
@@ -107,7 +108,7 @@ public class DeviceService {
       }
         String deviceHistory=NEW_DEVICE_NAME+device.getDeviceName()+","
                 +NEW_DEVICE_MANUFACTURE_ID+device.getManufacturedId();
-        History history=new History(service.currentUser(),DEVICE_ADD,deviceHistory,service.DateAndTime());
+        History history=new History(service.currentUser(),DEVICE_ADD,new Gson().toJson(device),service.DateAndTime());
         historyDao.save(history);
         return deviceDao.save(device);
     }
@@ -116,7 +117,7 @@ public class DeviceService {
     public void updateDeviceDetails(Device device) {
         String deviceHistory=NEW_DEVICE_NAME+device.getDeviceName()+","
                 +NEW_DEVICE_MANUFACTURE_ID+device.getManufacturedId();
-        History history=new History(service.currentUser(),DEVICE_UPDATED,deviceHistory,service.DateAndTime());
+        History history=new History(service.currentUser(),DEVICE_UPDATED,new Gson().toJson(device),service.DateAndTime());
         historyDao.save(history);
         deviceDao.save(device);
     }
@@ -125,7 +126,7 @@ public class DeviceService {
     public void updateDeviceCategory(DeviceCategory deviceCategory) {
         System.out.println(deviceCategory.getCategory());
         String deviceHistory=DEVICE_CATEGORY+deviceCategory.getCategory();
-        History history=new History(service.currentUser(),DEVICE_UPDATED,deviceHistory,service.DateAndTime());
+        History history=new History(service.currentUser(),DEVICE_UPDATED,new Gson().toJson(deviceCategory),service.DateAndTime());
         historyDao.save(history);
         deviceCategoryDao.save(deviceCategory);
     }
@@ -149,7 +150,7 @@ public class DeviceService {
         String deviceDeleteHistory=DEVICE_ID+device.getId()+","
                     +"device name: "+device.getDeviceName();
             String userName=service.currentUser();
-            History history1=new History(userName,DEVICE_DELETE,deviceDeleteHistory,service.DateAndTime());
+            History history1=new History(userName,DEVICE_DELETE,new Gson().toJson(id),service.DateAndTime());
             historyDao.save(history1);
             deviceDao.deleteForiegnKey(id);
             deviceDao.deleteById(id);
@@ -191,7 +192,7 @@ public class DeviceService {
         String userName=service.currentUser();
         DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy hh.mm aa");
         String dateString = dateFormat.format(new Date()).toString();
-        History history=new History(userName,DEVICE_CATEGORY_ADD,newDeviceHistory,dateString);
+        History history=new History(userName,DEVICE_CATEGORY_ADD,new Gson().toJson(category),dateString);
         historyDao.save(history);
         category.setCategory(i);
        return deviceCategoryDao.save(category);
@@ -224,7 +225,7 @@ public class DeviceService {
         }
         String newDeviceHistory="New Device  Name: "+deviceName.getName();
         String userName=service.currentUser();
-        History history=new History(userName,DEVICE_NAME_ADD,newDeviceHistory,service.DateAndTime());
+        History history=new History(userName,DEVICE_NAME_ADD,new Gson().toJson(deviceName),service.DateAndTime());
         historyDao.save(history);
         deviceName.setName(i);
         return deviceNameDao.save(deviceName);

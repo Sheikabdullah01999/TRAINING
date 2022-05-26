@@ -1,5 +1,6 @@
 package com.grootan.assetManagement.Service;
 
+import com.google.gson.Gson;
 import com.grootan.assetManagement.Exception.GeneralException;
 import com.grootan.assetManagement.Model.History;
 import com.grootan.assetManagement.Model.Role;
@@ -53,7 +54,7 @@ public class RoleService {
             throw new GeneralException(R0LE_EXISTS+role.getRoleName());
         }
         String roleHistory=NEW_ROLE+role.getRoleName();
-        History history=new History(service.currentUser(),ROLE_ADD,roleHistory,service.DateAndTime());
+        History history=new History(service.currentUser(),ROLE_ADD,new Gson().toJson(role),service.DateAndTime());
         historyDao.save(history);
         return roleDao.save(role);
     }

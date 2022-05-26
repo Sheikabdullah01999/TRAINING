@@ -273,7 +273,7 @@ var deviceStatus = $("#deviceStatus").val();
 $.ajax({
 			type : "PUT",
 			contentType : "application/json",
-			url : 'http://localhost:9092/device/update/device',
+			url : '/device/update/device',
 			data : JSON.stringify({id:id,category:category,deviceName:deviceName,manufacturedId:manufacturedId,devicePurchaseDate:devicePurchaseDate,assignStatus:assignStatus,deviceStatus:deviceStatus}),
 			dataType : 'json',
 			success : function(result) {
