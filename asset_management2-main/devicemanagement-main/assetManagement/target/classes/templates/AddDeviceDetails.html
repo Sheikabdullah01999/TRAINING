@@ -22,7 +22,7 @@
         <header>
             <div class="image-text">
                 <span class="image">
-                    <img th:src="@{images/grootan.webp}" alt="">
+                    <img src="/images/grootan.webp" alt="">
                 </span>
 
                 <div class="text logo-text">
@@ -78,41 +78,41 @@
         <div class="alert alert-info">[[${errorMessage}]]</div>
     </div>
 
-    <form th:action="@{/device/add/details}" method="post" th:object="${devices}">
+    <form  method="post">
         <h1>Device Registration</h1>
         <div class="form-group">
             <label class="control-label"> Device Category </label>
-            <select class="form-control" id="category"  th:name="device" th:field="*{category}" required>
+            <select class="form-control" id="category"  th:name="device"  required>
                 <option value="please select a category">Select a Device Category</option>
                 <option th:each="device:${ListOfDeviceCategory}" th:value="${device.category}" th:text="${device.category}" required></option>
             </select>
         </div>
         <div class="form-group">
             <label class="control-label">Device Name</label>
-            <select id="deviceName" class="form-control" th:field="*{deviceName}" required></select>
+            <select id="deviceName" class="form-control"  required></select>
         </div>
         <div class="form-group">
-            <label class="control-label" for="manufacture"> Manufacture Id </label>
-            <input id="manufacture" class="form-control" th:field="*{manufacturedId}" placeholder="Enter manufactured id" required
+            <label class="control-label" for="manufacturedId"> Manufacture Id </label>
+            <input id="manufacturedId" class="form-control"  placeholder="Enter manufactured id" required
                    autofocus="autofocus" />
         </div>
 
         <div class="form-group">
-            <label class="control-label" for="department"> DevicePurchaseDate </label>
-            <input id="department" class="form-control" type="date"
-                   th:field="*{devicePurchaseDate}" placeholder="Enter Password" required autofocus="autofocus" />
+            <label class="control-label" for="devicePurchaseDate"> DevicePurchaseDate </label>
+            <input  class="form-control" type="date" id="devicePurchaseDate"
+                    placeholder="Enter Password" required autofocus="autofocus" />
         </div>
         <div class="form-group">
             <label class="control-label" > AssignStatus </label>
 
-            <select class="form-control" th:field="*{assignStatus}">
+            <select class="form-control"  id="assignStatus">
                 <option th:value="unassigned">Unassigned</option>
             </select>
         </div>
 
         <div class="form-group">
             <label class="control-label" > DeviceStatus  </label>
-            <select class="form-control" th:field="*{deviceStatus}">
+            <select class="form-control"  id="deviceStatus">
                 <option th:value="new">New</option>
                 <option th:value="damaged">Damaged</option>
             </select>
@@ -120,15 +120,46 @@
         </div>
 
         <div class="form-group">
-            <button type="submit" class="btn btn-success btn1">Register</button>
+            <button type="submit" class="btn btn-success btn1" onclick="ajaxPost()">Register</button>
             <a th:href="@{/}" class="btn btn-primary btn2">Back</a>
         </div>
     </form>
 </div>
-</div>
-</div>
-</div>
 <script type="text/javascript">
+function ajaxPost()
+{
+var category = $("#category").val();
+var deviceName = $("#deviceName").val();
+var manufacturedId = $("#manufacturedId").val();
+var devicePurchaseDate = $("#devicePurchaseDate").val();
+var assignStatus = $("#assignStatus").val();
+var deviceStatus = $("#deviceStatus").val();
+$.ajax({
+			type : "POST",
+			contentType : "application/json",
+			url : 'http://localhost:9092/device/add/add',
+			data : JSON.stringify({category:category,deviceName:deviceName,manufacturedId:manufacturedId,devicePurchaseDate:devicePurchaseDate,assignStatus:assignStatus,deviceStatus:deviceStatus}),
+			dataType : 'json',
+			success : function(result) {
+				console.log(result);
+				alert("Registered Successfully");
+				window.location.href='/device/list';
+			},
+			error : function(request,status,error) {
+				alert(request.responseText);
+			}
+		});
+		resetData();
+}
+function resetData()
+{
+ $("#category").val("");
+ $("#deviceName").val("");
+ $("#manufacturedId").val("");
+ $("#devicePurchaseDate").val("");
+ $("#assignStatus").val("");
+ $("#deviceStatus").val("");
+}
 $("#category").change(function() {
         var x = $("#category").val();
         console.log(x);

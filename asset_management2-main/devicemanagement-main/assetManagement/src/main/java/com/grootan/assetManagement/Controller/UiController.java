@@ -38,4 +38,9 @@ public class UiController {
     public String login() {
         return "Login";
     }
+
+    @GetMapping("/frames")
+    public String frames(){
+        return "frames";
+    }
 }

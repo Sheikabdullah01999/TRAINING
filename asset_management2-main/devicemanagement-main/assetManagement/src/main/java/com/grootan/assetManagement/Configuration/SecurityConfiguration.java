@@ -41,9 +41,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         auth.setPasswordEncoder(passwordEncoder());
         return auth;
     }
-    public String getEncodedPassword(String password) {
-        return passwordEncoder.encode(password);
-    }
+
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.authenticationProvider(authenticationProvider());
@@ -61,7 +59,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 .formLogin()
                 .successHandler(successHandler)
-               // .loginPage("/login")
+                 .loginPage("/login")
                 .permitAll()
                 .and()
                 .logout()
@@ -69,6 +67,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .clearAuthentication(true)
                 .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
                 .permitAll();
+
+        http.headers().frameOptions().disable();
 
     }
 }

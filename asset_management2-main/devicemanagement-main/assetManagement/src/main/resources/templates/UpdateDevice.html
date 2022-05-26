@@ -152,7 +152,7 @@ header .image-text .profession{
         <header>
             <div class="image-text">
                 <span class="image">
-                    <img th:src="@{images/grootan.webp}" alt="">
+                    <img src="/images/grootan.webp" alt="">
                 </span>
 
                 <div class="text logo-text">
@@ -210,7 +210,7 @@ header .image-text .profession{
     </div>
     <h1>Update Device</h1>
 
-    <form th:action="@{/device/update}" method="post" th:object="${device}">
+    <form  method="post" th:object="${device}">
         <div class="form-group">
             <label class="control-label" for="id"> DeviceId </label>
             <input id="id" class="form-control" th:field="*{id}" readonly="readonly"
@@ -226,8 +226,8 @@ header .image-text .profession{
         </div>
 
         <div class="form-group">
-            <label class="control-label" for="manufacture"> Manufacture Id </label>
-            <input id="manufacture" class="form-control" th:field="*{manufacturedId}" placeholder="Enter manufactured id" required
+            <label class="control-label" for="manufacturedId"> Manufacture Id </label>
+            <input id="manufacturedId" class="form-control" th:field="*{manufacturedId}" placeholder="Enter manufactured id" required
                    autofocus="autofocus" />
         </div>
 
@@ -237,30 +237,63 @@ header .image-text .profession{
         </div>
 
         <div class="form-group">
-            <label class="control-label" for="department"> DevicePurchaseDate </label>
-            <input id="department" class="form-control" type="date"
+            <label class="control-label" for="devicePurchaseDate"> DevicePurchaseDate </label>
+            <input id="devicePurchaseDate" class="form-control" type="date"
                    th:field="*{devicePurchaseDate}" required autofocus="autofocus" />
         </div>
 <!--        readonly="readonly"-->
         <div class="form-group">
-            <label class="control-label" for="laptop"> Assign Status </label>
-            <input id="" class="form-control" readonly="readonly"
+            <label class="control-label" for="assignStatus"> Assign Status </label>
+            <input id="assignStatus" class="form-control" readonly="readonly"
                    th:field="*{assignStatus}" required autofocus="autofocus" />
         </div>
 <!--        readonly="readonly"-->
         <div class="form-group">
-            <label class="control-label" for="laptop"> DeviceStatus  </label>
-            <input id="laptop" class="form-control"readonly="readonly"
+            <label class="control-label" for="deviceStatus"> DeviceStatus  </label>
+            <input id="deviceStatus" class="form-control"readonly="readonly"
                    th:field="*{deviceStatus}" required autofocus="autofocus" />
         </div>
 
         <div class="form-group">
-            <button type="submit" class="btn btn-success btn1">update</button>
+            <button type="submit" class="btn btn-success btn1" onclick="ajaxUpdate()">update</button>
             <a th:href="@{/device/list}" class="btn btn-primary btn2">Back</a>
         </div>
     </form>
 </div>
 <script type="text/javascript">
+function ajaxUpdate()
+{
+var id = $("#id").val();
+var category = $("#category").val();
+var deviceName = $("#deviceName").val();
+var manufacturedId = $("#manufacturedId").val();
+var devicePurchaseDate = $("#devicePurchaseDate").val();
+var assignStatus = $("#assignStatus").val();
+var deviceStatus = $("#deviceStatus").val();
+$.ajax({
+			type : "PUT",
+			contentType : "application/json",
+			url : 'http://localhost:9092/device/update/device',
+			data : JSON.stringify({id:id,category:category,deviceName:deviceName,manufacturedId:manufacturedId,devicePurchaseDate:devicePurchaseDate,assignStatus:assignStatus,deviceStatus:deviceStatus}),
+			dataType : 'json',
+			success : function(result) {
+				console.log(result);
+				alert("Updated Successfully");
+				window.location.href='/device/list';
+			},
+			error : function(request,status,error) {
+				alert(request.responseText);
+			}
+		});
+		resetData();
+}
+function resetData()
+{
+ $("#category").val("");
+ $("#deviceName").val("");
+ $("#manufacturedId").val("");
+ $("#devicePurchaseDate").val("");
+}
 $("#category").change(function() {
         var x = $("#category").val();
         console.log(x);

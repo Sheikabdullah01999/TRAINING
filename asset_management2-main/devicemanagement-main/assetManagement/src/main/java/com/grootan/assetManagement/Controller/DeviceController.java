@@ -158,20 +158,20 @@ public class DeviceController {
         return "AddDeviceCategory";
     }
 
-    @PostMapping("/device/save/category")
-    public String saveDeviceCategory(@ModelAttribute("deviceCategory") DeviceCategory deviceCategory,Model model)
-    {
-        try{
-            deviceService.saveDeviceCategory(deviceCategory);
-            return "redirect:/device/add/category?success";
-        }
-        catch(GeneralException e)
-        {
-            model.addAttribute("errorMessage",e.getMessage());
-            return "AddDeviceCategory";
-        }
+//    @PostMapping("/device/save/category")
+//    public String saveDeviceCategory(@ModelAttribute("deviceCategory") DeviceCategory deviceCategory,Model model)
+//    {
+//        try{
+//            deviceService.saveDeviceCategory(deviceCategory);
+//            return "redirect:/device/add/category?success";
+//        }
+//        catch(GeneralException e)
+//        {
+//            model.addAttribute("errorMessage",e.getMessage());
+//            return "AddDeviceCategory";
+//        }
 
-    }
+//    }
 
 
     @GetMapping("/device/add/name")

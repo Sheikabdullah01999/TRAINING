@@ -1,5 +1,6 @@
 package com.grootan.assetManagement.Controller.RestController;
 
+import com.grootan.assetManagement.Exception.GeneralException;
 import com.grootan.assetManagement.Model.Employee;
 import com.grootan.assetManagement.Model.EmployeeDepartment;
 import com.grootan.assetManagement.Model.EmployeeDevices;
@@ -10,12 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
-
-
-@org.springframework.web.bind.annotation.RestController
-
-public class RestController {
+@RestController
+public class EmployeeRestController {
     @Autowired
     EmployeeDepartmentDao employeeDepartmentDao;
     @Autowired
@@ -23,7 +22,7 @@ public class RestController {
     @Autowired
     EmployeeService employeeService;
 
-    @GetMapping("/GET/EMP")
+    @GetMapping("/employee/department/emp")
     public ResponseEntity<List<EmployeeDepartment>> getEmployeeDepartment()
     {
         List<EmployeeDepartment> list=employeeDepartmentDao.findAll();
@@ -34,19 +33,26 @@ public class RestController {
     public ResponseEntity<List<EmployeeDepartment>> deleteEmployeeDepartment(String empDep)
     {
         employeeService.deleteEmployeeDepartment(empDep);
-     List<EmployeeDepartment> list=employeeDepartmentDao.findAll();
-     if(list.isEmpty())
-     {
-         return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-     }
-     return  ResponseEntity.status(HttpStatus.OK).body(list);
+        List<EmployeeDepartment> list=employeeDepartmentDao.findAll();
+        if(list.isEmpty())
+        {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return  ResponseEntity.status(HttpStatus.OK).body(list);
     }
 
-    @PostMapping("/employee/registration")
+    @PostMapping("/employee/add")
     public ResponseEntity<Object> employeeRegistration(@RequestBody Employee employee)
     {
-        employeeService.saveEmployee(employee);
-        return ResponseEntity.status(HttpStatus.CREATED).body("success");
+        try
+        {
+            return ResponseEntity.status(HttpStatus.CREATED).body(employeeService.saveEmployee(employee));
+        }
+        catch(GeneralException e)
+        {
+            return ResponseEntity.status(HttpStatus.CREATED).body(e.getMessage());
+        }
+
     }
 
     @GetMapping("/employee/all/list")
@@ -72,30 +78,42 @@ public class RestController {
     }
 
     @DeleteMapping("/employee/device/delete/{id}")
-    public ResponseEntity<Object> deleteEmployeeDevice(int id)
+    public ResponseEntity<List<EmployeeDevices>> deleteEmployeeDevice(@PathVariable(name="id") int id)
     {
-       EmployeeDevices devices=employeeService.employeeDevices(id);
-       if(devices==null)
-       {
-           return  ResponseEntity.status(HttpStatus.NOT_FOUND).body("no records found");
-       }
-       employeeService.deleteEmpDevices(id);
-       return ResponseEntity.status(HttpStatus.OK).body("deleted Successfully");
+        employeeService.deleteEmpDevices(id);
+        List<EmployeeDevices> userDevices = employeeService.getUserDevices();
+        return ResponseEntity.status(HttpStatus.OK).body(userDevices);
     }
 
-    @PutMapping("/employee/update/{id}")
-    public ResponseEntity<List<Employee>> updateEmployee(@PathVariable(name="id") String  empId,@RequestBody Employee employee)
+    @PutMapping("/employee/update")
+    public ResponseEntity<List<Employee>> updateEmployee(@RequestBody Employee employee)
     {
-        Employee employee1=employeeService.findEmployeeById(empId);
-        if(employee1==null)
-        {
-           return  ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
-        employeeService.updateEmployee(employee1);
+
+        employeeService.updateEmployee(employee);
         List<Employee> list=employeeService.getAllEmployees();
         return ResponseEntity.status(HttpStatus.OK).body(list);
     }
 
+    @PostMapping("/employee/department/save")
+    public ResponseEntity<Object> addEmployeeDepartment(@RequestBody EmployeeDepartment dep)
+    {
+        try
+        {
+            return  ResponseEntity.status(HttpStatus.CREATED).body(employeeService.saveEmpDepartment(dep));
+        }
+        catch(GeneralException e)
+        {
+            return ResponseEntity.status(HttpStatus.OK).body(e.getMessage());
+        }
 
+    }
+
+    @DeleteMapping("/delete/employee/{id}")
+    public  ResponseEntity<List<Employee>> deleteEmployeeById(@PathVariable(name="id") String empId)
+    {
+        employeeService.deleteEmpDetails(empId);
+        List<Employee> list=employeeService.getAllEmployees();
+        return ResponseEntity.status(HttpStatus.OK).body(list);
+    }
 
 }

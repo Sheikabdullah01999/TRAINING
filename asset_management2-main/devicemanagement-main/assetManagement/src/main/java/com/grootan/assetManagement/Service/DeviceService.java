@@ -71,7 +71,35 @@ public class DeviceService {
 
 
     //Add device details
-    public void addDeviceDetails(Device device) {
+    public Device addDeviceDetails(Device device) {
+      if(device.getCategory()=="")
+      {
+          throw new GeneralException("Select the device category");
+      }
+
+      if(device.getDeviceName()=="")
+      {
+          throw new GeneralException("Select the deviceName");
+      }
+
+      if(device.getManufacturedId()=="")
+      {
+          throw new GeneralException("Enter the device manufactureId");
+      }
+
+      if(device.getAssignStatus()=="")
+      {
+          throw new GeneralException("Select the device assignStatus");
+      }
+
+      if(device.getDevicePurchaseDate()==null)
+      {
+          throw new GeneralException("Pick the devicePurchaseDate");
+      }
+      if(device.getDeviceStatus()=="")
+      {
+          throw new GeneralException("Select the device Status");
+      }
 
       if(deviceIdExists(device.getManufacturedId()))
       {
@@ -81,7 +109,7 @@ public class DeviceService {
                 +NEW_DEVICE_MANUFACTURE_ID+device.getManufacturedId();
         History history=new History(service.currentUser(),DEVICE_ADD,deviceHistory,service.DateAndTime());
         historyDao.save(history);
-        deviceDao.save(device);
+        return deviceDao.save(device);
     }
 
     //update device details
@@ -145,9 +173,14 @@ public class DeviceService {
     }
 
     //save device category
-    public void saveDeviceCategory(DeviceCategory category) {
+    public DeviceCategory saveDeviceCategory(DeviceCategory category) {
         String lower = category.getCategory();
         String i = lower.toLowerCase();
+      if(category.getCategory()=="")
+      {
+          throw new GeneralException("Enter the category");
+      }
+
       if(deviceCategoryExists(i))
       {
           throw new GeneralException("This category is already exists: "+category.getCategory());
@@ -161,7 +194,7 @@ public class DeviceService {
         History history=new History(userName,DEVICE_CATEGORY_ADD,newDeviceHistory,dateString);
         historyDao.save(history);
         category.setCategory(i);
-       deviceCategoryDao.save(category);
+       return deviceCategoryDao.save(category);
     }
 
     //get device category
@@ -172,21 +205,29 @@ public class DeviceService {
     }
 
     //save device name
-    public void saveDeviceName(DeviceName deviceName)
+    public DeviceName saveDeviceName(DeviceName deviceName)
     {
         DeviceCategory deviceCategory = deviceName.getDeviceCategory();
         String lower = deviceName.getName();
         String i = lower.toLowerCase();
+        if(deviceName.getName()=="")
+        {
+            throw new GeneralException("Enter the deviceName");
+        }
+        if(deviceCategory.getCategory()=="")
+        {
+            throw new GeneralException("Enter the category");
+        }
         if(deviceNameExists(i))
         {
-            throw new GeneralException("This Product Name is Already Exists: "+deviceName.getName());
+            throw new GeneralException("This device Name is Already Exists: "+deviceName.getName());
         }
         String newDeviceHistory="New Device  Name: "+deviceName.getName();
         String userName=service.currentUser();
         History history=new History(userName,DEVICE_NAME_ADD,newDeviceHistory,service.DateAndTime());
         historyDao.save(history);
         deviceName.setName(i);
-        deviceNameDao.save(deviceName);
+        return deviceNameDao.save(deviceName);
     }
 
     //get device name

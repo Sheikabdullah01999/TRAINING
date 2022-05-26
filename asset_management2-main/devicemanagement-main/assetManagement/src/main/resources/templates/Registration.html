@@ -13,167 +13,15 @@
     <link href="https://fonts.googleapis.com/css2?family=Orelega+One&display=swap" rel="stylesheet">
     <link href='https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css' rel='stylesheet'/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <style>
-    body {
-    font-family: "Lato", sans-serif;
-    background-color:#E4E9F7;
-    }
-
-
-    /* Fixed sidenav, full height */
-    .sidenav {
-    height: 100%;
-    width: 300px;
-    position: fixed;
-    z-index: 1;
-    top: 0;
-    left: 0;
-    background-color: white;
-    overflow-x: hidden;
-    padding-top: 20px;
-    }
-
-    /* Style the sidenav links and the dropdown button */
-   .dropdown-btn {
-    padding: 6px 8px 6px 16px;
-    text-decoration: none;
-    font-size: 20px;
-    color: #818181;
-    display: block;
-    border: none;
-    background: none;
-    width: 100%;
-    text-align: left;
-    cursor: pointer;
-    outline: none;
-    font-weight:bold;
-    }
-
-    /* On mouse-over */
-    .sidenav a:hover, .dropdown-btn:hover {
-    text-decoration:none;
-    color: #3a3b3c;
-    }
-
-    /* Main content */
-    .main {
-    margin-left: 300px; /* Same as the width of the sidenav */
-    font-size: 20px; /* Increased text to enable scrolling */
-    padding: 0px 10px;
-    }
-
-    /* Add an active class to the active dropdown button */
-    .active {
-    background-color: #695CFE;
-    color: #3a3b3c;
-    }
-
-    /* Dropdown container (hidden by default). Optional: add a lighter background color and some left padding to change the design of the dropdown content */
-    .dropdown-container {
-    display: none;
-    padding-left: 8px;
-    }
-
-    /* Optional: Style the caret down icon */
-    .fa-caret-down {
-    float: right;
-    padding-right: 8px;
-    }
-
-    /* Some media queries for responsiveness */
-    @media screen and (max-height: 450px) {
-    .sidenav {padding-top: 15px;}
-    .sidenav a {font-size: 18px;}
-    }
-    .sidebar header .image
-    {
-    min-width: 60px;
-    border-radius: 6px;
-    }
-    .sidebar header{
-    position: relative;
-    }
-
-    .sidebar header .image-text{
-    display: flex;
-    align-items: center;
-    }
-    .sidebar header .logo-text{
-    display: flex;
-    flex-direction: column;
-    }
-    header .image-text .name {
-    margin-top: 2px;
-    font-size: 18px;
-    font-weight: 600;
-    }
-
-    header .image-text .profession{
-    font-size: 16px;
-    margin-top: -2px;
-    display: block;
-    }
-
-    .sidebar header .image{
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    }
-    .sidebar header .image img{
-    width: 40px;
-    border-radius: 6px;
-    }
-    a
-    {
-    padding: 6px 8px 6px 16px;
-    text-decoration: none;
-    font-size: 16px;
-    color: #818181;
-    display: block;
-    border: none;
-    background: none;
-    width: 100%;
-    text-align: left;
-    cursor: pointer;
-    outline: none;
-    }
-    .control-label
-    {
-    font-style:italic;
-    font-size:18px;
-    }
-    .form-control
-    {
-    width:60%;
-    }
-    .btn2
-    {
-    width:5%;
-    }
-    h1
-    {
-    color:#3A86FF;
-    text-align:center;
-    padding:20px;
-    font-family: 'Orelega One', cursive;
-    }
-    input,label,.btn1,select,input[type="checkbox"]
-    {
-    margin-left:240px;
-    }
-    li
-    {
-    list-style-type:none;
-    }
-    </style>
-</head>
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <body>
 <div class="sidenav">
     <nav class="sidebar">
         <header>
             <div class="image-text">
                 <span class="image">
-                    <img th:src="@{images/grootan.webp}" alt="">
+                    <img src="/images/grootan.webp" alt="">
                 </span>
 
                 <div class="text logo-text">
@@ -215,88 +63,116 @@
     <br>
     <a th:href="@{/history}" class="dropdown-btn"><i class="fa fa-history" aria-hidden="true"></i>&nbsp;History</a>
     <br>
-    <a sec:authorize="isAuthenticated()" th:href="@{/logout}" class="dropdown-btn"><i class="fa fa-sign-out" aria-hidden="true"></i>&nbsp;Logout</a>
+    <a sec:authorize="isAuthenticated()" th:href="@{/logout}" class="dropdown-btn" ><i class="fa fa-sign-out" aria-hidden="true"></i>&nbsp;Logout</a>
 </div>
 <div class="main">
-    <!-- success message -->
-    <div th:if="${param.success}">
-        <div class="alert alert-info">You've successfully registered
-            to Grootan Asset Management website!</div>
+    <div>
+        <h1>Employee Registration</h1>
+        <form  method="post" onsubmit="return validation()">
+            <div class="form-group">
+                <label class="control-label"> EmployeeId </label>
+                <input id="empId" class="form-control"  placeholder="Enter EmployeeId"
+                       required autofocus="autofocus" />
+                <!--          autocomplete="off"-->
+            </div>
+
+            <div class="form-group">
+                <label class="control-label" > EmployeeName </label>
+                <input id="empName" class="form-control"  placeholder="Enter EmployeeName"
+                       required autofocus="autofocus" />
+            </div>
+
+            <div class="form-group">
+                <label class="control-label" for="email"> EmployeeEmail </label>
+                <input id="email" class="form-control"  placeholder="Enter Email" required
+                       autofocus="autofocus" />
+            </div>
+
+            <div class="form-group">
+                <label class="control-label" for="empPassword"> EmployeePassword </label>
+                <input id="empPassword" class="form-control" type="password" placeholder="Enter Password"
+                       required autofocus="autofocus" />
+            </div>
+            <div class="form-group">
+                <label class="control-label" > EmployeeDepartment </label>
+                <select class="form-control"   id="empDepartment" required>
+                    <option th:each="department:${ListOfEmpDepartment}" th:value="${department.department}" th:text="${department.department}"></option>
+                </select>
+
+                <!--            <ul>-->
+                <!--                <li th:each="device : ${ListOfEmpDepartment}">-->
+                <!--                    <input type="checkbox" th:field="*{empDepartment}" th:value="${EmployeeDepartment}" th:text="${EmployeeDepartment}" />-->
+                <!--                </li>-->
+                <!--            </ul>-->
+            </div>
+
+
+            <div class="form-group">
+                <label class="control-label"> Available Devices </label>
+
+                <ul>
+                    <li th:each="device : ${ListOfDevices}">
+                        <input type="checkbox"  th:value="${device}" th:text="${device}" id="empDevices" />
+                    </li>
+                </ul>
+
+                <!--          <select class="form-control" th:name="device" th:field="*{empDevices}" multiple>-->
+                <!--            <option th:each="device:${List_Of_Devices}" th:value="${device}" th:text="${device}"></option>-->
+                <!--          </select>-->
+
+            </div>
+            <div class="form-group">
+                <label class="control-label"> EmployeeRole </label>
+
+                <select class="form-control"  id="assignRole" required>
+                    <option th:each="role:${ListOfRoles}" th:value="${role.roleName}" th:text="${role.roleName}" ></option>
+                </select>
+            </div>
+            <div class="form-group">
+                <input type="submit" class="btn btn-success btn1" onclick="ajaxPost()" value="Register">
+                <a th:href="@{/}" class="btn btn-primary btn2">Back</a>
+            </div>
+        </form>
     </div>
-    <br>
-    <br>
-    <div th:if="${errorMessage!=null}">
-        <div class="alert alert-info">[[${errorMessage}]]</div>
-    </div>
-    <h1>Employee Registration</h1>
-
-    <form th:action="@{/employee/save}" method="post" th:object="${employee}">
-        <div class="form-group">
-            <label class="control-label"> EmployeeId </label>
-            <input id="empId" class="form-control" th:field="*{empId}" placeholder="Enter EmployeeId"
-                   required autofocus="autofocus" />
-            <!--          autocomplete="off"-->
-        </div>
-
-        <div class="form-group">
-            <label class="control-label" > EmployeeName </label>
-            <input id="Name" class="form-control" th:field="*{empName}" placeholder="Enter EmployeeName"
-                   required autofocus="autofocus" />
-        </div>
-
-        <div class="form-group">
-            <label class="control-label" for="email"> EmployeeEmail </label>
-            <input id="email" class="form-control" th:field="*{email}" placeholder="Enter Email" required
-                   autofocus="autofocus" />
-        </div>
-
-        <div class="form-group">
-            <label class="control-label" for="password"> EmployeePassword </label>
-            <input id="password" class="form-control" type="password" placeholder="Enter Password"
-                   th:field="*{empPassword}" required autofocus="autofocus" />
-        </div>
-        <div class="form-group">
-            <label class="control-label" > EmployeeDepartment </label>
-            <select class="form-control"  th:field="*{empDepartment}" required>
-                <option th:each="department:${ListOfEmpDepartment}" th:value="${department.department}" th:text="${department.department}"></option>
-            </select>
-
-<!--            <ul>-->
-<!--                <li th:each="device : ${ListOfEmpDepartment}">-->
-<!--                    <input type="checkbox" th:field="*{empDepartment}" th:value="${EmployeeDepartment}" th:text="${EmployeeDepartment}" />-->
-<!--                </li>-->
-<!--            </ul>-->
-        </div>
-
-
-        <div class="form-group">
-            <label class="control-label"> Available Devices </label>
-
-            <ul>
-                <li th:each="device : ${ListOfDevices}">
-                    <input type="checkbox" th:field="*{empDevices}" th:value="${device}" th:text="${device}" />
-                </li>
-            </ul>
-
-            <!--          <select class="form-control" th:name="device" th:field="*{empDevices}" multiple>-->
-            <!--            <option th:each="device:${List_Of_Devices}" th:value="${device}" th:text="${device}"></option>-->
-            <!--          </select>-->
-
-        </div>
-        <div class="form-group">
-            <label class="control-label"> EmployeeRole </label>
-
-            <select class="form-control"  th:field="*{assignRole}" required>
-                <option th:each="role:${ListOfRoles}" th:value="${role.roleName}" th:text="${role.roleName}"></option>
-            </select>
-        </div>
-        <div class="form-group">
-            <button type="submit" class="btn btn-success btn1">Register</button>
-            <a th:href="@{/}" class="btn btn-primary btn2">Back</a>
-        </div>
-    </form>
 </div>
 <script>
+function ajaxPost()
+{
+var empId = $("#empId").val();
+var empName = $("#empName").val();
+var email = $("#email").val();
+var empPassword = $("#empPassword").val();
+var empDepartment = $("#empDepartment").val();
+var empDevices = $("#empDevices").val();
+var assignRole = $("#assignRole").val();
+$.ajax({
+			type : "POST",
+			contentType : "application/json",
+			url : 'http://localhost:9092/employee/add',
+			data : JSON.stringify({empId:empId,empName:empName,email:email,empPassword:empPassword,empDepartment:empDepartment,empDevices:empDevices,assignRole:assignRole}),
+			dataType : 'json',
+			success : function(result) {
+				console.log(result);
+				alert("Registered Successfully");
+				window.location.href='/employee/list';
+			},
+			error : function(request,status,error) {
+				alert(request.responseText);
+				window.location.href='http://localhost:9092/employee/registration';
+			}
+		});
+		resetData();
+}
+function resetData()
+{
+ $("#empId").val("");
+ $("#empName").val("");
+ $("#email").val("");
+ $("#empPassword").val("");
+ $("#empDepartment").val("");
+ $("#empDevices").val("");
+ $("#assignRole").val("");
+}
 /* Loop through all dropdown buttons to toggle between hiding and showing its dropdown content - This allows the user to have multiple dropdowns without any conflict */
 var dropdown = document.getElementsByClassName("dropdown-btn");
 var i;

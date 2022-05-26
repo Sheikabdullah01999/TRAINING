@@ -14,6 +14,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Orelega+One&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="/css/table.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 </head>
 <body>
 <div class="sidenav">
@@ -21,7 +22,7 @@
         <header>
             <div class="image-text">
                 <span class="image">
-                    <img th:src="@{images/grootan.webp}" alt="">
+                    <img src="/images/grootan.webp" alt="">
                 </span>
 
                 <div class="text logo-text">
@@ -86,23 +87,55 @@
             <th scope="col" colspan="2">Operations</th>
         </tr>
         </thead>
-        <tbody>
-        <tr th:each="device:${DeviceDetails}">
-            <td th:text="${device.id}"></td>
-            <td th:text="${device.category}" class="row"></td>
-            <td th:text="${device.deviceName}" class="row"></td>
-            <td th:text="${device.devicePurchaseDate}" class="row"></td>
-            <td th:text="${device.manufacturedId}" class="row"></td>
-            <td th:text="${device.assignStatus}" class="row"></td>
-            <td th:text="${device.deviceStatus}" class="row"></td>
-            <td class="row"><button class="submit1"><a th:href="@{'/device/update/' +${device.id}}">update</a></button></td>
-            <td class="row"><button class="submit2"><a th:href="@{'/device/delete/'+${device.id}}">delete</a></button></td>
-        </tr>
+        <tbody id="devices">
+
         </tbody>
     </table>
     <a th:href="@{/}" class="btn btn-primary btn1">Back</a>
 </div>
 <script>
+$(document).ready(function(){
+$.ajax({
+url:"http://localhost:9092/device/list/device",
+type:"GET",
+contentType : "application/json",
+dataType : 'json',
+success: function(response){
+						$.each(response, function (key, value) {
+						var Id = value.id;
+							$('#devices').append('<tr>\
+										<td>'+value.id+'</td>\
+										<td>'+value.category+'</td>\
+										<td>'+value.deviceName+'</td>\
+										<td>'+value.devicePurchaseDate+'</td>\
+										<td>'+value.manufacturedId+'</td>\
+										<td>'+value.assignStatus+'</td>\
+										<td>'+value.deviceStatus+'</td>\
+										<td><a href="/device/update/'+value.id+'" class="btn btn-success">update</a></td>\
+										<td><button  class="btn btn-danger" onclick="Delete('+Id+')">delete</button></td>\
+										</tr>');
+
+						})
+                  }
+});
+});
+function Delete(id)
+{
+ $.ajax({
+			type : "DELETE",
+			contentType : "application/json",
+			url : 'http://localhost:9092/device/delete/'+id,
+			dataType : 'json',
+			success : function() {
+				alert("Deleted Successfully");
+				window.location.href='http://localhost:9092/device/list';
+			},
+			error : function(request,status,error) {
+				alert(request.responseText);
+				window.location.href='http://localhost:9092/device/list';
+			}
+		});
+}
 /* Loop through all dropdown buttons to toggle between hiding and showing its dropdown content - This allows the user to have multiple dropdowns without any conflict */
 var dropdown = document.getElementsByClassName("dropdown-btn");
 var i;

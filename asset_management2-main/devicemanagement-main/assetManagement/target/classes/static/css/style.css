@@ -148,4 +148,12 @@
     {
     margin-left:240px;
     }
+    input[type="checkbox"]
+    {
+    margin-left:240px;
+    }
+    li
+    {
+    list-style-type:none;
+    }
 

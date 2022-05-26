@@ -21,7 +21,7 @@
         <header>
             <div class="image-text">
                 <span class="image">
-                    <img th:src="@{images/grootan.webp}" alt="">
+                    <img src="/images/grootan.webp" alt="">
                 </span>
 
                 <div class="text logo-text">
@@ -100,12 +100,12 @@
             </span>
             </div>
             <div class="col-sm-1">
-                <a th:if="${currentPage<totalPages}" th:href="@{'/page/'+${currentPage + 1}}">Next</a>
-                <span th:unless="${currentPage<totalPages}">Next</span>
+                <a th:if="${currentPage<=totalPages and currentPage>1}" th:href="@{'/page/'+${currentPage - 1}}">Prev</a>
+                <span th:unless="${currentPage<=totalPages and currentPage>1}">Prev</span>
             </div>
             <div class="col-sm-1">
-                <a th:if="${currentPage<totalPages}" th:href="@{'/page/'+${totalPages}}">Last</a>
-                <span th:unless="${currentPage<totalPages}">Last</span>
+                <a th:if="${currentPage<totalPages}" th:href="@{'/page/'+${currentPage + 1}}">Next</a>
+                <span th:unless="${currentPage<totalPages}">Next</span>
             </div>
         </div>
     </div>

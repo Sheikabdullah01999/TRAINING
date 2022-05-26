@@ -25,4 +25,5 @@ public class Constants {
     public static final String NEW_DEVICE_MANUFACTURE_ID="  device manufacture id:";
     public static final String DEVICE_CATEGORY=" device category:  ";
     public static final String DEVICE_ID="device id:";
+    public static final String NO_RECORDS="no records found";
 }

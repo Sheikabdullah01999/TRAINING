@@ -40,6 +40,14 @@ public class RoleService {
     }
 
     public Role saveRoles(Role role) {
+        if(role.getRoleName()=="")
+        {
+            throw new GeneralException("Enter the roleName");
+        }
+        if(role.getRoleDescription()=="")
+        {
+            throw new GeneralException("Enter the roleDescription");
+        }
         if(roleExists(role.getRoleName()))
         {
             throw new GeneralException(R0LE_EXISTS+role.getRoleName());

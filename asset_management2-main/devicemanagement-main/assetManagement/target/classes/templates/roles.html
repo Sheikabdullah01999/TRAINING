@@ -13,6 +13,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Orelega+One&display=swap" rel="stylesheet">
     <link href='https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css' rel='stylesheet'/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <style>
     body {
     font-family: "Lato", sans-serif;
@@ -168,7 +169,7 @@
         <header>
             <div class="image-text">
                 <span class="image">
-                    <img th:src="@{images/grootan.webp}" alt="">
+                    <img src="/images/grootan.webp" alt="">
                 </span>
 
                 <div class="text logo-text">
@@ -225,27 +226,53 @@
 
     <h1>Roles Registration</h1>
 
-    <form th:action="@{/role/save}" method="post" th:object="${roles}">
+    <form  method="post" >
 
         <div class="form-group">
-            <label class="control-label" for="firstName"> RoleName </label>
-            <input id="firstName" class="form-control" th:field="*{roleName}"
+            <label class="control-label" for="roleName"> RoleName </label>
+            <input id="roleName" class="form-control"
                    required autofocus="autofocus" />
         </div>
 
         <div class="form-group">
-            <label class="control-label" for="lastName"> RoleDescription </label>
-            <input id="lastName" class="form-control" th:field="*{roleDescription}"
+            <label class="control-label" for="roleDescription"> RoleDescription </label>
+            <input id="roleDescription" class="form-control"
                    required autofocus="autofocus" />
         </div>
 
         <div class="form-group">
-            <button type="submit" class="btn btn-success btn1">Register</button>
+            <button type="submit" class="btn btn-success btn1" onclick="ajaxPost()">Register</button>
             <a th:href="@{/}" class="btn btn-primary btn2">Back</a>
         </div>
     </form>
 </div>
 <script>
+function ajaxPost()
+{
+var roleName = $("#roleName").val();
+var roleDescription = $("#roleDescription").val();
+$.ajax({
+			type : "POST",
+			contentType : "application/json",
+			url : 'http://localhost:9092/role/save',
+			data : JSON.stringify({roleName:roleName,roleDescription:roleDescription}),
+			dataType : 'json',
+			success : function(result) {
+				console.log(result);
+				alert("Registered Successfully");
+				window.location.href='/roles/list';
+			},
+			error : function(request,status,error) {
+				alert(request.responseText);
+			}
+		});
+		resetData();
+}
+function resetData()
+{
+ $("#roleName").val("");
+ $("#roleDescription").val("");
+}
 /* Loop through all dropdown buttons to toggle between hiding and showing its dropdown content - This allows the user to have multiple dropdowns without any conflict */
 var dropdown = document.getElementsByClassName("dropdown-btn");
 var i;

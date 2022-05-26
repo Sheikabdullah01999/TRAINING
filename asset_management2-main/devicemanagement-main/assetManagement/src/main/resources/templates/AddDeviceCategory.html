@@ -14,6 +14,7 @@
     <link href='https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css' rel='stylesheet'/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="/css/style.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 </head>
 <body>
 <div class="sidenav">
@@ -21,7 +22,7 @@
         <header>
             <div class="image-text">
                 <span class="image">
-                    <img th:src="@{images/grootan.webp}" alt="">
+                    <img src="/images/grootan.webp" alt="">
                 </span>
 
                 <div class="text logo-text">
@@ -75,20 +76,43 @@
         <div class="alert alert-info">[[${errorMessage}]]</div>
     </div>
     <h1>Device category</h1>
-    <form th:action="@{/device/save/category}" method="post" th:object="${deviceCategory}">
+    <form  method="post" >
         <div class="form-group">
-            <label class="control-label" for="sample"> Device Category </label>
-            <input id="sample" class="form-control" th:field="*{category}" placeholder="deviceCategory"
+            <label class="control-label" for="category"> Device Category </label>
+            <input id="category" class="form-control"  placeholder="deviceCategory"
                    required autofocus="autofocus" />
         </div>
         <div class="form-group">
-            <button type="submit" class="btn btn-success btn1">ADD</button>
+            <button type="submit" class="btn btn-success btn1" onclick="ajaxPost()">ADD</button>
             <a th:href="@{/}" class="btn btn-primary btn2">Back</a>
         </div>
     </form>
 
 </div>
 <script>
+function ajaxPost()
+{
+var category = $("#category").val();
+$.ajax({
+			type : "POST",
+			contentType : "application/json",
+			url : 'http://localhost:9092/device/add/category/device',
+			data : JSON.stringify({category:category}),
+			dataType : 'json',
+			success : function(result) {
+				console.log(result);
+				alert("Registered Successfully");
+			},
+			error : function(request,status,error) {
+				alert(request.responseText);
+			}
+		});
+		resetData();
+}
+function resetData()
+{
+ $("#category").val("");
+}
 /* Loop through all dropdown buttons to toggle between hiding and showing its dropdown content - This allows the user to have multiple dropdowns without any conflict */
 var dropdown = document.getElementsByClassName("dropdown-btn");
 var i;

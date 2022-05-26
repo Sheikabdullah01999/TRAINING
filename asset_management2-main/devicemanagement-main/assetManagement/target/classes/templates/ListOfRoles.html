@@ -14,6 +14,7 @@
     <link href='https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css' rel='stylesheet'/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="/css/table.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 </head>
 <body>
 <div class="sidenav">
@@ -21,7 +22,7 @@
         <header>
             <div class="image-text">
                 <span class="image">
-                    <img th:src="@{images/grootan.webp}" alt="">
+                    <img src="/images/grootan.webp" alt="">
                 </span>
 
                 <div class="text logo-text">
@@ -74,16 +75,31 @@
             <th scope="col">RoleDescription</th>
         </tr>
         </thead>
-        <tbody>
-        <tr th:each="role:${ListOfRoles}">
-            <td  th:text="${role.roleName}" class="row"></td>
-            <td th:text="${role.roleDescription}" class="row"></td>
-        </tr>
+        <tbody id="roles">
+
         </tbody>
     </table>
     <a th:href="@{/}" class="btn btn-primary btn1">Back</a>
 </div>
 <script>
+$(document).ready(function(){
+$.ajax({
+url:"http://localhost:9092/role/list/role",
+type:"GET",
+contentType : "application/json",
+dataType : 'json',
+success: function(response){
+						$.each(response, function (key, value) {
+						var empId = value.empId;
+							$('#roles').append('<tr>\
+										<td>'+value.roleName+'</td>\
+										<td>'+value.roleDescription+'</td>\
+										</tr>');
+
+						})
+                  }
+});
+});
 /* Loop through all dropdown buttons to toggle between hiding and showing its dropdown content - This allows the user to have multiple dropdowns without any conflict */
 var dropdown = document.getElementsByClassName("dropdown-btn");
 var i;

@@ -1,5 +1,6 @@
 package com.grootan.assetManagement.Service;
 
+import com.google.gson.Gson;
 import com.grootan.assetManagement.Exception.GeneralException;
 import com.grootan.assetManagement.Model.*;
 import com.grootan.assetManagement.Repository.*;
@@ -85,6 +86,7 @@ public class EmployeeService {
 
     //save employee details after check all details are  correct
     public Employee saveEmployee(Employee employeeDetails) {
+        validate(employeeDetails);
         Employee employee=saveEmpDetails(employeeDetails);
         String history = NEW_EMP_ID + employeeDetails.getEmpId() + ","
                 + EMP_NAME + employeeDetails.getEmpName();
@@ -92,10 +94,10 @@ public class EmployeeService {
 
         if(employeeDetails.getAssignRole().equals("ADMIN"))
         {
-            newHistory = new History(service.currentUser(), ADMIN_ADD, history, service.DateAndTime());
+            newHistory = new History(service.currentUser(), ADMIN_ADD, new Gson().toJson(employeeDetails), service.DateAndTime());
         }
         else {
-            newHistory = new History(service.currentUser(), USER_ADD, history, service.DateAndTime());
+            newHistory = new History(service.currentUser(), USER_ADD, new Gson().toJson(employeeDetails), service.DateAndTime());
         }
         historyDao.save(newHistory);
         return employeeDao.save(employee);
@@ -168,12 +170,36 @@ public class EmployeeService {
 
     public Boolean validate(Employee employeeDetails)
     {
+        if(employeeDetails.getEmpId()=="")
+        {
+            throw new GeneralException("Enter the employee Id");
+        }
+
+        if(employeeDetails.getEmpName()=="")
+        {
+            throw new GeneralException("Enter the employee Name");
+        }
+
         Boolean validEmail=isValid(employeeDetails.getEmail());
         if(!validEmail)
         {
             throw new GeneralException(INCORRECT_EMAIL+employeeDetails.getEmail());
         }
 
+        if(employeeDetails.getEmpPassword()=="" || employeeDetails.getEmpPassword().length()<9)
+        {
+            throw new GeneralException("Enter the employee Password Correctly");
+        }
+
+        if(employeeDetails.getEmpDepartment()=="")
+        {
+            throw new GeneralException("Select the employee Department");
+        }
+
+        if(employeeDetails.getAssignRole()=="")
+        {
+            throw new GeneralException("Select the assignRole");
+        }
         if(emailExists(employeeDetails.getEmail()))
         {
             throw new GeneralException(EMP_EMAIL_EXISTS+employeeDetails.getEmail());
@@ -243,9 +269,14 @@ public class EmployeeService {
     }
 
     //save employee department
-    public void saveEmpDepartment(EmployeeDepartment employeeDepartment) {
+    public EmployeeDepartment saveEmpDepartment(EmployeeDepartment employeeDepartment) {
         String lower = employeeDepartment.getDepartment();
         String i = lower.toLowerCase();
+        if(employeeDepartment.getDepartment()=="")
+        {
+            throw new GeneralException("Enter the Department Name");
+        }
+
         if(departmentExists(i))
         {
             throw new GeneralException("Department Name  Already Exists: "+employeeDepartment.getDepartment());
@@ -257,7 +288,7 @@ public class EmployeeService {
         employeeDepartment.setDepartment(i);
 
         logger.info("saved success");
-        employeeDepartmentDao.save(employeeDepartment);
+        return employeeDepartmentDao.save(employeeDepartment);
     }
 
     //update employee details
@@ -273,19 +304,18 @@ public class EmployeeService {
             {
                 updatedDeviceList=getDeviceID(newDevice);
             }
-
-            List<Integer> existingDevice=deviceDao.deviceId(employeeDetails.getEmpId());
-            for(Integer id:existingDevice)
-            {
-                updatedDeviceList.add(id);
-            }
-
-            for(Integer Id : updatedDeviceList)
-            {
-                device.add(new Device(Id));
-            }
-            updateAssignStatus(updatedDeviceList);
         }
+        List<Integer> existingDevice=deviceDao.deviceId(employeeDetails.getEmpId());
+        for(Integer id:existingDevice)
+        {
+            updatedDeviceList.add(id);
+        }
+
+        for(Integer Id : updatedDeviceList)
+        {
+            device.add(new Device(Id));
+        }
+        updateAssignStatus(updatedDeviceList);
 
         Employee employee = new Employee(employeeDetails.getEmpId(),
                 employeeDetails.getEmpName(), employeeDetails.getEmail(),

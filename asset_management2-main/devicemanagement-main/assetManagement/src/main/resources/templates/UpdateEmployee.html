@@ -12,6 +12,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Orelega+One&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <style type="text/css">
     body {
   font-family: "Lato", sans-serif;
@@ -159,7 +160,7 @@ header .image-text .profession{
         <header>
             <div class="image-text">
                 <span class="image">
-                    <img th:src="@{images/grootan.webp}" alt="">
+                    <img src="/images/grootan.webp" alt="">
                 </span>
 
                 <div class="text logo-text">
@@ -217,16 +218,16 @@ header .image-text .profession{
     </div>
     <h1>Employee Updation</h1>
 
-    <form th:action="@{/employee/update}" method="post" th:object="${employee}">
+    <form  method="post" th:object="${employee}">
         <div class="form-group">
-            <label class="control-label" for="firstName"> EmployeeId </label>
-            <input id="firstName" class="form-control" th:field="*{empId}"
+            <label class="control-label" for="empId"> EmployeeId </label>
+            <input id="empId" class="form-control" th:field="*{empId}"
                    required autofocus="autofocus" readonly="readonly" />
         </div>
 
         <div class="form-group">
-            <label class="control-label" for="lastName"> EmployeeName </label>
-            <input id="lastName" class="form-control" th:field="*{empName}"
+            <label class="control-label" for="empName"> EmployeeName </label>
+            <input id="empName" class="form-control" th:field="*{empName}"
                    required autofocus="autofocus" />
         </div>
 
@@ -237,14 +238,14 @@ header .image-text .profession{
         </div>
 
         <div class="form-group">
-            <label class="control-label" for="password" hidden> EmployeePassword </label>
-            <input id="password" class="form-control" type="hidden"
+            <label class="control-label" for="empPassword" hidden> EmployeePassword </label>
+            <input id="empPassword" class="form-control" type="hidden"
                    th:field="*{empPassword}" required autofocus="autofocus"  readonly="readonly"/>
         </div>
 
         <div class="form-group">
             <label class="control-label" > EmployeeDepartment </label>
-            <select class="form-control"  th:field="*{empDepartment}" required>
+            <select class="form-control"  th:field="*{empDepartment}" id="empDepartment" required>
                 <option th:each="department:${ListOfEmpDepartment}" th:value="${department.department}" th:text="${department.department}"></option>
             </select>
         </div>
@@ -252,23 +253,59 @@ header .image-text .profession{
             <label class="control-label"> EmployeeDevices </label>
             <ul>
                 <li th:each="device : ${ListOfDevices}">
-                    <input type="checkbox" th:field="*{empDevices}" th:value="${device}" th:text="${device}" />
+                    <input type="checkbox" th:field="*{empDevices}" id="empDevices" th:value="${device}" th:text="${device}" />
                 </li>
             </ul>
         </div>
         <div class="form-group">
             <label class="control-label"> EmployeeRole </label>
-            <select class="form-control"  th:field="*{assignRole}">
+            <select class="form-control"  th:field="*{assignRole}" id="assignRole">
                 <option th:each="role:${ListOfRoles}" th:value="${role.roleName}" th:text="${role.roleName}"></option>
             </select>
         </div>
         <div class="form-group">
-            <button type="submit" class="btn btn-success btn1">update</button>
+            <button type="submit" class="btn btn-success btn1" onclick="ajaxUpdate()">update</button>
             <a th:href="@{/}" class="btn btn-primary btn2">Back</a>
         </div>
     </form>
 </div>
 <script>
+function ajaxUpdate()
+{
+var empId = $("#empId").val();
+var empName = $("#empName").val();
+var email = $("#email").val();
+var empPassword = $("#empPassword").val();
+var empDepartment = $("#empDepartment").val();
+var empDevices = $("#empDevices").val();
+var assignRole = $("#assignRole").val();
+$.ajax({
+			type : "PUT",
+			contentType : "application/json",
+			url : 'http://localhost:9092/employee/update',
+			data : JSON.stringify({empId:empId,empName:empName,email:email,empPassword:empPassword,empDepartment:empDepartment,empDevices:empDevices,assignRole:assignRole}),
+			dataType : 'json',
+			success : function(result) {
+				console.log(result);
+				alert("Updated Successfully");
+				window.location.href='/employee/list';
+			},
+			error : function(request,status,error) {
+				alert(request.responseText);
+			}
+		});
+		resetData();
+}
+function resetData()
+{
+ $("#empId").val("");
+ $("#empName").val("");
+ $("#email").val("");
+ $("#empPassword").val("");
+ $("#empDepartment").val("");
+ $("#empDevices").val("");
+ $("#assignRole").val("");
+}
 /* Loop through all dropdown buttons to toggle between hiding and showing its dropdown content - This allows the user to have multiple dropdowns without any conflict */
 var dropdown = document.getElementsByClassName("dropdown-btn");
 var i;

@@ -30,20 +30,20 @@ public class RoleController {
         return "roles";
     }
 
-    @PostMapping("/role/save")
-    public String saveRoles(@ModelAttribute("roles") Role role, Model model)
-    {
-        try{
-            roleService.saveRoles(role);
-            model.addAttribute("ListOfRoles",roleService.getAllRoles());
-            return "ListOfRoles";
-        }
-        catch(GeneralException e)
-        {
-            model.addAttribute("errorMessage",e.getMessage());
-            return "roles";
-        }
-    }
+//    @PostMapping("/role/save")
+//    public String saveRoles(@ModelAttribute("roles") Role role, Model model)
+//    {
+//        try{
+//            roleService.saveRoles(role);
+//            model.addAttribute("ListOfRoles",roleService.getAllRoles());
+//            return "ListOfRoles";
+//        }
+//        catch(GeneralException e)
+//        {
+//            model.addAttribute("errorMessage",e.getMessage());
+//            return "roles";
+//        }
+//    }
 
     @GetMapping("/roles/list")
     public String list_of_Roles(Model model)
