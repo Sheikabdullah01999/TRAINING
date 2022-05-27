@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import javax.persistence.criteria.CriteriaBuilder;
 import javax.transaction.Transactional;
 import java.util.List;
 
@@ -64,4 +65,11 @@ public interface DeviceDao extends JpaRepository<Device,Integer>
 
     @Query(value = "SELECT devices_id from employee_devices where employee_emp_id=?1",nativeQuery = true)
     public List<Integer> deviceId(String empId);
+
+    @Query(value = "select * from Device where id=?1",nativeQuery = true)
+    public Device getByDeviceId(Integer id);
+
+    @Query(value = "select * from Device where id=?1",nativeQuery = true)
+    public Boolean deviceCheck(Integer id);
+
 }

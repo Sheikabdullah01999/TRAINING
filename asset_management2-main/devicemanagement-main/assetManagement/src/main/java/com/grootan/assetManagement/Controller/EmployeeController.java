@@ -10,6 +10,7 @@ import com.grootan.assetManagement.Service.EmployeeService;
 import com.grootan.assetManagement.Service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -37,33 +38,33 @@ public class EmployeeController {
         model.addAttribute("ListOfRoles",roles);
         List<String> deviceList=deviceService.getAllDevicesByName();
         model.addAttribute("ListOfDevices",deviceList);
-        List<EmployeeDepartment> employeeDepartmentList=employeeService.getAllEmpDepartments();
+        List<EmployeeDepartment> employeeDepartmentList= (List<EmployeeDepartment>) employeeService.getAllEmpDepartments();
         model.addAttribute("ListOfEmpDepartment",employeeDepartmentList);
         Employee employee = new Employee();
         model.addAttribute("employee",employee);
         return "Registration";
     }
 
-    @PostMapping("/employee/save")
-    public String saveEmployee(@ModelAttribute("employee") Employee registrationDto, Model model)
-    {
-        try{
-            employeeService.saveEmployee(registrationDto);
-            return "redirect:/employee/registration?success";
-        }
-        catch(GeneralException e)
-        {
-            model.addAttribute("errorMessage",e.getMessage());
-            return "Registration";
-        }
-    }
+//    @PostMapping("/employee/save")
+//    public String saveEmployee(@ModelAttribute("employee") Employee registrationDto, Model model)
+//    {
+//        try{
+//            employeeService.saveEmployee(registrationDto);
+//            return "redirect:/employee/registration?success";
+//        }
+//        catch(GeneralException e)
+//        {
+//            model.addAttribute("errorMessage",e.getMessage());
+//            return "Registration";
+//        }
+//    }
 
-    @GetMapping("/employee/list")
-    public String listOfEmployee(Model model)
-    {
-        model.addAttribute("List_Of_Employees",employeeService.getAllEmployees());
-        return "ListOfEmployees";
-    }
+//    @GetMapping("/employee/list")
+//    public String listOfEmployee(Model model)
+//    {
+//        model.addAttribute("List_Of_Employees",employeeService.getAllEmployees());
+//        return "ListOfEmployees";
+//    }
 
     @GetMapping("/employee/department/list")
     public String listOfDepartment(Model model)
@@ -75,7 +76,7 @@ public class EmployeeController {
     @GetMapping("/employee/user/device")
     public String userDevices(Model model)
     {
-        List<EmployeeDevices> userDevices = employeeService.getUserDevices();
+        List<EmployeeDevices> userDevices = (List<EmployeeDevices>) employeeService.getUserDevices();
         if(!userDevices.isEmpty())
         {
             model.addAttribute("userDevices", userDevices);
@@ -109,27 +110,27 @@ public class EmployeeController {
         model.addAttribute("ListOfRoles",roles);
         List<String> deviceList=deviceService.getAllDevicesByName();
         model.addAttribute("ListOfDevices",deviceList);
-        List<EmployeeDepartment> employeeDepartmentList=employeeService.getAllEmpDepartments();
+        List<EmployeeDepartment> employeeDepartmentList= (List<EmployeeDepartment>) employeeService.getAllEmpDepartments();
         model.addAttribute("ListOfEmpDepartment",employeeDepartmentList);
-        Employee employee = employeeService.findEmployeeById(empId);
+        ResponseEntity employee = employeeService.findEmployeeById(empId);
         editView.addObject("employee",employee);
         return editView;
     }
 
-    @PostMapping("/employee/update")
-    public String save(@ModelAttribute("employee") Employee registrationDto,Model model)
-    {
-        try
-        {
-            employeeService.updateEmployee(registrationDto);
-            return "redirect:/employee/list?success";
-        }
-        catch(GeneralException e)
-        {
-            model.addAttribute("errorMessage",e.getMessage());
-            return "UpdateEmployee";
-        }
-    }
+//    @PostMapping("/employee/update")
+//    public String save(@ModelAttribute("employee") Employee registrationDto,Model model)
+//    {
+//        try
+//        {
+//            employeeService.updateEmployee(registrationDto);
+//            return "redirect:/employee/list?success";
+//        }
+//        catch(GeneralException e)
+//        {
+//            model.addAttribute("errorMessage",e.getMessage());
+//            return "UpdateEmployee";
+//        }
+//    }
 
     @GetMapping("/delete/employee/{id}")
     public String deleteEmpDetails(@PathVariable(name="id") String id,Model model) {
@@ -158,7 +159,7 @@ public class EmployeeController {
             List<Employee> list = employeeService.getByKeyword(keyword);
             model.addAttribute("List_Of_Employees", list);
         }else {
-            List<Employee> list = employeeService.getAllEmployees();
+            List<Employee> list = (List<Employee>) employeeService.getAllEmployees();
             model.addAttribute("List_Of_Employees", list);}
         return "ListOfEmployees";
     }

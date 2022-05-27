@@ -19,14 +19,19 @@ public class Employee {
     private String empId;
     private String empName;
     private String empPassword;
-    private String empDepartment;
     private String assignRole;
+    private String empDepartment;
+
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinTable(name = "department_emp",
+            joinColumns = @JoinColumn(name = "empId"),
+            inverseJoinColumns = @JoinColumn(name = "department"))
+    private EmployeeDepartment department;
+
 
     @Transient
     private String empDevices;
-
-
-
     @ManyToMany
     @JoinTable(name = "user_role",
             joinColumns = {
@@ -46,15 +51,16 @@ public class Employee {
 
     }
 
-    public Employee(String empId, String empName, String email, String empPassword, String empDepartment, String assignRole, Collection<Role> role, List<Device> devices)
+    public Employee(String empId, String empName, String email, String empPassword, EmployeeDepartment empDepartment, String assignRole, Collection<Role> role, List<Device> devices,String department)
     {
         this.empId = empId;
         this.empName = empName;
         this.email = email;
         this.empPassword = empPassword;
-        this.empDepartment = empDepartment;
+        this.department = empDepartment;
         this.assignRole = assignRole;
         this.role = role;
         this.devices = devices;
+        this.empDepartment=department;
     }
 }

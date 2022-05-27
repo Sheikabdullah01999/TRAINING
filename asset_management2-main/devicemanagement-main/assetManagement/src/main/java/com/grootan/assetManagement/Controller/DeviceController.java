@@ -13,6 +13,7 @@ import com.grootan.assetManagement.Service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -43,25 +44,25 @@ public class DeviceController {
     @GetMapping("/device/add")
     public String addDeviceDetails(Model model)
     {
-        List<DeviceCategory> devices = deviceService.getCategory();
+        List<DeviceCategory> devices = (List<DeviceCategory>) deviceService.getCategory();
         model.addAttribute("ListOfDeviceCategory",devices);
         model.addAttribute("devices",new Device());
         return "AddDeviceDetails";
     }
 
-    @PostMapping("/device/add/details")
-    public String saveDevice(@ModelAttribute("devices") Device device,Model model)
-    {
-        try{
-            deviceService.addDeviceDetails(device);
-            return "redirect:/device/add?success";
-        }
-        catch(GeneralException e)
-        {
-            model.addAttribute("errorMessage",e.getMessage());
-            return "AddDeviceDetails";
-        }
-    }
+//    @PostMapping("/device/add/details")
+//    public String saveDevice(@ModelAttribute("devices") Device device,Model model)
+//    {
+//        try{
+//            deviceService.addDeviceDetails(device);
+//            return "redirect:/device/add?success";
+//        }
+//        catch(GeneralException e)
+//        {
+//            model.addAttribute("errorMessage",e.getMessage());
+//            return "AddDeviceDetails";
+//        }
+//    }
 
     @GetMapping("/device/list")
     public String list_of_devices(Model model)
@@ -93,7 +94,7 @@ public class DeviceController {
         }
         else
         {
-            List<Device> list = deviceService.getAllDevices();
+            List<Device> list = (List<Device>) deviceService.getAllDevices();
             model.addAttribute("Device_details",list);
         }
         return "DeviceDetails";
@@ -120,29 +121,29 @@ public class DeviceController {
         ModelAndView editView = new ModelAndView("UpdateDevice");
         Device device=new Device();
         model.addAttribute("devices",device);
-        List<DeviceCategory> devicesCategory = deviceService.getCategory();
+        List<DeviceCategory> devicesCategory = (List<DeviceCategory>) deviceService.getCategory();
         model.addAttribute("ListOfDeviceCategory",devicesCategory);
-        List<DeviceName> devicesNameList = deviceService.getDeviceName();
+        List<DeviceName> devicesNameList = (List<DeviceName>) deviceService.getDeviceName();
         model.addAttribute("ListOfDeviceName",devicesNameList);
-        Optional<Device> allDevice = deviceService.findDeviceById(id);
-        editView.addObject("device",allDevice);
+        ResponseEntity allDevice = deviceService.findDeviceById(id);
+        editView.addObject("device", allDevice);
         return editView;
     }
 
-    @PostMapping("/device/update")
-    public String saveDevices(@ModelAttribute("device") Device device, Model model)
-    {
-        try
-        {
-            deviceService.updateDeviceDetails(device);
-            return "redirect:/device/list";
-        }
-        catch(GeneralException e)
-        {
-            model.addAttribute("errorMessage",e.getMessage());
-            return "UpdateDevice";
-        }
-    }
+//    @PostMapping("/device/update")
+//    public String saveDevices(@ModelAttribute("device") Device device, Model model)
+//    {
+//        try
+//        {
+//            deviceService.updateDeviceDetails(device);
+//            return "redirect:/device/list";
+//        }
+//        catch(GeneralException e)
+//        {
+//            model.addAttribute("errorMessage",e.getMessage());
+//            return "UpdateDevice";
+//        }
+//    }
 
     @GetMapping("/device/delete/{id}")
     public String deleteDeviceDetails(@PathVariable(name="id") Integer id, Model model)
@@ -177,7 +178,7 @@ public class DeviceController {
     @GetMapping("/device/add/name")
     public String addName(Model model)
     {
-        List<DeviceCategory> devices = deviceService.getCategory();
+        List<DeviceCategory> devices = (List<DeviceCategory>) deviceService.getCategory();
         model.addAttribute("ListOfDeviceCategory",devices);
         DeviceName deviceName=new DeviceName();
         model.addAttribute("deviceName",deviceName);
@@ -189,7 +190,7 @@ public class DeviceController {
     {
         try
         {
-            List<DeviceCategory> devices = deviceService.getCategory();
+            List<DeviceCategory> devices = (List<DeviceCategory>) deviceService.getCategory();
             model.addAttribute("ListOfDeviceCategory",devices);
             deviceService.saveDeviceName(deviceName);
             return "redirect:/device/add/name?success";
@@ -251,16 +252,16 @@ public class DeviceController {
         return editView;
     }
 
-    @PostMapping("/device/update/category")
-    public String updateDevicesCategory(@ModelAttribute("device") DeviceCategory deviceCategory,Model model) {
-        try {
-            deviceService.updateDeviceCategory(deviceCategory);
-            return "redirect:/getAllDeviceCategory";
-        } catch (GeneralException e) {
-            model.addAttribute("errorMessage", e.getMessage());
-            return "UpdateDeviceCategory";
-        }
-    }
+//    @PostMapping("/device/update/category")
+//    public String updateDevicesCategory(@ModelAttribute("device") DeviceCategory deviceCategory,Model model) {
+//        try {
+//            deviceService.updateDeviceCategory(deviceCategory);
+//            return "redirect:/getAllDeviceCategory";
+//        } catch (GeneralException e) {
+//            model.addAttribute("errorMessage", e.getMessage());
+//            return "UpdateDeviceCategory";
+//        }
+//    }
 
     @GetMapping("/device/get/category")
     public String getAllDeviceCategory(Model model)

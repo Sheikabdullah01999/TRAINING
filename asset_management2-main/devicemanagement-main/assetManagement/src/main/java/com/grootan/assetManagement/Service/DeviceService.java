@@ -1,19 +1,22 @@
 package com.grootan.assetManagement.Service;
 
 import com.google.gson.Gson;
-import com.grootan.assetManagement.Exception.GeneralException;
 import com.grootan.assetManagement.Model.*;
 import com.grootan.assetManagement.Repository.*;
+import com.grootan.assetManagement.Response;
+import com.grootan.assetManagement.request.DeviceRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import java.text.DateFormat;
+
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import static com.grootan.assetManagement.Model.Constants.*;
@@ -72,188 +75,224 @@ public class DeviceService {
 
 
     //Add device details
-    public Device addDeviceDetails(Device device) {
-      if(device.getCategory()=="")
-      {
-          throw new GeneralException("Select the device category");
-      }
+    public ResponseEntity addDeviceDetails(DeviceRequest deviceRequest) {
+      if(deviceRequest.getCategory().isEmpty()||deviceRequest.getDeviceName().isEmpty()||
+              deviceRequest.getManufacturedId().isEmpty()||deviceRequest.getAssignStatus().isEmpty()||
+              deviceRequest.getDevicePurchaseDate()==null||deviceRequest.getDeviceStatus().isEmpty())
 
-      if(device.getDeviceName()=="")
       {
-          throw new GeneralException("Select the deviceName");
+          return new ResponseEntity<>(new Response<>(String.valueOf(HttpStatus.NOT_ACCEPTABLE),
+                  HttpStatus.NOT_ACCEPTABLE.getReasonPhrase(),"field should not empty"),
+                  new HttpHeaders(),HttpStatus.NOT_ACCEPTABLE);
       }
+      if(deviceIdExists(deviceRequest.getManufacturedId()))
+        {
+            return new ResponseEntity<>(new Response<>(String.valueOf(HttpStatus.NOT_ACCEPTABLE),
+                    HttpStatus.NOT_ACCEPTABLE.getReasonPhrase(),"manufactured id already exits"),
+                    new HttpHeaders(),HttpStatus.NOT_ACCEPTABLE);
+        }
 
-      if(device.getManufacturedId()=="")
-      {
-          throw new GeneralException("Enter the device manufactureId");
-      }
 
-      if(device.getAssignStatus()=="")
-      {
-          throw new GeneralException("Select the device assignStatus");
-      }
 
-      if(device.getDevicePurchaseDate()==null)
-      {
-          throw new GeneralException("Pick the devicePurchaseDate");
-      }
-      if(device.getDeviceStatus()=="")
-      {
-          throw new GeneralException("Select the device Status");
-      }
-
-      if(deviceIdExists(device.getManufacturedId()))
-      {
-          throw new GeneralException(PRODUCT_ID_EXISTS+device.getManufacturedId());
-      }
-        String deviceHistory=NEW_DEVICE_NAME+device.getDeviceName()+","
-                +NEW_DEVICE_MANUFACTURE_ID+device.getManufacturedId();
-        History history=new History(service.currentUser(),DEVICE_ADD,new Gson().toJson(device),service.DateAndTime());
-        historyDao.save(history);
-        return deviceDao.save(device);
+//        String deviceHistory=NEW_DEVICE_NAME+device.getDeviceName()+","
+//                +NEW_DEVICE_MANUFACTURE_ID+device.getManufacturedId();
+        saveHistory(deviceRequest,DEVICE_ADD);
+        Device device=new Device(deviceRequest.getManufacturedId(), deviceRequest.getCategory(),
+                deviceRequest.getDeviceName(),deviceRequest.getDevicePurchaseDate(),
+                deviceRequest.getAssignStatus(),deviceRequest.getDeviceStatus());
+        deviceDao.save(device);
+        return new ResponseEntity(
+                new Response<>(String.valueOf(HttpStatus.CREATED.value()), HttpStatus.CREATED.getReasonPhrase(), "successfully saved",deviceRequest),
+                new HttpHeaders(),
+                HttpStatus.CREATED);
     }
 
     //update device details
-    public void updateDeviceDetails(Device device) {
-        String deviceHistory=NEW_DEVICE_NAME+device.getDeviceName()+","
-                +NEW_DEVICE_MANUFACTURE_ID+device.getManufacturedId();
-        History history=new History(service.currentUser(),DEVICE_UPDATED,new Gson().toJson(device),service.DateAndTime());
-        historyDao.save(history);
+    public ResponseEntity updateDeviceDetails(DeviceRequest deviceRequest) {
+//        String deviceHistory=NEW_DEVICE_NAME+device.getDeviceName()+","
+//                +NEW_DEVICE_MANUFACTURE_ID+device.getManufacturedId();
+        if(deviceRequest.getCategory()==""||deviceRequest.getDeviceName()==""||
+                deviceRequest.getManufacturedId()==""||deviceRequest.getAssignStatus()==""||
+                deviceRequest.getDevicePurchaseDate()==null||deviceRequest.getDeviceStatus()==""||
+                deviceIdExists(deviceRequest.getManufacturedId()))
+        {
+            return new ResponseEntity<>(new Response<>(String.valueOf(HttpStatus.NOT_ACCEPTABLE),
+                    HttpStatus.NOT_ACCEPTABLE.getReasonPhrase(),"field should not empty"),
+                    new HttpHeaders(),HttpStatus.NOT_ACCEPTABLE);
+        }
+        saveHistory(deviceRequest,DEVICE_UPDATED);
+        Device device=new Device(deviceRequest.getManufacturedId(), deviceRequest.getCategory(),
+                deviceRequest.getDeviceName(),deviceRequest.getDevicePurchaseDate(),
+                deviceRequest.getAssignStatus(),deviceRequest.getDeviceStatus());
+
         deviceDao.save(device);
+        return new ResponseEntity(
+                new Response<>(String.valueOf(HttpStatus.OK.value()), HttpStatus.OK.getReasonPhrase(), "Updated saved",deviceRequest),
+                new HttpHeaders(),
+                HttpStatus.OK);
     }
 
-    //update device category
-    public void updateDeviceCategory(DeviceCategory deviceCategory) {
-        System.out.println(deviceCategory.getCategory());
-        String deviceHistory=DEVICE_CATEGORY+deviceCategory.getCategory();
-        History history=new History(service.currentUser(),DEVICE_UPDATED,new Gson().toJson(deviceCategory),service.DateAndTime());
-        historyDao.save(history);
-        deviceCategoryDao.save(deviceCategory);
-    }
 
     //get all devices
-    public List<Device> getAllDevices()
+    public ResponseEntity getAllDevices()
     {
-        return deviceDao.findAll();
+        List<Device> deviceList=deviceDao.findAll();
+        if (deviceList.isEmpty())
+        {
+            return new ResponseEntity(
+                    new Response<>(String.valueOf(HttpStatus.NOT_FOUND.value()),
+                            HttpStatus.NOT_FOUND.getReasonPhrase(), "device not found"),
+                    new HttpHeaders(),
+                    HttpStatus.NOT_FOUND
+            );
+        }
+
+        return   new ResponseEntity(
+                new Response<>(String.valueOf(HttpStatus.FOUND.value()), HttpStatus.FOUND.getReasonPhrase(), "device found", deviceList),
+                new HttpHeaders(),
+                HttpStatus.FOUND);
     }
 
-    //get all category
-    public List<String> getAllCategory()
-    {
-        return (List<String>) deviceDao.getDevice();
-    }
-
-    //delete device details
-    public void deleteDeviceDetails(Integer id) {
-        Device device=deviceDao.findById(id).orElseThrow(()-> new GeneralException("no record found"));
-
-        String deviceDeleteHistory=DEVICE_ID+device.getId()+","
-                    +"device name: "+device.getDeviceName();
-            String userName=service.currentUser();
-            History history1=new History(userName,DEVICE_DELETE,new Gson().toJson(id),service.DateAndTime());
-            historyDao.save(history1);
-            deviceDao.deleteForiegnKey(id);
-            deviceDao.deleteById(id);
-    }
 
     //get device by device id
-    public Optional<Device> findDeviceById(int id)
+    public ResponseEntity findDeviceById(int id)
     {
         Optional<Device> device = deviceDao.findById(id);
-        if(device.isEmpty())
-        {
-            throw new GeneralException("No Records Found");
-        }
-        return device;
+        return device.map(value -> new ResponseEntity(
+                new Response<>(String.valueOf(HttpStatus.OK.value()), HttpStatus.OK.getReasonPhrase(), "device found", value),
+                new HttpHeaders(),
+                HttpStatus.OK)).orElseGet(() -> new ResponseEntity(
+                new Response<>(String.valueOf(HttpStatus.NOT_FOUND.value()), HttpStatus.NOT_FOUND.getReasonPhrase(), "device not found"),
+                new HttpHeaders(),
+                HttpStatus.NOT_FOUND
+        ));
     }
 
-    //search by keyword using ilike
+    //search by keyword using i like
     public List<Device> getByKeywordDevice(String keyword)
     {
         return deviceDao.findByKeyword(keyword);
     }
 
     //save device category
-    public DeviceCategory saveDeviceCategory(DeviceCategory category) {
-        String lower = category.getCategory();
-        String i = lower.toLowerCase();
-      if(category.getCategory()=="")
+    public ResponseEntity saveDeviceCategory(DeviceCategory category) {
+        String lowerCase = category.getCategory().toLowerCase();
+      if(category.getCategory().isEmpty())
       {
-          throw new GeneralException("Enter the category");
+          return new ResponseEntity<>(new Response<>(String.valueOf(HttpStatus.NOT_ACCEPTABLE),
+                  HttpStatus.NOT_ACCEPTABLE.getReasonPhrase(),"field should not empty"),
+                  new HttpHeaders(),HttpStatus.NOT_ACCEPTABLE);
       }
 
-      if(deviceCategoryExists(i))
+      if(deviceCategoryExists(lowerCase))
       {
-          throw new GeneralException("This category is already exists: "+category.getCategory());
+          return new ResponseEntity<>(new Response<>(String.valueOf(HttpStatus.CONFLICT),
+                  HttpStatus.CONFLICT.getReasonPhrase(),"This category is already exists: "+category.getCategory()),
+                  new HttpHeaders(),HttpStatus.CONFLICT);
       }
-        String newDeviceHistory="New Device category: "+category.getCategory();
-        LocalDateTime now=LocalDateTime.now();
 
-        String userName=service.currentUser();
-        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy hh.mm aa");
-        String dateString = dateFormat.format(new Date()).toString();
-        History history=new History(userName,DEVICE_CATEGORY_ADD,new Gson().toJson(category),dateString);
+        History history=new History(service.currentUser(),DEVICE_CATEGORY_ADD,new Gson().toJson(category),service.DateAndTime());
         historyDao.save(history);
-        category.setCategory(i);
-       return deviceCategoryDao.save(category);
+        category.setCategory(lowerCase);
+        deviceCategoryDao.save(category);
+       return new ResponseEntity(
+                new Response<>(String.valueOf(HttpStatus.CREATED.value()), HttpStatus.CREATED.getReasonPhrase(), "successfully saved",category),
+                new HttpHeaders(),
+                HttpStatus.CREATED);
     }
 
     //get device category
-    public List<DeviceCategory> getCategory() {
+    public ResponseEntity getCategory() {
 
-      List<DeviceCategory> list=deviceCategoryDao.findAll();
-      return list;
+      List<DeviceCategory> deviceCategoryList=deviceCategoryDao.findAll();
+      if(deviceCategoryList.isEmpty())
+      {
+         return new ResponseEntity(
+                  new Response<>(String.valueOf(HttpStatus.NOT_FOUND.value()), HttpStatus.NOT_FOUND.getReasonPhrase(), "no device found"),
+                  new HttpHeaders(),
+                  HttpStatus.NOT_FOUND
+          );
+
+      }
+      return   new ResponseEntity(
+                new Response<>(String.valueOf(HttpStatus.OK.value()), HttpStatus.OK.getReasonPhrase(), "device found", deviceCategoryList),
+                new HttpHeaders(),
+                HttpStatus.OK);
     }
 
     //save device name
-    public DeviceName saveDeviceName(DeviceName deviceName)
+    public ResponseEntity saveDeviceName(DeviceName deviceName)
     {
         DeviceCategory deviceCategory = deviceName.getDeviceCategory();
-        String lower = deviceName.getName();
-        String i = lower.toLowerCase();
-        if(deviceName.getName()=="")
+        String lowerCase = deviceName.getName().toLowerCase();
+        if(deviceName.getName()==""||deviceCategory.getCategory()=="")
         {
-            throw new GeneralException("Enter the deviceName");
+            return new ResponseEntity<>(new Response<>(String.valueOf(HttpStatus.NOT_ACCEPTABLE),
+                    HttpStatus.NOT_ACCEPTABLE.getReasonPhrase(),"field should not empty"),
+                    new HttpHeaders(),HttpStatus.NOT_ACCEPTABLE);
         }
-        if(deviceCategory.getCategory()=="")
+        if(deviceNameExists(lowerCase))
         {
-            throw new GeneralException("Enter the category");
+            return new ResponseEntity<>(new Response<>(String.valueOf(HttpStatus.CONFLICT),
+                    HttpStatus.CONFLICT.getReasonPhrase(),"This device Name is Already Exists: "+deviceName.getName()),
+                    new HttpHeaders(),HttpStatus.CONFLICT);
         }
-        if(deviceNameExists(i))
-        {
-            throw new GeneralException("This device Name is Already Exists: "+deviceName.getName());
-        }
-        String newDeviceHistory="New Device  Name: "+deviceName.getName();
+
+
+        saveHistory(deviceName,DEVICE_NAME_ADD);
+        deviceName.setName(lowerCase);
+        deviceNameDao.save(deviceName);
+        return new ResponseEntity(
+                new Response<>(String.valueOf(HttpStatus.CREATED.value()), HttpStatus.CREATED.getReasonPhrase(), "successfully saved",deviceName),
+                new HttpHeaders(),
+                HttpStatus.CREATED);
+    }
+
+    public void saveHistory(Object o,String constant)
+    {
         String userName=service.currentUser();
-        History history=new History(userName,DEVICE_NAME_ADD,new Gson().toJson(deviceName),service.DateAndTime());
-        historyDao.save(history);
-        deviceName.setName(i);
-        return deviceNameDao.save(deviceName);
+        History saveHistory=new History(userName,constant,new Gson().toJson(o),service.DateAndTime());
+        historyDao.save(saveHistory);
+
     }
 
     //get device name
-    public List<DeviceName> getDeviceName()
+    public ResponseEntity getDeviceName()
     {
         List<DeviceName> list=deviceNameDao.findAll();
-        return list;
-    }
-
-    public List<History> getHistory(){
-        List<History> historyList=historyDao.findAll();
-        if(historyList.isEmpty())
+        if(list.isEmpty())
         {
-            throw new GeneralException("RECORD_NOT_FOUND");
+            new ResponseEntity(
+                    new Response<>(String.valueOf(HttpStatus.NOT_FOUND.value()), HttpStatus.NOT_FOUND.getReasonPhrase(), "no device name found"),
+                    new HttpHeaders(),
+                    HttpStatus.NOT_FOUND
+            );
+
         }
-        return historyList;
+        return   new ResponseEntity(
+                new Response<>(String.valueOf(HttpStatus.FOUND.value()), HttpStatus.FOUND.getReasonPhrase(), "device name found", list),
+                new HttpHeaders(),
+                HttpStatus.OK);
     }
 
-    public Iterable<DeviceCategory> findAll() {
-        return deviceCategoryDao.findAll();
+    public ResponseEntity getHistory(){
+        List<History> list=historyDao.findAll();
+        if(list.isEmpty())
+        {
+            new ResponseEntity(
+                    new Response<>(String.valueOf(HttpStatus.NOT_FOUND.value()), HttpStatus.NOT_FOUND.getReasonPhrase(), "history found"),
+                    new HttpHeaders(),
+                    HttpStatus.NOT_FOUND
+            );
+
+        }
+        return   new ResponseEntity(
+                new Response<>(String.valueOf(HttpStatus.FOUND.value()), HttpStatus.FOUND.getReasonPhrase(), "history  found", list),
+                new HttpHeaders(),
+                HttpStatus.FOUND);
+
     }
 
-    public List<String> findByCategory(String name) {
-        return deviceNameDao.getDeviceNames(name);
-    }
 
     //pagination by employee table
     public Page<History> findPaginated(int pageNo, int pageSize)
@@ -267,8 +306,50 @@ public class DeviceService {
         return deviceCategoryDao.findAll();
     }
 
-    public void deleteDeviceCategory(String id) {
+    public ResponseEntity deleteDeviceCategory(String id) {
+        DeviceCategory deviceCategory=deviceCategoryDao.findByDeviceCategory(id);
+        if(deviceCategory==null)
+        {
+            return new ResponseEntity(
+                    new Response<>(String.valueOf(HttpStatus.NOT_FOUND.value()), HttpStatus.NOT_FOUND.getReasonPhrase(), "no device category found"),
+                    new HttpHeaders(),
+                    HttpStatus.NOT_FOUND
+            );
+        }
         deviceCategoryDao.deleteById(id);
+        return   new ResponseEntity(
+                new Response<>(String.valueOf(HttpStatus.OK.value()), HttpStatus.OK.getReasonPhrase(), "deleted successful"),
+                new HttpHeaders(),
+                HttpStatus.OK);
+    }
+
+    public ResponseEntity deleteDeviceDetails(Integer id) {
+        Device device=deviceDao.getByDeviceId(id);
+        if(device==null)
+        {
+            return new ResponseEntity(
+                    new Response<>(String.valueOf(HttpStatus.NOT_FOUND.value()),
+                            HttpStatus.NOT_FOUND.getReasonPhrase(), "device not found"),
+                    new HttpHeaders(), HttpStatus.NOT_FOUND
+            );
+
+        }
+        //    saveHistory(device,DEVICE_DELETE);
+        deviceDao.deleteForiegnKey(id);
+        deviceDao.deleteById(id);
+
+        return new ResponseEntity(
+                new Response<>(String.valueOf(HttpStatus.OK.value()),
+                        HttpStatus.OK.getReasonPhrase(), "deleted successful"),
+                new HttpHeaders(), HttpStatus.OK);
+    }
+
+    public Object findByCategory(String name) {
+        return deviceCategoryDao.findByDeviceCategory(name);
+    }
+
+    public Object findAll() {
+        return deviceCategoryDao.findAll();
     }
 }
 

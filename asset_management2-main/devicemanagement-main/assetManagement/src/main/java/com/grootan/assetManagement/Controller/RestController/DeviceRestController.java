@@ -8,10 +8,13 @@ import com.grootan.assetManagement.Model.History;
 import com.grootan.assetManagement.Repository.DeviceCategoryDao;
 import com.grootan.assetManagement.Repository.HistoryDao;
 import com.grootan.assetManagement.Service.DeviceService;
+import com.grootan.assetManagement.request.DeviceRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import javax.websocket.server.PathParam;
 import java.util.List;
 
 import static com.grootan.assetManagement.Model.Constants.NO_RECORDS;
@@ -29,82 +32,69 @@ public class DeviceRestController {
     DeviceCategoryDao deviceCategoryDao;
 
     @PostMapping("/device/add/add")
-    public ResponseEntity<Object> addDeviceDetails(@RequestBody Device device)
+    public ResponseEntity addDeviceDetails(@RequestBody DeviceRequest device)
     {
-        try{
-            return ResponseEntity.status(HttpStatus.CREATED).body(deviceService.addDeviceDetails(device));
-        }
-        catch(GeneralException e)
-        {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
-        }
+      return  deviceService.addDeviceDetails(device);
     }
 
     @GetMapping("/device/list/device")
-    public ResponseEntity<List<Device>> getAllDeviceList()
+    public ResponseEntity getAllDeviceList()
     {
-        return ResponseEntity.status(HttpStatus.OK).body(deviceService.getAllDevices());
+        return deviceService.getAllDevices();
+    }
+
+    @GetMapping("/device/{deviceId}")
+    public ResponseEntity getDeviceById(@PathParam("deviceId") Integer deviceId)
+    {
+        return deviceService.findDeviceById(deviceId);
     }
 
     @PutMapping("/device/update/device")
-    public ResponseEntity<Device> updateDevice(@RequestBody Device device)
+    public ResponseEntity updateDevice(@RequestBody DeviceRequest device)
     {
-        deviceService.updateDeviceDetails(device);
-        return ResponseEntity.status(HttpStatus.OK).body(device);
+        return deviceService.updateDeviceDetails(device);
     }
 
     @DeleteMapping("/device/delete/{id}")
-    public ResponseEntity<List<Device>> deleteDevice(@PathVariable(name="id") Integer id)
+    public ResponseEntity deleteDevice(@PathVariable(name="id") Integer id)
     {
-        deviceService.deleteDeviceDetails(id);
-        return ResponseEntity.status(HttpStatus.OK).body(deviceService.getAllDevices());
+        return deviceService.deleteDeviceDetails(id);
     }
 
     @PostMapping("/device/add/category/device")
-    public ResponseEntity<Object> addDeviceCategory(@RequestBody DeviceCategory deviceCategory)
+    public ResponseEntity addDeviceCategory(@RequestBody DeviceCategory deviceCategory)
     {
-        try{
-            return ResponseEntity.status(HttpStatus.CREATED).body(deviceService.saveDeviceCategory(deviceCategory));
-        }
-        catch(GeneralException e)
-        {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
-        }
+
+            return deviceService.saveDeviceCategory(deviceCategory);
+
     }
 
     @PostMapping("/device/name/add")
-    public ResponseEntity<Object> addDeviceName(@RequestBody DeviceName deviceName)
+    public ResponseEntity addDeviceName(@RequestBody DeviceName deviceName)
     {
-        try{
-            return  ResponseEntity.status(HttpStatus.CREATED).body(deviceService.saveDeviceName(deviceName));
-        }
-        catch(GeneralException e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
-        }
+            return  deviceService.saveDeviceName(deviceName);
+
     }
 
     @GetMapping("/get/history")
-    public ResponseEntity<List<History>> history()
+    public ResponseEntity history()
     {
-        return ResponseEntity.status(HttpStatus.FOUND).body(historyDao.findAll());
-    }
-
-    @DeleteMapping("/device/category/delete/{id}")
-    public ResponseEntity<List<DeviceCategory>> deleteDeviceCategory(@PathVariable(name="id") String  category)
-    {
-        deviceService.deleteDeviceCategory(category);
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(deviceService.getAllDeviceCategory());
+        return deviceService.getHistory();
     }
 
     @GetMapping("/device/get/category/all")
-    public ResponseEntity<List<DeviceCategory>> getDeviceCategory()
+    public ResponseEntity getDeviceCategory()
     {
-        List<DeviceCategory> list=deviceService.getCategory();
-        if(list.isEmpty())
-        {
-            throw  new GeneralException( NO_RECORDS);
-        }
-        return ResponseEntity.status(HttpStatus.FOUND).body(list);
+        return deviceService.getCategory();
     }
+
+    @DeleteMapping("/device/category/delete/{id}")
+    public ResponseEntity deleteDeviceCategory(@PathVariable(name="id") String  category)
+    {
+
+        return deviceService.deleteDeviceCategory(category);
+    }
+
+
 
 }

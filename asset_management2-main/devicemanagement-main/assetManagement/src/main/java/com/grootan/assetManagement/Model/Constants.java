@@ -2,6 +2,7 @@ package com.grootan.assetManagement.Model;
 
 public class Constants {
     public static final String DEVICE_DELETE = "Device_Deleted";
+    public static final String EMP_DELETE = "employee_deleted";
     public static final String DEVICE_ADD = "Device_Added";
     public static final String DEVICE_UPDATED = "Device_Updated";
     public static final String USER_DELETE = "User_Deleted";
