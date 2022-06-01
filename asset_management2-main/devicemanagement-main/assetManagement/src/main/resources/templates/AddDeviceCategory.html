@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="ISO-8859-1">
+    <title>Device Category</title>
+    <link rel="stylesheet"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+          crossorigin="anonymous">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orelega+One&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Audiowide"> <!-- Heading font -->
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand&display=swap" rel="stylesheet"> <!--label font -->
+    <link href='https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css' rel='stylesheet'/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+</head>
+<body>
+<div class="sidenav">
+    <nav class="sidebar">
+        <header>
+            <div class="image-text">
+                <span class="image">
+                    <img src="/images/grootan.webp" alt="">
+                </span>
+
+                <div class="text logo-text">
+                    <span class="name">Grootan</span>
+                    <span class="profession">Device Management</span>
+                </div>
+            </div>
+        </header>
+    </nav>
+    <br>
+    <br>
+    <button class="dropdown-btn"><i class="fa fa-user" aria-hidden="true"></i>&nbsp;Employee
+        <i class="fa fa-caret-down"></i>
+    </button>
+    <div class="dropdown-container">
+        <a th:href="@{/employee/registration}">Employee Registration</a>
+        <a th:href="@{/employee/list}">List Of Employees</a>
+        <a th:href="@{/employee/user/device}">List Of Employee Devices</a>
+        <a th:href="@{/employee/department}">Add Employee Department</a>
+    </div>
+    <br>
+    <button class="dropdown-btn"><i class='fa fa-users'></i>&nbsp;Roles
+        <i class="fa fa-caret-down"></i>
+    </button>
+    <div class="dropdown-container">
+        <a th:href="@{/role/registration}">Roles Registration</a>
+        <a th:href="@{/roles/list}">List Of Roles</a>
+    </div>
+    <br>
+    <button class="dropdown-btn"><i class='bx bxs-devices'></i>&nbsp;Devices
+        <i class="fa fa-caret-down"></i>
+    </button>
+    <div class="dropdown-container">
+        <a th:href="@{/device/add}">Add Device Details</a>
+        <a th:href="@{/device/list}">List Of Device Details</a>
+        <a th:href="@{/device/add/category}">Add Device Category</a>
+        <a th:href="@{/device/add/name}">Add Device Name</a>
+    </div>
+    <br>
+    <a th:href="@{/history}" class="dropdown-btn"><i class="fa fa-history" aria-hidden="true"></i>&nbsp;History</a>
+    <br>
+    <a sec:authorize="isAuthenticated()" th:href="@{/logout}" class="dropdown-btn" ><i class="fa fa-sign-out" aria-hidden="true"></i>&nbsp;Logout</a>
+</div>
+<div class="main">
+    <div th:if="${param.success}">
+        <div class="alert alert-info">You've successfully saved!</div>
+    </div>
+    <br>
+    <br>
+    <div th:if="${errorMessage!=null}">
+        <div class="alert alert-info">[[${errorMessage}]]</div>
+    </div>
+    <h1>Device category</h1>
+    <form  method="post" >
+        <div class="form-group">
+            <label class="control-label" for="category"> Device Category </label>
+            <input id="category" class="form-control"  placeholder="deviceCategory"
+                   required autofocus="autofocus" />
+        </div>
+        <div class="form-group">
+            <button type="submit" class="btn btn-success btn1" onclick="ajaxPost()">ADD</button>
+            <a th:href="@{/}" class="btn btn-primary btn2">Back</a>
+        </div>
+    </form>
+
+</div>
+<script>
+function ajaxPost()
+{
+var category = $("#category").val();
+$.ajax({
+			type : "POST",
+			contentType : "application/json",
+			url : '/device/add/category/device',
+			data : JSON.stringify({category:category}),
+			dataType : 'json',
+			success : function(result) {
+				console.log(result);
+				alert("Registered Successfully");
+			},
+			error : function(request,status,error) {
+				alert(request.responseText);
+			}
+		});
+		resetData();
+}
+function resetData()
+{
+ $("#category").val("");
+}
+/* Loop through all dropdown buttons to toggle between hiding and showing its dropdown content - This allows the user to have multiple dropdowns without any conflict */
+var dropdown = document.getElementsByClassName("dropdown-btn");
+var i;
+
+for (i = 0; i < dropdown.length; i++) {
+  dropdown[i].addEventListener("click", function() {
+    this.classList.toggle("active");
+    var dropdownContent = this.nextElementSibling;
+    if (dropdownContent.style.display === "block") {
+      dropdownContent.style.display = "none";
+    } else {
+      dropdownContent.style.display = "block";
+    }
+  });
+}
+</script>
+</body>
+</html>

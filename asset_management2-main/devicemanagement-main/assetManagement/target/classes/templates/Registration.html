@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="ISO-8859-1">
+    <title>Registration</title>
+    <link rel="stylesheet"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+          crossorigin="anonymous">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orelega+One&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Audiowide"> <!-- Heading font -->
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand&display=swap" rel="stylesheet"> <!--label font -->
+    <link href='https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css' rel='stylesheet'/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/fontawesome.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<body>
+<div class="sidenav">
+    <nav class="sidebar">
+        <header>
+            <div class="image-text">
+                <span class="image">
+                    <img src="/images/grootan.webp" alt="">
+                </span>
+
+                <div class="text logo-text">
+                    <span class="name">Grootan</span>
+                    <span class="profession">Device Management</span>
+                </div>
+            </div>
+        </header>
+    </nav>
+    <br>
+    <br>
+    <button class="dropdown-btn"><i class='bx bx-user bx-sm' ></i>&nbsp;Employee
+        <i class='bx bx-chevron-down'></i>
+    </button>
+    <div class="dropdown-container">
+        <a th:href="@{/employee/registration}">Employee Registration</a>
+        <a th:href="@{/employee/list}">List Of Employees</a>
+        <a th:href="@{/employee/user/device}">List Of Employee Devices</a>
+        <a th:href="@{/employee/department}">Add Employee Department</a>
+    </div>
+    <br>
+    <button class="dropdown-btn"><i class='bx bx-user-plus'></i>&nbsp;Roles
+        <i class='bx bx-chevron-down'></i>
+    </button>
+    <div class="dropdown-container">
+        <a th:href="@{/role/registration}">Roles Registration</a>
+        <a th:href="@{/roles/list}">List Of Roles</a>
+    </div>
+    <br>
+    <button class="dropdown-btn"><i class='bx bx-devices bx-sm' ></i>&nbsp;Devices
+        <i class='bx bx-chevron-down'></i>
+    </button>
+    <div class="dropdown-container">
+        <a th:href="@{/device/add}">Add Device Details</a>
+        <a th:href="@{/device/list}">List Of Device Details</a>
+        <a th:href="@{/device/add/category}">Add Device Category</a>
+        <a th:href="@{/device/add/name}">Add Device Name</a>
+    </div>
+    <br>
+    <a th:href="@{/history}" class="dropdown-btn"><i class='bx bx-history bx-sm' ></i>&nbsp;History</a>
+    <br>
+    <a sec:authorize="isAuthenticated()" th:href="@{/logout}" class="dropdown-btn" ><i class='bx bx-log-out bx-sm'></i>&nbsp;Logout</a>
+</div>
+<div class="main">
+    <div>
+        <h1>Employee Registration</h1>
+        <form  method="post">
+            <div class="form-group">
+                <label class="control-label"> Employee Id </label>
+                <input id="empId" class="form-control"  placeholder="Enter Employee Id"
+                       required autofocus="autofocus" />
+                <!--          autocomplete="off"-->
+            </div>
+
+            <div class="form-group">
+                <label class="control-label" > Employee Name </label>
+                <input id="empName" class="form-control"  placeholder="Enter Employee Name"
+                       required autofocus="autofocus" />
+            </div>
+
+            <div class="form-group">
+                <label class="control-label" for="email"> Employee Email </label>
+                <input id="email" class="form-control"  placeholder="Enter Email" required
+                       autofocus="autofocus" />
+            </div>
+
+            <div class="form-group">
+                <label class="control-label" for="empPassword"> Employee Password </label>
+                <input id="empPassword" class="form-control" type="password" placeholder="Enter Password"
+                       required autofocus="autofocus" />
+            </div>
+            <div class="form-group">
+                <label class="control-label" > Employee Department </label>
+                <select class="form-control"   id="empDepartment" required>
+                    <option th:each="department:${ListOfEmpDepartment}" th:value="${department.department}" th:text="${department.department}"></option>
+                </select>
+
+                <!--            <ul>-->
+                <!--                <li th:each="device : ${ListOfEmpDepartment}">-->
+                <!--                    <input type="checkbox" th:field="*{empDepartment}" th:value="${EmployeeDepartment}" th:text="${EmployeeDepartment}" />-->
+                <!--                </li>-->
+                <!--            </ul>-->
+            </div>
+
+
+            <div class="form-group">
+                <label class="control-label"> Available Devices </label>
+
+                <ul>
+                    <li th:each="device : ${ListOfDevices}">
+                        <input type="checkbox"  th:value="${device}" th:text="${device}" id="empDevices"/>
+                    </li>
+                </ul>
+
+                <!--          <select class="form-control" th:name="device" th:field="*{empDevices}" multiple>-->
+                <!--            <option th:each="device:${List_Of_Devices}" th:value="${device}" th:text="${device}"></option>-->
+                <!--          </select>-->
+
+            </div>
+            <div class="form-group">
+                <label class="control-label"> Employee Role </label>
+
+                <select class="form-control"  id="assignRole" required>
+                    <option th:each="role:${ListOfRoles}" th:value="${role.roleName}" th:text="${role.roleName}"></option>
+                </select>
+            </div>
+            <div class="form-group">
+                <input type="submit" class="btn btn-success btn1" onclick="ajaxPost()" value="Register">
+                <a th:href="@{/}" class="btn btn-primary btn2">Back</a>
+            </div>
+        </form>
+    </div>
+</div>
+<script>
+function ajaxPost()
+{
+var empId = $("#empId").val();
+var empName = $("#empName").val();
+var email = $("#email").val();
+var empPassword = $("#empPassword").val();
+var empDepartment = $("#empDepartment").val();
+var empDevices = $("#empDevices").val();
+var assignRole = $("#assignRole").val();
+$.ajax({
+			type : "POST",
+			contentType : "application/json",
+			url : '/employee/add',
+			data : JSON.stringify({empId:empId,empName:empName,email:email,empPassword:empPassword,empDepartment:empDepartment,empDevices:empDevices,assignRole:assignRole}),
+			dataType : 'json',
+			success : function(result) {
+				console.log(result);
+				alert("Registered Successfully");
+				window.location.href='/employee/list';
+			},
+			error : function(request,status,error) {
+				alert(request.responseText);
+				window.location.href='/employee/registration';
+			}
+		});
+		resetData();
+}
+function resetData()
+{
+ $("#empId").val("");
+ $("#empName").val("");
+ $("#email").val("");
+ $("#empPassword").val("");
+ $("#empDepartment").val("");
+ $("#empDevices").val("");
+ $("#assignRole").val("");
+}
+/* Loop through all dropdown buttons to toggle between hiding and showing its dropdown content - This allows the user to have multiple dropdowns without any conflict */
+var dropdown = document.getElementsByClassName("dropdown-btn");
+var i;
+
+for (i = 0; i < dropdown.length; i++) {
+  dropdown[i].addEventListener("click", function() {
+    this.classList.toggle("active");
+    var dropdownContent = this.nextElementSibling;
+    if (dropdownContent.style.display === "block") {
+      dropdownContent.style.display = "none";
+    } else {
+      dropdownContent.style.display = "block";
+    }
+  });
+}
+</script>
+</body>
+</html>

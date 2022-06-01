@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="ISO-8859-1">
+    <title>History</title>
+    <link rel="stylesheet"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+          crossorigin="anonymous">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Audiowide"> <!-- Heading font -->
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand&display=swap" rel="stylesheet"> <!--label font -->
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orelega+One&display=swap" rel="stylesheet">
+    <link href='https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css' rel='stylesheet'/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/css/table.css">
+</head>
+<body>
+<div class="container">
+    <div class="sidenav">
+        <nav class="sidebar">
+            <header>
+                <div class="image-text">
+                <span class="image">
+                    <img src="/images/grootan.webp" alt="">
+                </span>
+
+                    <div class="text logo-text">
+                        <span class="name">Grootan</span>
+                        <span class="profession">Device Management</span>
+                    </div>
+                </div>
+            </header>
+        </nav>
+        <br>
+        <br>
+        <button class="dropdown-btn"><i class="fa fa-user" aria-hidden="true"></i>&nbsp;Employee
+            <i class="fa fa-caret-down"></i>
+        </button>
+        <div class="dropdown-container">
+            <a th:href="@{/employee/registration}" class="row1">Employee Registration</a>
+            <a th:href="@{/employee/list}" class="row1">List Of Employees</a>
+            <a th:href="@{/employee/user/device}" class="row1">List Of Employee Devices</a>
+            <a th:href="@{/employee/department}" class="row1">Add Employee Department</a>
+        </div>
+        <br>
+        <button class="dropdown-btn"><i class='fa fa-users'></i>&nbsp;Roles
+            <i class="fa fa-caret-down"></i>
+        </button>
+        <div class="dropdown-container">
+            <a th:href="@{/role/registration}" class="row1">Roles Registration</a>
+            <a th:href="@{/roles/list}" class="row1">List Of Roles</a>
+        </div>
+        <br>
+        <button class="dropdown-btn"><i class='bx bxs-devices'></i>&nbsp;Devices
+            <i class="fa fa-caret-down"></i>
+        </button>
+        <div class="dropdown-container">
+            <a th:href="@{/device/add}" class="row1">Add Device Details</a>
+            <a th:href="@{/device/list}" class="row1">List Of Device Details</a>
+            <a th:href="@{/device/add/category}" class="row1">Add Device Category</a>
+            <a th:href="@{/device/add/name}" class="row1">Add Device Name</a>
+        </div>
+        <br>
+        <a th:href="@{/history}" class="dropdown-btn"><i class="fa fa-history" aria-hidden="true"></i>&nbsp;History</a>
+        <br>
+        <a sec:authorize="isAuthenticated()" th:href="@{/logout}" class="dropdown-btn"><i class="fa fa-sign-out" aria-hidden="true"></i>&nbsp;Logout</a>
+    </div>
+    <div class="history_main">
+        <h1>History</h1>
+        <table class="table table-bordered">
+            <thead class="thead-light">
+            <tr>
+                <th scope="col">Id</th>
+                <th scope="col">Created By</th>
+                <th scope="col">Created Date</th>
+                <th scope="col" class="change">History</th>
+                <th scope="col">Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="history:${maintainHistory}" class="pages">
+                <td th:text="${history.id}" class="row"></td>
+                <td th:text="${history.createdBy}" class="row"></td>
+                <td th:text="${history.creationDate}" class="row"></td>
+                <td th:text="${history.history}" class="row"></td>
+                <td th:text="${history.action}" class="row"></td>
+
+            </tr>
+            </tbody>
+        </table>
+        <div th:if="${totalPages>1}" class="pages">
+            <div class="row col-sm-10">
+                <div class="col-sm-2">
+                    TotalRows:[[${totalItems}]]
+                </div>
+                <div class="col-sm-3">
+            <span th:each="i:${#numbers.sequence(1,totalPages)}">
+                <a th:if="${currentPage!=i}" th:href="@{'/page/'+${i}}">[[${i}]]</a>
+                <span th:unless="${currentPage!=i}">[[${i}]]</span>
+            </span>
+                </div>
+                <div class="col-sm-1">
+                    <a th:if="${currentPage<=totalPages and currentPage>1}" th:href="@{'/page/'+${currentPage - 1}}">Prev</a>
+                    <span th:unless="${currentPage<=totalPages and currentPage>1}">Prev</span>
+                </div>
+                <div class="col-sm-1">
+                    <a th:if="${currentPage<totalPages}" th:href="@{'/page/'+${currentPage + 1}}">Next</a>
+                    <span th:unless="${currentPage<totalPages}">Next</span>
+                </div>
+            </div>
+        </div>
+        <br>
+        <br>
+        <a th:href="@{/}" class="btn btn-primary btn1">Back</a>
+    </div>
+
+</div>
+<script>
+/* Loop through all dropdown buttons to toggle between hiding and showing its dropdown content - This allows the user to have multiple dropdowns without any conflict */
+var dropdown = document.getElementsByClassName("dropdown-btn");
+var i;
+
+for (i = 0; i < dropdown.length; i++) {
+  dropdown[i].addEventListener("click", function() {
+    this.classList.toggle("active");
+    var dropdownContent = this.nextElementSibling;
+    if (dropdownContent.style.display === "block") {
+      dropdownContent.style.display = "none";
+    } else {
+      dropdownContent.style.display = "block";
+    }
+  });
+}
+</script>
+</body>
+</html>

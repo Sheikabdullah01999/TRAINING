@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="ISO-8859-1">
+    <title>Device Details</title>
+    <link rel="stylesheet"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+          crossorigin="anonymous">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orelega+One&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style type="text/css">
+    body {
+  font-family: "Lato", sans-serif;
+  background-color:#E4E9F7;
+}
+h3
+{
+color:#707070;
+}
+
+/* Fixed sidenav, full height */
+.sidenav {
+  height: 100%;
+  width: 300px;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  background-color: white;
+  overflow-x: hidden;
+  padding-top: 20px;
+}
+
+/* Style the sidenav links and the dropdown button */
+.sidenav a, .dropdown-btn {
+  padding: 6px 8px 6px 16px;
+  text-decoration: none;
+  font-size: 20px;
+  color: #818181;
+  display: block;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  outline: none;
+}
+
+/* On mouse-over */
+.sidenav a:hover, .dropdown-btn:hover {
+  color: #3a3b3c;
+}
+
+/* Main content */
+.main {
+  margin-left: 300px; /* Same as the width of the sidenav */
+  font-size: 20px; /* Increased text to enable scrolling */
+  padding: 0px 10px;
+}
+
+/* Add an active class to the active dropdown button */
+.active {
+  background-color: #695CFE;
+  color: #3a3b3c;
+}
+
+/* Dropdown container (hidden by default). Optional: add a lighter background color and some left padding to change the design of the dropdown content */
+.dropdown-container {
+  display: none;
+  padding-left: 8px;
+}
+
+/* Optional: Style the caret down icon */
+.fa-caret-down {
+  float: right;
+  padding-right: 8px;
+}
+
+/* Some media queries for responsiveness */
+@media screen and (max-height: 450px) {
+  .sidenav {padding-top: 15px;}
+  .sidenav a {font-size: 18px;}
+}
+.sidebar header .image
+{
+    min-width: 60px;
+    border-radius: 6px;
+}
+.sidebar header{
+    position: relative;
+}
+
+.sidebar header .image-text{
+    display: flex;
+    align-items: center;
+}
+.sidebar header .logo-text{
+    display: flex;
+    flex-direction: column;
+}
+header .image-text .name {
+    margin-top: 2px;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+header .image-text .profession{
+    font-size: 16px;
+    margin-top: -2px;
+    display: block;
+}
+
+.sidebar header .image{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.sidebar header .image img{
+    width: 40px;
+    border-radius: 6px;
+}
+    .control-label
+    {
+    font-style:italic;
+    font-size:18px;
+    }
+    .form-control
+    {
+    width:60%;
+    }
+    h1
+    {
+    color:#707070;
+    text-align:center;
+    padding:20px;
+    font-family: 'Orelega One', cursive;
+    }
+    table,.btn1,input
+    {
+    margin-left:200px;
+    }
+    .table
+    {
+    width:50%;
+    }
+  </style>
+</head>
+<body>
+<div class="sidenav">
+    <nav class="sidebar">
+        <header>
+            <div class="image-text">
+                <span class="image">
+                    <img th:src="@{images/grootan.webp}" alt="">
+                </span>
+
+                <div class="text logo-text">
+                    <span class="name">Grootan</span>
+                    <span class="profession">Device Management</span>
+                </div>
+            </div>
+
+            <i class='bx bx-chevron-right toggle'></i>
+        </header>
+    </nav>
+    <br>
+    <br>
+    <button class="dropdown-btn">Employee
+        <i class="fa fa-caret-down"></i>
+    </button>
+    <div class="dropdown-container">
+        <a th:href="@{/registration_form}">Employee Registration</a>
+        <a th:href="@{/List_Of_Employees}">List Of Employees</a>
+        <a th:href="@{/user_devices}">List Of Employee Devices</a>
+        <a th:href="@{/department}">Add Employee Department</a>
+    </div>
+    <br>
+    <button class="dropdown-btn">Roles
+        <i class="fa fa-caret-down"></i>
+    </button>
+    <div class="dropdown-container">
+        <a th:href="@{/registration_roles}">Roles Registration</a>
+        <a th:href="@{/roles/list}">List Of Roles</a>
+    </div>
+    <br>
+    <button class="dropdown-btn">Devices
+        <i class="fa fa-caret-down"></i>
+    </button>
+    <div class="dropdown-container">
+        <a th:href="@{/device/add}">Add Device Details</a>
+        <a th:href="@{/device/list}">List Of Device Details</a>
+        <a th:href="@{/device/add/category}">Add Device Category</a>
+        <a th:href="@{/device/add/name}">Add Device Name</a>
+<!--        <a th:href="@{/getAllDeviceCategory}">listOfDeviceCategory</a>-->
+    </div>
+    <br>
+    <a th:href="@{/history}">History</a>
+    <br>
+    <a sec:authorize="isAuthenticated()" th:href="@{/logout}" >Logout</a>
+</div>
+<div class="main">
+    <h1>Device List</h1>
+    <form th:action="@{/device/searching}" method="get">
+        <input type="text" name="keyword" th:value="${keyword}" placeholder="Find by Category and DeviceStatus" size="50">
+        <button type="submit" class="btn btn-info" >Search</button>
+    </form>
+    <br>
+    <br>
+    <table class="table table-stripped table-bordered">
+        <thead>
+        <tr>
+            <th scope="col">category</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="device:${categoryList}">
+            <td th:text="${device.category}"></td>
+
+            <td><button class="submit1"><a th:href="@{'/CategoryUpdate/' +${device.category}}">update</a></button></td>
+            <td><button class="submit2"><a th:href="@{'/category/delete/'+${device.category}}">delete</a></button></td>
+
+        </tr>
+        </tbody>
+    </table>
+    <a th:href="@{/}" class="btn btn-primary btn1">Back</a>
+</div>
+<script>
+/* Loop through all dropdown buttons to toggle between hiding and showing its dropdown content - This allows the user to have multiple dropdowns without any conflict */
+var dropdown = document.getElementsByClassName("dropdown-btn");
+var i;
+
+for (i = 0; i < dropdown.length; i++) {
+  dropdown[i].addEventListener("click", function() {
+    this.classList.toggle("active");
+    var dropdownContent = this.nextElementSibling;
+    if (dropdownContent.style.display === "block") {
+      dropdownContent.style.display = "none";
+    } else {
+      dropdownContent.style.display = "block";
+    }
+  });
+}
+</script>
+</body>
+</html>

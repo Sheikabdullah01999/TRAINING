@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.w3.org/1999/xhtml">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>List Of Information</title>
+    <link rel="stylesheet"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+          crossorigin="anonymous">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href='https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css' rel='stylesheet'/>
+    <link href="https://fonts.googleapis.com/css2?family=Orelega+One&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/css/table.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+</head>
+<body>
+<div class="sidenav">
+    <nav class="sidebar">
+        <header>
+            <div class="image-text">
+                <span class="image">
+                    <img src="/images/grootan.webp" alt="">
+                </span>
+
+                <div class="text logo-text">
+                    <span class="name">Grootan</span>
+                    <span class="profession">Device Management</span>
+                </div>
+            </div>
+        </header>
+    </nav>
+    <br>
+    <br>
+    <button class="dropdown-btn"><i class="fa fa-user" aria-hidden="true"></i>&nbsp;Employee
+        <i class="fa fa-caret-down"></i>
+    </button>
+    <div class="dropdown-container">
+        <a th:href="@{/employee/registration}" class="row1">Employee Registration</a>
+        <a th:href="@{/employee/list}" class="row1">List Of Employees</a>
+        <a th:href="@{/employee/user/device}" class="row1">List Of Employee Devices</a>
+        <a th:href="@{/employee/department}" class="row1">Add Employee Department</a>
+    </div>
+    <br>
+    <button class="dropdown-btn"><i class='fa fa-users'></i>&nbsp;Roles
+        <i class="fa fa-caret-down"></i>
+    </button>
+    <div class="dropdown-container">
+        <a th:href="@{/role/registration}" class="row1">Roles Registration</a>
+        <a th:href="@{/roles/list}" class="row1">List Of Roles</a>
+    </div>
+    <br>
+    <button class="dropdown-btn"><i class='bx bxs-devices'></i>&nbsp;Devices
+        <i class="fa fa-caret-down"></i>
+    </button>
+    <div class="dropdown-container">
+        <a th:href="@{/device/add}" class="row1">Add Device Details</a>
+        <a th:href="@{/device/list}" class="row1">List Of Device Details</a>
+        <a th:href="@{/device/add/category}" class="row1">Add Device Category</a>
+        <a th:href="@{/device/add/name}" class="row1">Add Device Name</a>
+    </div>
+    <br>
+    <a th:href="@{/history}" class="dropdown-btn"><i class="fa fa-history" aria-hidden="true"></i>&nbsp;History</a>
+    <br>
+    <a sec:authorize="isAuthenticated()" th:href="@{/logout}" class="dropdown-btn" ><i class="fa fa-sign-out" aria-hidden="true"></i>&nbsp;Logout</a>
+    <br>
+    <a th:href="@{/list}" class="dropdown-btn"><i class='bx bx-list-ul'></i>&nbsp;Lists</a>
+</div>
+<div class="buttons">
+    <a href="#" class="btn btn-primary btn-lg active" onclick="ListOfEmployees(); return false;">ListOfEmployees</a>
+    <a href="#" class="btn btn-primary btn-lg active" onclick="ListOfRoles(); return false;">ListOfRoles</a>
+    <a href="#" class="btn btn-primary btn-lg active" onclick="ListOfDevices(); return false;">ListOfDevices</a>
+    <a href="#" class="btn btn-primary btn-lg active" onclick="ListOfEmployeeDevices(); return false;">ListOfEmployeeDevices</a>
+    <a href="#" class="btn btn-primary btn-lg active" onclick="ListOfEmployeeDepartment(); return false;">ListOfEmployeeDepartment</a>
+    <a href="#" class="btn btn-primary btn-lg active" onclick="ListOfDeviceCategory(); return false;">ListOfDeviceCategory</a>
+</div>
+<div class="main">
+    <table class="table table-stripped table-bordered">
+        <thead id="headers">
+
+        </thead>
+        <tbody id="content">
+
+        </tbody>
+    </table>
+</div>
+<script>
+      function ListOfEmployees()
+      {
+      clear();
+      $.ajax({
+      url:"http://localhost:9092/employee/all/list",
+      type:"GET",
+      contentType : "application/json",
+      dataType : 'json',
+      success: function(response){
+                        $('#headers').append('<tr>\
+                                    <td>EmployeeId</td>\
+                                    <td>EmployeeName</td>\
+                                    <td>EmployeeEmail</td>\
+                                    <td>EmployeeDepartment</td>\
+                                    <td>AssignRole</td>\
+                                    <td colspan="2">Operations</td>\
+                                    <tr>');
+						$.each(response, function (key, value) {
+						var empId = value.empId;
+						 console.log(empId);
+							$('#content').append('<tr>\
+										<td>'+empId+'</td>\
+										<td>'+value.empName+'</td>\
+										<td>'+value.email+'</td>\
+										<td>'+value.empDepartment+'</td>\
+										<td>'+value.assignRole+'</td>\
+										<td><a href="/update/employee/'+value.empId+'" class="btn btn-success">update</a></td>\
+										<td><button  class="btn btn-danger" onclick="DeleteEmployee(\''+empId+'\')">delete</button></td>\
+										</tr>');
+
+						})
+
+                  }
+       });
+      }
+function DeleteEmployee(empId)
+{
+ $.ajax({
+			type : "DELETE",
+			contentType : "application/json",
+			url : 'http://localhost:9092/delete/employee/'+empId,
+			dataType : 'json',
+			success : function() {
+				alert("Deleted Successfully");
+				window.location.href='http://localhost:9092/employee/list';
+			},
+			error : function(request,status,error) {
+				alert("Cannot delete default admin");
+				window.location.href='http://localhost:9092/employee/list';
+			}
+		});
+}
+function ListOfRoles()
+{
+clear();
+$.ajax({
+url:"http://localhost:9092/role/list/role",
+type:"GET",
+contentType : "application/json",
+dataType : 'json',
+success: function(response){
+                        $('#headers').append('<tr>\
+                        <td>RoleName</td>\
+                        <td>RoleDescription</td>\
+                        </tr>');
+						$.each(response, function (key, value) {
+						var empId = value.empId;
+							$('#content').append('<tr>\
+										<td>'+value.roleName+'</td>\
+										<td>'+value.roleDescription+'</td>\
+										</tr>');
+
+						})
+                  }
+});
+}
+function ListOfDevices()
+{
+clear();
+$.ajax({
+url:"http://localhost:9092/device/list/device",
+type:"GET",
+contentType : "application/json",
+dataType : 'json',
+success: function(response){
+                        $('#headers').append('<tr>\
+                                    <td>DeviceId</td>\
+                                    <td>Category</td>\
+                                    <td>DeviceName</td>\
+                                    <td>DevicePurchaseDate</td>\
+                                    <td>ManufactureId</td>\
+                                    <td>AssignStatus</td>\
+                                    <td>DeviceStatus</td>\
+                                    <td colspan="2">Operations</td>\
+                                    <tr>');
+						$.each(response, function (key, value) {
+						var Id = value.id;
+							$('#content').append('<tr>\
+										<td>'+value.id+'</td>\
+										<td>'+value.category+'</td>\
+										<td>'+value.deviceName+'</td>\
+										<td>'+value.devicePurchaseDate+'</td>\
+										<td>'+value.manufacturedId+'</td>\
+										<td>'+value.assignStatus+'</td>\
+										<td>'+value.deviceStatus+'</td>\
+										<td><a href="/device/update/'+value.id+'" class="btn btn-success">update</a></td>\
+										<td><button  class="btn btn-danger" onclick="DeleteDevice('+Id+')">delete</button></td>\
+										</tr>');
+
+						})
+                  }
+});
+}
+function DeleteDevice(id)
+{
+ $.ajax({
+			type : "DELETE",
+			contentType : "application/json",
+			url : 'http://localhost:9092/device/delete/'+id,
+			dataType : 'json',
+			success : function() {
+				alert("Deleted Successfully");
+				window.location.href='http://localhost:9092/device/list';
+			},
+			error : function(request,status,error) {
+				alert(request.responseText);
+				window.location.href='http://localhost:9092/device/list';
+			}
+		});
+}
+function ListOfEmployeeDevices()
+{
+clear();
+$.ajax({
+url:"http://localhost:9092/employee/user/devices/all",
+type:"GET",
+contentType : "application/json",
+dataType : 'json',
+success: function(response){
+                        $('#headers').append('<tr>\
+                                    <td>EmployeeId</td>\
+                                    <td>DeviceName</td>\
+                                    <td>DeviceId</td>\
+                                    <td>DevicePurchaseDate</td>\
+                                    <td>Category</td>\
+                                    <td colspan="2">Operations</td>\
+                                    <tr>');
+						$.each(response, function (key, value) {
+						var id = value.id;
+							$('#content').append('<tr>\
+										<td>'+value.empId+'</td>\
+										<td>'+value.deviceName+'</td>\
+										<td>'+value.id+'</td>\
+										<td>'+value.devicePurchaseDate+'</td>\
+										<td>'+value.category+'</td>\
+										<td><button  class="btn btn-danger" onclick="DeleteEmployeeDevices('+id+')">delete</button></td>\
+										</tr>');
+
+						})
+                  }
+});
+}
+function DeleteEmployeeDevices(id)
+{
+ $.ajax({
+			type : "DELETE",
+			contentType : "application/json",
+			url : 'http://localhost:9092/employee/device/delete/'+id,
+			dataType : 'json',
+			success : function() {
+				alert("Deleted Successfully");
+				window.location.href='http://localhost:9092/employee/user/device';
+			},
+			error : function(request,status,error) {
+				alert(request.responseText);
+			}
+		});
+}
+function ListOfEmployeeDepartment()
+{
+clear();
+$.ajax({
+url:"http://localhost:9092/employee/department/emp",
+type:"GET",
+contentType : "application/json",
+dataType : 'json',
+success: function(response){
+                        $('#headers').append('<tr>\
+                                    <td>List Of Departments</td>\
+                                    <td>Operation</td>\
+                                    <tr>');
+						$.each(response, function (key, value) {
+							$('#content').append('<tr>\
+										<td>'+value.department+'</td>\
+										<td><button  class="btn btn-danger" onclick="DeleteEmployeeDepartment(\''+value.department+'\')">delete</button></td>\
+										</tr>');
+
+						})
+                  }
+});
+}
+function DeleteEmployeeDepartment(id)
+{
+ $.ajax({
+			type : "DELETE",
+			contentType : "application/json",
+			url : 'http://localhost:9092/employee/department/delete/'+id,
+			dataType : 'json',
+			success : function() {
+				alert("Deleted Successfully");
+				window.location.href='http://localhost:9092/employee/user/device';
+			},
+			error : function(request,status,error) {
+				alert(request.responseText);
+			}
+		});
+}
+function ListOfDeviceCategory()
+{
+clear();
+$.ajax({
+url:"http://localhost:9092/device/get/category/all",
+type:"GET",
+contentType : "application/json",
+dataType : 'json',
+success: function(response){
+                        $('#headers').append('<tr>\
+                                    <td>List Of Category</td>\
+                                    <td>Operation</td>\
+                                    <tr>');
+						$.each(response, function (key, value) {
+							$('#content').append('<tr>\
+										<td>'+value.category+'</td>\
+										<td><button  class="btn btn-danger" onclick="DeleteDeviceCategory(\''+value.category+'\')">delete</button></td>\
+										</tr>');
+
+						})
+                  }
+});
+}
+function DeleteDeviceCategory(id)
+{
+ $.ajax({
+			type : "DELETE",
+			contentType : "application/json",
+			url : 'http://localhost:9092/device/category/delete/'+id,
+			dataType : 'json',
+			success : function() {
+				alert("Deleted Successfully");
+				window.location.href='http://localhost:9092/employee/user/device';
+			},
+			error : function(request,status,error) {
+				alert(request.responseText);
+			}
+		});
+}
+
+
+function clear()
+{
+$("thead").empty();
+$("tbody").empty();
+}
+/* Loop through all dropdown buttons to toggle between hiding and showing its dropdown content - This allows the user to have multiple dropdowns without any conflict */
+var dropdown = document.getElementsByClassName("dropdown-btn");
+var i;
+
+for (i = 0; i < dropdown.length; i++) {
+  dropdown[i].addEventListener("click", function() {
+    this.classList.toggle("active");
+    var dropdownContent = this.nextElementSibling;
+    if (dropdownContent.style.display === "block") {
+      dropdownContent.style.display = "none";
+    } else {
+      dropdownContent.style.display = "block";
+    }
+  });
+}
+  </script>
+</body>
+</html>
