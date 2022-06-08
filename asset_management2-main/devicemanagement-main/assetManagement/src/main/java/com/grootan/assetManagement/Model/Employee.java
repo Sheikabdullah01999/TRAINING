@@ -1,7 +1,9 @@
 package com.grootan.assetManagement.Model;
 
+import lombok.Generated;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.Cascade;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
@@ -12,10 +14,12 @@ import java.util.List;
 @Getter
 @Setter
 @Component
-@Table(name = "employee",uniqueConstraints = @UniqueConstraint(columnNames = {"email", "empId"}))
+@Table(name = "employee",uniqueConstraints = @UniqueConstraint(columnNames = {"email", "id","empId"}))
 public class Employee {
-    private String email;
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
+    private String email;
     private String empId;
     private String empName;
     private String empPassword;
@@ -23,10 +27,10 @@ public class Employee {
     private String empDepartment;
 
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.PERSIST)
     @JoinTable(name = "department_emp",
-            joinColumns = @JoinColumn(name = "empId"),
-            inverseJoinColumns = @JoinColumn(name = "department"))
+            joinColumns = @JoinColumn(name = "emp_id"),
+            inverseJoinColumns = @JoinColumn(name = "department_id"))
     private EmployeeDepartment department;
 
 
@@ -35,10 +39,10 @@ public class Employee {
     @ManyToMany
     @JoinTable(name = "user_role",
             joinColumns = {
-                    @JoinColumn(name = "email")
+                    @JoinColumn(name = "emp_id")
             },
             inverseJoinColumns = {
-                    @JoinColumn(name = "roleName")
+                    @JoinColumn(name = "role_id")
             }
     )
     private Collection<Role> role;

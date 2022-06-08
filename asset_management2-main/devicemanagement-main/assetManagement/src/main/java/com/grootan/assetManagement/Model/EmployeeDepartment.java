@@ -8,9 +8,11 @@ import javax.persistence.*;
 @Entity
 @Getter
 @Setter
-@Table(uniqueConstraints = @UniqueConstraint(columnNames = "department"))
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"id","department"}))
 public class EmployeeDepartment {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
     private String department;
 
     public EmployeeDepartment() {

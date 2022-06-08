@@ -58,7 +58,7 @@ public class EmployeeService {
     {
         String userName=service.currentUser();
         History saveHistory=new History(userName,constant,new Gson().toJson(o),service.DateAndTime());
-      //  historyDao.save(saveHistory);
+        //  historyDao.save(saveHistory);
 
     }
     //get all departments from the table
@@ -175,12 +175,12 @@ public class EmployeeService {
             return null;
         }
 
-//        if(deviceExists(employeeDetails.getEmpDevices()))
-//        {
-//            return new ResponseEntity<>(new Response<>(String.valueOf(HttpStatus.NOT_ACCEPTABLE),
-//                    HttpStatus.NOT_ACCEPTABLE.getReasonPhrase(),"device un available"),
-//                    new HttpHeaders(),HttpStatus.NOT_ACCEPTABLE);
-//        }
+        if(deviceExists(employeeDetails.getEmpDevices()))
+        {
+            return new ResponseEntity<>(new Response<>(String.valueOf(HttpStatus.NOT_ACCEPTABLE),
+                    HttpStatus.NOT_ACCEPTABLE.getReasonPhrase(),"device un available"),
+                    new HttpHeaders(),HttpStatus.NOT_ACCEPTABLE);
+        }
 
         return null;
     }
@@ -201,7 +201,7 @@ public class EmployeeService {
             }
 
         }
-         return deviceExists;
+        return deviceExists;
     }
 
 
@@ -214,11 +214,10 @@ public class EmployeeService {
 
         Employee employee=saveEmpDetails(employeeDetails);
 
-         employeeDao.save(employee);
+        employeeDao.save(employee);
         return new ResponseEntity(
                 new Response<>(String.valueOf(HttpStatus.CREATED.value()), HttpStatus.CREATED.getReasonPhrase(), "successfully saved",employeeDetails),
-                new HttpHeaders(),
-                HttpStatus.CREATED);
+                new HttpHeaders(), HttpStatus.CREATED);
     }
 
     //get device by device id
@@ -362,7 +361,7 @@ public class EmployeeService {
 
         if(employeeDetails.getEmpDevices()!=null)
         {
-                updatedDeviceList=getDeviceID(employeeDetails.getEmpDevices());
+            updatedDeviceList=getDeviceID(employeeDetails.getEmpDevices());
         }
         List<Integer> existingDevice=deviceDao.deviceId(employeeDetails.getEmpId());
 
@@ -381,7 +380,7 @@ public class EmployeeService {
 
         Employee employee = new Employee(employeeDetails.getEmpId(),
                 employeeDetails.getEmpName(), employeeDetails.getEmail(),
-               employeeDetails.getEmpPassword(), employeeDepartment,
+                employeeDetails.getEmpPassword(), employeeDepartment,
                 employeeDetails.getAssignRole(),
                 Arrays.asList(new Role(employeeDetails.getAssignRole())),device,employeeDetails.getEmpDepartment());
 

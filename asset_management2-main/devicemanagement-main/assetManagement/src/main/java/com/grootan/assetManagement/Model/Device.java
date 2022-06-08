@@ -16,7 +16,7 @@ import java.time.Instant;
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = "manufacturedId"))
 public class Device {
         @Id
-        @GeneratedValue(strategy = GenerationType.AUTO)
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
         private Integer id;
 
         @Column(name="manufacturedId")
@@ -50,7 +50,7 @@ public class Device {
         //        @ManyToOne(fetch = FetchType.LAZY)
 //        private Employee employee;
         public Device(Integer id) {
-            this.id = id;
+                this.id = id;
         }
         public Device()
         {

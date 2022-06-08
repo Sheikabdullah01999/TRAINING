@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
 import lombok.extern.slf4j.XSlf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,13 +30,13 @@ public class EmployeeRestController {
     EmployeeService employeeService;
 
     @GetMapping("/employee/department/emp")
-    public ResponseEntity getEmployeeDepartment()
+    public List<EmployeeDepartment> getEmployeeDepartment()
     {
-        return employeeService.getAllEmpDepartments();
+        return (List<EmployeeDepartment>) employeeDepartmentDao.findAll();
     }
 
     @DeleteMapping("/employee/department/delete/{id}")
-    public ResponseEntity deleteEmployeeDepartment(String empDep)
+    public ResponseEntity deleteEmployeeDepartment(@PathVariable(name="id") String empDep)
     {
 
         return  employeeService.deleteEmployeeDepartment(empDep);
@@ -44,6 +45,7 @@ public class EmployeeRestController {
     @PostMapping("/employee/add")
     public ResponseEntity employeeRegistration(@RequestBody EmployeeRequest employeeRequest)
     {
+
         return employeeService.saveEmployee(employeeRequest);
     }
 
@@ -86,7 +88,7 @@ public class EmployeeRestController {
     public ResponseEntity addEmployeeDepartment(@RequestBody EmployeeDepartment dep)
     {
 
-            return  employeeService.saveEmpDepartment(dep);
+        return  employeeService.saveEmpDepartment(dep);
 
     }
 

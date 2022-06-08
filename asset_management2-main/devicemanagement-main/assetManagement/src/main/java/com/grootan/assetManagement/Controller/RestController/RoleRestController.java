@@ -19,22 +19,16 @@ public class RoleRestController {
     RoleService roleService;
 
     @GetMapping("/role/list/role")
-    public ResponseEntity<List<Role>> getAllRoles()
-    {
+    public ResponseEntity<List<Role>> getAllRoles() {
         return ResponseEntity.status(HttpStatus.OK).body(roleService.getAllRoles());
     }
 
     @PostMapping("/role/save")
-    public ResponseEntity<Object> saveRole(@RequestBody Role role)
-    {
-        try{
+    public ResponseEntity<Object> saveRole(@RequestBody Role role) {
+        try {
             return ResponseEntity.status(HttpStatus.CREATED).body(roleService.saveRoles(role));
-        }
-        catch(GeneralException e) {
+        } catch (GeneralException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         }
     }
-
-
 }
-

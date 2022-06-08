@@ -5,6 +5,7 @@ import com.grootan.assetManagement.Exception.GeneralException;
 import com.grootan.assetManagement.Model.*;
 import com.grootan.assetManagement.Repository.DeviceCategoryDao;
 import com.grootan.assetManagement.Repository.DeviceDao;
+import com.grootan.assetManagement.Repository.DeviceNameDao;
 import com.grootan.assetManagement.Repository.EmployeeDao;
 import com.grootan.assetManagement.Service.DeviceService;
 import com.grootan.assetManagement.Service.CommonService;
@@ -39,12 +40,14 @@ public class DeviceController {
     @Autowired
     private DeviceCategoryDao deviceCategoryDao;
     @Autowired
+    private DeviceNameDao deviceNameDao;
+    @Autowired
     private CommonService service;
 
     @GetMapping("/device/add")
     public String addDeviceDetails(Model model)
     {
-        List<DeviceCategory> devices = (List<DeviceCategory>) deviceService.getCategory();
+        List<DeviceCategory> devices = (List<DeviceCategory>) deviceCategoryDao.findAll();
         model.addAttribute("ListOfDeviceCategory",devices);
         model.addAttribute("devices",new Device());
         return "AddDeviceDetails";
@@ -110,20 +113,21 @@ public class DeviceController {
     @RequestMapping(value = "loadNamesByCategory/{name}", method = RequestMethod.GET)
     public String loadNamesByCategory(@PathVariable("name") String name) {
         Gson gson = new Gson();
-        return gson.toJson(deviceService.findByCategory(name));
+        long id = deviceService.findByCategoryId(name);
+        return gson.toJson(deviceService.findByCategory(id));
     }
 
     @ResponseBody
     @RequestMapping(value = "/device/update/{id}", method = RequestMethod.GET)
-   // @GetMapping("/device/update/{id}")
+    // @GetMapping("/device/update/{id}")
     public ModelAndView showUpdateDevicePage(@PathVariable(name="id") int id,Model model)
     {
         ModelAndView editView = new ModelAndView("UpdateDevice");
         Device device=new Device();
         model.addAttribute("devices",device);
-        List<DeviceCategory> devicesCategory = (List<DeviceCategory>) deviceService.getCategory();
+        List<DeviceCategory> devicesCategory = (List<DeviceCategory>) deviceCategoryDao.findAll();
         model.addAttribute("ListOfDeviceCategory",devicesCategory);
-        List<DeviceName> devicesNameList = (List<DeviceName>) deviceService.getDeviceName();
+        List<DeviceName> devicesNameList = (List<DeviceName>) deviceNameDao.findAll();
         model.addAttribute("ListOfDeviceName",devicesNameList);
         ResponseEntity allDevice = deviceService.findDeviceById(id);
         editView.addObject("device", allDevice);

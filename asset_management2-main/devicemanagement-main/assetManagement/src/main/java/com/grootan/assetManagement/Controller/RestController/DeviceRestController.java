@@ -6,6 +6,7 @@ import com.grootan.assetManagement.Model.DeviceCategory;
 import com.grootan.assetManagement.Model.DeviceName;
 import com.grootan.assetManagement.Model.History;
 import com.grootan.assetManagement.Repository.DeviceCategoryDao;
+import com.grootan.assetManagement.Repository.DeviceDao;
 import com.grootan.assetManagement.Repository.HistoryDao;
 import com.grootan.assetManagement.Service.DeviceService;
 import com.grootan.assetManagement.request.DeviceRequest;
@@ -31,16 +32,24 @@ public class DeviceRestController {
     @Autowired
     DeviceCategoryDao deviceCategoryDao;
 
+    @Autowired
+    DeviceDao deviceDao;
+
     @PostMapping("/device/add/add")
     public ResponseEntity addDeviceDetails(@RequestBody DeviceRequest device)
     {
-      return  deviceService.addDeviceDetails(device);
+        return  deviceService.addDeviceDetails(device);
     }
 
     @GetMapping("/device/list/device")
-    public ResponseEntity getAllDeviceList()
+    public ResponseEntity<List<Device>> getAllDeviceList()
     {
-        return deviceService.getAllDevices();
+        List<Device> devices = deviceDao.findAll();
+        if(devices.isEmpty())
+        {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(devices);
     }
 
     @GetMapping("/device/{deviceId}")
@@ -65,14 +74,14 @@ public class DeviceRestController {
     public ResponseEntity addDeviceCategory(@RequestBody DeviceCategory deviceCategory)
     {
 
-            return deviceService.saveDeviceCategory(deviceCategory);
+        return deviceService.saveDeviceCategory(deviceCategory);
 
     }
 
     @PostMapping("/device/name/add")
     public ResponseEntity addDeviceName(@RequestBody DeviceName deviceName)
     {
-            return  deviceService.saveDeviceName(deviceName);
+        return  deviceService.saveDeviceName(deviceName);
 
     }
 

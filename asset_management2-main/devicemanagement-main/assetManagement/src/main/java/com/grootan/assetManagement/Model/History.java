@@ -20,7 +20,7 @@ import static javax.persistence.TemporalType.TIMESTAMP;
 public class History {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     private String creationDate;

@@ -13,6 +13,8 @@ import javax.persistence.*;
 public class DeviceName {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
     private String name;
 
     @ManyToOne()

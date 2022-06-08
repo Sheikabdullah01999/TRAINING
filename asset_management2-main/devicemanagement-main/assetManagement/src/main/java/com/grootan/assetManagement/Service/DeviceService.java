@@ -54,7 +54,6 @@ public class DeviceService {
         return (List<String>) deviceDao.getDeviceByName();
     }
 
-
     //to check device Id  already exits or not
     private boolean deviceIdExists(final String id)
     {
@@ -76,16 +75,16 @@ public class DeviceService {
 
     //Add device details
     public ResponseEntity addDeviceDetails(DeviceRequest deviceRequest) {
-      if(deviceRequest.getCategory().isEmpty()||deviceRequest.getDeviceName().isEmpty()||
-              deviceRequest.getManufacturedId().isEmpty()||deviceRequest.getAssignStatus().isEmpty()||
-              deviceRequest.getDevicePurchaseDate()==null||deviceRequest.getDeviceStatus().isEmpty())
+        if(deviceRequest.getCategory().isEmpty()||deviceRequest.getDeviceName().isEmpty()||
+                deviceRequest.getManufacturedId().isEmpty()||deviceRequest.getAssignStatus().isEmpty()||
+                deviceRequest.getDevicePurchaseDate()==null||deviceRequest.getDeviceStatus().isEmpty())
 
-      {
-          return new ResponseEntity<>(new Response<>(String.valueOf(HttpStatus.NOT_ACCEPTABLE),
-                  HttpStatus.NOT_ACCEPTABLE.getReasonPhrase(),"field should not empty"),
-                  new HttpHeaders(),HttpStatus.NOT_ACCEPTABLE);
-      }
-      if(deviceIdExists(deviceRequest.getManufacturedId()))
+        {
+            return new ResponseEntity<>(new Response<>(String.valueOf(HttpStatus.NOT_ACCEPTABLE),
+                    HttpStatus.NOT_ACCEPTABLE.getReasonPhrase(),"field should not empty"),
+                    new HttpHeaders(),HttpStatus.NOT_ACCEPTABLE);
+        }
+        if(deviceIdExists(deviceRequest.getManufacturedId()))
         {
             return new ResponseEntity<>(new Response<>(String.valueOf(HttpStatus.NOT_ACCEPTABLE),
                     HttpStatus.NOT_ACCEPTABLE.getReasonPhrase(),"manufactured id already exits"),
@@ -177,25 +176,25 @@ public class DeviceService {
     //save device category
     public ResponseEntity saveDeviceCategory(DeviceCategory category) {
         String lowerCase = category.getCategory().toLowerCase();
-      if(category.getCategory().isEmpty())
-      {
-          return new ResponseEntity<>(new Response<>(String.valueOf(HttpStatus.NOT_ACCEPTABLE),
-                  HttpStatus.NOT_ACCEPTABLE.getReasonPhrase(),"field should not empty"),
-                  new HttpHeaders(),HttpStatus.NOT_ACCEPTABLE);
-      }
+        if(category.getCategory().isEmpty())
+        {
+            return new ResponseEntity<>(new Response<>(String.valueOf(HttpStatus.NOT_ACCEPTABLE),
+                    HttpStatus.NOT_ACCEPTABLE.getReasonPhrase(),"field should not empty"),
+                    new HttpHeaders(),HttpStatus.NOT_ACCEPTABLE);
+        }
 
-      if(deviceCategoryExists(lowerCase))
-      {
-          return new ResponseEntity<>(new Response<>(String.valueOf(HttpStatus.CONFLICT),
-                  HttpStatus.CONFLICT.getReasonPhrase(),"This category is already exists: "+category.getCategory()),
-                  new HttpHeaders(),HttpStatus.CONFLICT);
-      }
+        if(deviceCategoryExists(lowerCase))
+        {
+            return new ResponseEntity<>(new Response<>(String.valueOf(HttpStatus.CONFLICT),
+                    HttpStatus.CONFLICT.getReasonPhrase(),"This category is already exists: "+category.getCategory()),
+                    new HttpHeaders(),HttpStatus.CONFLICT);
+        }
 
         History history=new History(service.currentUser(),DEVICE_CATEGORY_ADD,new Gson().toJson(category),service.DateAndTime());
         historyDao.save(history);
         category.setCategory(lowerCase);
         deviceCategoryDao.save(category);
-       return new ResponseEntity(
+        return new ResponseEntity(
                 new Response<>(String.valueOf(HttpStatus.CREATED.value()), HttpStatus.CREATED.getReasonPhrase(), "successfully saved",category),
                 new HttpHeaders(),
                 HttpStatus.CREATED);
@@ -204,17 +203,17 @@ public class DeviceService {
     //get device category
     public ResponseEntity getCategory() {
 
-      List<DeviceCategory> deviceCategoryList=deviceCategoryDao.findAll();
-      if(deviceCategoryList.isEmpty())
-      {
-         return new ResponseEntity(
-                  new Response<>(String.valueOf(HttpStatus.NOT_FOUND.value()), HttpStatus.NOT_FOUND.getReasonPhrase(), "no device found"),
-                  new HttpHeaders(),
-                  HttpStatus.NOT_FOUND
-          );
+        List<DeviceCategory> deviceCategoryList=deviceCategoryDao.findAll();
+        if(deviceCategoryList.isEmpty())
+        {
+            return new ResponseEntity(
+                    new Response<>(String.valueOf(HttpStatus.NOT_FOUND.value()), HttpStatus.NOT_FOUND.getReasonPhrase(), "no device found"),
+                    new HttpHeaders(),
+                    HttpStatus.NOT_FOUND
+            );
 
-      }
-      return   new ResponseEntity(
+        }
+        return   new ResponseEntity(
                 new Response<>(String.valueOf(HttpStatus.OK.value()), HttpStatus.OK.getReasonPhrase(), "device found", deviceCategoryList),
                 new HttpHeaders(),
                 HttpStatus.OK);
@@ -344,12 +343,15 @@ public class DeviceService {
                 new HttpHeaders(), HttpStatus.OK);
     }
 
-    public Object findByCategory(String name) {
-        return deviceCategoryDao.findByDeviceCategory(name);
+    public List<String> findByCategory(long id) {
+        return deviceNameDao.getDeviceNames(id);
+    }
+
+    public int findByCategoryId(String name){
+        return deviceNameDao.getDeviceCategoryId(name);
     }
 
     public Object findAll() {
         return deviceCategoryDao.findAll();
     }
 }
-
