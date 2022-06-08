@@ -1,6 +1,9 @@
 package com.grootan.assetManagement.Controller;
 
+import com.grootan.assetManagement.Exception.AlreadyExistsException;
+import com.grootan.assetManagement.Exception.FieldEmptyException;
 import com.grootan.assetManagement.Exception.GeneralException;
+import com.grootan.assetManagement.Exception.ResourceNotFoundException;
 import com.grootan.assetManagement.Model.Employee;
 import com.grootan.assetManagement.Model.EmployeeDepartment;
 import com.grootan.assetManagement.Model.EmployeeDevices;
@@ -80,8 +83,7 @@ public class EmployeeController {
     }
 
     @GetMapping("/employee/devices/delete/{id}")
-    public String deleteEmpDevices(@PathVariable(name="id") int id, Model model)
-    {
+    public String deleteEmpDevices(@PathVariable(name="id") int id, Model model) throws ResourceNotFoundException {
         employeeService.deleteEmpDevices(id);
         return "redirect:/employee/user/device";
     }
@@ -133,18 +135,24 @@ public class EmployeeController {
             model.addAttribute("status",httpStatus);
             model.addAttribute("message",e.getMessage());
             return "Error";
+        } catch (ResourceNotFoundException e) {
+            throw new RuntimeException(e);
         }
 
     }
 
     @GetMapping("/employee/search")
-    public String home(Employee employee, Model model, String keyword) {
-        if(keyword!=null) {
+    public String home(Employee employee, Model model, String keyword) throws ResourceNotFoundException
+    {
+        if(keyword!=null)
+        {
             List<Employee> list = employeeService.getByKeyword(keyword);
             model.addAttribute("List_Of_Employees", list);
-        }else {
+        }else
+        {
             List<Employee> list = (List<Employee>) employeeService.getAllEmployees();
-            model.addAttribute("List_Of_Employees", list);}
+            model.addAttribute("List_Of_Employees", list);
+        }
         return "ListOfEmployees";
     }
 
@@ -167,13 +175,14 @@ public class EmployeeController {
         {
             model.addAttribute("errorMessage",e.getMessage());
             return "AddEmployeeDepartment";
+        } catch (FieldEmptyException e) {
+            model.addAttribute("errorMessage",e.getMessage());
+            return "AddEmployeeDepartment";
+        } catch (AlreadyExistsException e) {
+            model.addAttribute("errorMessage",e.getMessage());
+            return "AddEmployeeDepartment";
         }
     }
 
-//    @GetMapping("/employee/delete/department/{id}")
-//    public String deleteEmployeeDepartment(@PathVariable(name="id") String id)
-//    {
-//
-//    }
 
 }

@@ -1,6 +1,9 @@
 package com.grootan.assetManagement.Controller.RestController;
 
+import com.grootan.assetManagement.Exception.AlreadyExistsException;
+import com.grootan.assetManagement.Exception.FieldEmptyException;
 import com.grootan.assetManagement.Exception.GeneralException;
+import com.grootan.assetManagement.Exception.ResourceNotFoundException;
 import com.grootan.assetManagement.Model.Device;
 import com.grootan.assetManagement.Model.DeviceCategory;
 import com.grootan.assetManagement.Model.DeviceName;
@@ -36,8 +39,7 @@ public class DeviceRestController {
     DeviceDao deviceDao;
 
     @PostMapping("/device/add/add")
-    public ResponseEntity addDeviceDetails(@RequestBody DeviceRequest device)
-    {
+    public ResponseEntity addDeviceDetails(@RequestBody DeviceRequest device) throws FieldEmptyException {
         return  deviceService.addDeviceDetails(device);
     }
 
@@ -59,47 +61,40 @@ public class DeviceRestController {
     }
 
     @PutMapping("/device/update/device")
-    public ResponseEntity updateDevice(@RequestBody DeviceRequest device)
-    {
+    public ResponseEntity updateDevice(@RequestBody DeviceRequest device) throws FieldEmptyException {
         return deviceService.updateDeviceDetails(device);
     }
 
     @DeleteMapping("/device/delete/{id}")
-    public ResponseEntity deleteDevice(@PathVariable(name="id") Integer id)
-    {
+    public ResponseEntity deleteDevice(@PathVariable(name="id") Integer id) throws ResourceNotFoundException {
         return deviceService.deleteDeviceDetails(id);
     }
 
     @PostMapping("/device/add/category/device")
-    public ResponseEntity addDeviceCategory(@RequestBody DeviceCategory deviceCategory)
-    {
+    public ResponseEntity addDeviceCategory(@RequestBody DeviceCategory deviceCategory) throws FieldEmptyException, AlreadyExistsException {
 
         return deviceService.saveDeviceCategory(deviceCategory);
 
     }
 
     @PostMapping("/device/name/add")
-    public ResponseEntity addDeviceName(@RequestBody DeviceName deviceName)
-    {
+    public ResponseEntity addDeviceName(@RequestBody DeviceName deviceName) throws FieldEmptyException, AlreadyExistsException {
         return  deviceService.saveDeviceName(deviceName);
 
     }
 
     @GetMapping("/get/history")
-    public ResponseEntity history()
-    {
+    public ResponseEntity history() throws ResourceNotFoundException {
         return deviceService.getHistory();
     }
 
     @GetMapping("/device/get/category/all")
-    public ResponseEntity getDeviceCategory()
-    {
+    public ResponseEntity getDeviceCategory() throws ResourceNotFoundException {
         return deviceService.getCategory();
     }
 
     @DeleteMapping("/device/category/delete/{id}")
-    public ResponseEntity deleteDeviceCategory(@PathVariable(name="id") String  category)
-    {
+    public ResponseEntity deleteDeviceCategory(@PathVariable(name="id") String  category) throws ResourceNotFoundException {
 
         return deviceService.deleteDeviceCategory(category);
     }

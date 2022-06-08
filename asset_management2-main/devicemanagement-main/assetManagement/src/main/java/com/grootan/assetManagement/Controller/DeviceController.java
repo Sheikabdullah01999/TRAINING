@@ -1,7 +1,10 @@
 package com.grootan.assetManagement.Controller;
 
 import com.google.gson.Gson;
+import com.grootan.assetManagement.Exception.AlreadyExistsException;
+import com.grootan.assetManagement.Exception.FieldEmptyException;
 import com.grootan.assetManagement.Exception.GeneralException;
+import com.grootan.assetManagement.Exception.ResourceNotFoundException;
 import com.grootan.assetManagement.Model.*;
 import com.grootan.assetManagement.Repository.DeviceCategoryDao;
 import com.grootan.assetManagement.Repository.DeviceDao;
@@ -11,6 +14,7 @@ import com.grootan.assetManagement.Service.DeviceService;
 import com.grootan.assetManagement.Service.CommonService;
 import com.grootan.assetManagement.Service.EmployeeService;
 import com.grootan.assetManagement.Service.RoleService;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -24,6 +28,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Logger;
 
 @Controller
 public class DeviceController {
@@ -44,6 +49,8 @@ public class DeviceController {
     @Autowired
     private CommonService service;
 
+
+
     @GetMapping("/device/add")
     public String addDeviceDetails(Model model)
     {
@@ -53,20 +60,6 @@ public class DeviceController {
         return "AddDeviceDetails";
     }
 
-//    @PostMapping("/device/add/details")
-//    public String saveDevice(@ModelAttribute("devices") Device device,Model model)
-//    {
-//        try{
-//            deviceService.addDeviceDetails(device);
-//            return "redirect:/device/add?success";
-//        }
-//        catch(GeneralException e)
-//        {
-//            model.addAttribute("errorMessage",e.getMessage());
-//            return "AddDeviceDetails";
-//        }
-//    }
-
     @GetMapping("/device/list")
     public String list_of_devices(Model model)
     {
@@ -74,7 +67,7 @@ public class DeviceController {
             model.addAttribute("DeviceDetails", deviceService.getAllDevices());
             return "DeviceDetails";
         }
-        catch(GeneralException e)
+        catch(ResourceNotFoundException e)
         {
             LocalDateTime dateTime = LocalDateTime.now();
             DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
@@ -88,8 +81,7 @@ public class DeviceController {
     }
 
     @GetMapping("/device/searching")
-    public String search(Device device, Model model, String keyword)
-    {
+    public String search(Device device, Model model, String keyword) throws ResourceNotFoundException {
         if(keyword!=null)
         {
             List<Device> list = deviceService.getByKeywordDevice(keyword);
@@ -134,24 +126,9 @@ public class DeviceController {
         return editView;
     }
 
-//    @PostMapping("/device/update")
-//    public String saveDevices(@ModelAttribute("device") Device device, Model model)
-//    {
-//        try
-//        {
-//            deviceService.updateDeviceDetails(device);
-//            return "redirect:/device/list";
-//        }
-//        catch(GeneralException e)
-//        {
-//            model.addAttribute("errorMessage",e.getMessage());
-//            return "UpdateDevice";
-//        }
-//    }
 
     @GetMapping("/device/delete/{id}")
-    public String deleteDeviceDetails(@PathVariable(name="id") Integer id, Model model)
-    {
+    public String deleteDeviceDetails(@PathVariable(name="id") Integer id, Model model) throws ResourceNotFoundException {
         deviceService.deleteDeviceDetails(id);
         return "redirect:/device/list";
     }
@@ -163,48 +140,33 @@ public class DeviceController {
         return "AddDeviceCategory";
     }
 
-//    @PostMapping("/device/save/category")
-//    public String saveDeviceCategory(@ModelAttribute("deviceCategory") DeviceCategory deviceCategory,Model model)
-//    {
-//        try{
-//            deviceService.saveDeviceCategory(deviceCategory);
-//            return "redirect:/device/add/category?success";
-//        }
-//        catch(GeneralException e)
-//        {
-//            model.addAttribute("errorMessage",e.getMessage());
-//            return "AddDeviceCategory";
-//        }
-
-//    }
-
 
     @GetMapping("/device/add/name")
-    public String addName(Model model)
-    {
-        List<DeviceCategory> devices = (List<DeviceCategory>) deviceService.getCategory();
+    public String addName(Model model) throws ResourceNotFoundException {
+        List<DeviceCategory> devices =  deviceCategoryDao.findAll();
+       // System.out.println(devices.get(0).getCategory());
         model.addAttribute("ListOfDeviceCategory",devices);
         DeviceName deviceName=new DeviceName();
         model.addAttribute("deviceName",deviceName);
         return "AddDeviceName";
     }
 
-    @PostMapping("/device/save/name")
-    public String saveDeviceName(@ModelAttribute("deviceName") DeviceName deviceName,Model model)
-    {
-        try
-        {
-            List<DeviceCategory> devices = (List<DeviceCategory>) deviceService.getCategory();
-            model.addAttribute("ListOfDeviceCategory",devices);
-            deviceService.saveDeviceName(deviceName);
-            return "redirect:/device/add/name?success";
-        }
-        catch(GeneralException e)
-        {
-            model.addAttribute("errorMessage",e.getMessage());
-            return "AddDeviceName";
-        }
-    }
+//    @PostMapping("/device/save/name")
+//    public String saveDeviceName(@ModelAttribute("deviceName") DeviceName deviceName,Model model)
+//    {
+//        try
+//        {
+//            List<DeviceCategory> devices = (List<DeviceCategory>) deviceService.getCategory();
+//            model.addAttribute("ListOfDeviceCategory",devices);
+//            deviceService.saveDeviceName(deviceName);
+//            return "redirect:/device/add/name?success";
+//        }
+//        catch(GeneralException | ResourceNotFoundException | FieldEmptyException | AlreadyExistsException e)
+//        {
+//            model.addAttribute("errorMessage",e.getMessage());
+//            return "AddDeviceName";
+//        }
+//    }
 
     @GetMapping("/history")
     public String history(Model model)
@@ -240,8 +202,7 @@ public class DeviceController {
     }
 
     @GetMapping("category/delete/{id}")
-    public String deleteDeviceCategoryDetails(@PathVariable(name="id") String  id)
-    {
+    public String deleteDeviceCategoryDetails(@PathVariable(name="id") String  id) throws ResourceNotFoundException {
         deviceService.deleteDeviceCategory(id);
         return "redirect:/getAllDeviceCategory";
     }
@@ -256,16 +217,6 @@ public class DeviceController {
         return editView;
     }
 
-//    @PostMapping("/device/update/category")
-//    public String updateDevicesCategory(@ModelAttribute("device") DeviceCategory deviceCategory,Model model) {
-//        try {
-//            deviceService.updateDeviceCategory(deviceCategory);
-//            return "redirect:/getAllDeviceCategory";
-//        } catch (GeneralException e) {
-//            model.addAttribute("errorMessage", e.getMessage());
-//            return "UpdateDeviceCategory";
-//        }
-//    }
 
     @GetMapping("/device/get/category")
     public String getAllDeviceCategory(Model model)

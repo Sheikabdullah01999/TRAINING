@@ -11,4 +11,6 @@ public interface DeviceCategoryDao extends JpaRepository<DeviceCategory,String> 
 
     @Query("SELECT u from DeviceCategory u where u.category=?1")
     DeviceCategory findByDeviceCategory(String category);
+    @Query("SELECT id from DeviceCategory u where u.category=?1")
+    long findByDeviceCategoryId(String category);
 }

@@ -1,6 +1,9 @@
 package com.grootan.assetManagement.Controller.RestController;
 
+import com.grootan.assetManagement.Exception.AlreadyExistsException;
+import com.grootan.assetManagement.Exception.FieldEmptyException;
 import com.grootan.assetManagement.Exception.GeneralException;
+import com.grootan.assetManagement.Exception.ResourceNotFoundException;
 import com.grootan.assetManagement.Model.Employee;
 import com.grootan.assetManagement.Model.EmployeeDepartment;
 import com.grootan.assetManagement.Model.EmployeeDevices;
@@ -36,15 +39,13 @@ public class EmployeeRestController {
     }
 
     @DeleteMapping("/employee/department/delete/{id}")
-    public ResponseEntity deleteEmployeeDepartment(@PathVariable(name="id") String empDep)
-    {
+    public ResponseEntity deleteEmployeeDepartment(@PathVariable(name="id") String empDep) throws ResourceNotFoundException {
 
         return  employeeService.deleteEmployeeDepartment(empDep);
     }
 
     @PostMapping("/employee/add")
-    public ResponseEntity employeeRegistration(@RequestBody EmployeeRequest employeeRequest)
-    {
+    public ResponseEntity employeeRegistration(@RequestBody EmployeeRequest employeeRequest) throws FieldEmptyException {
 
         return employeeService.saveEmployee(employeeRequest);
     }
@@ -73,28 +74,24 @@ public class EmployeeRestController {
     }
 
     @DeleteMapping("/employee/device/delete/{id}")
-    public ResponseEntity deleteEmployeeDevice(@PathVariable(name="id") int id)
-    {
+    public ResponseEntity deleteEmployeeDevice(@PathVariable(name="id") int id) throws ResourceNotFoundException {
         return employeeService.deleteEmpDevices(id);
     }
 
     @PutMapping("/employee/update")
-    public ResponseEntity updateEmployee(@RequestBody EmployeeRequest employee)
-    {
+    public ResponseEntity updateEmployee(@RequestBody EmployeeRequest employee) throws FieldEmptyException {
         return employeeService.updateEmployee(employee);
     }
 
     @PostMapping("/employee/department/save")
-    public ResponseEntity addEmployeeDepartment(@RequestBody EmployeeDepartment dep)
-    {
+    public ResponseEntity addEmployeeDepartment(@RequestBody EmployeeDepartment dep) throws FieldEmptyException, AlreadyExistsException {
 
         return  employeeService.saveEmpDepartment(dep);
 
     }
 
     @DeleteMapping("/delete/employee/{id}")
-    public  ResponseEntity deleteEmployeeById(@PathVariable(name="id") String empId)
-    {
+    public  ResponseEntity deleteEmployeeById(@PathVariable(name="id") String empId) throws ResourceNotFoundException {
 
         return employeeService.deleteEmpDetails(empId);
     }

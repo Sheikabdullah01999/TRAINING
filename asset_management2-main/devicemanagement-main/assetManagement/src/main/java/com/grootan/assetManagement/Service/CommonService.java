@@ -62,22 +62,26 @@ public class CommonService {
         return  employee;
     }
 
-    public void initRoleAndUser() {
+    public void initRoleAndUser()
+    {
         EmployeeDepartment employeeDepartment=new EmployeeDepartment();
         employeeDepartment.setDepartment("FrontEnd");
         employeeDepartmentDao.save(employeeDepartment);
         employeeDepartment.setDepartment("BackEnd");
         employeeDepartmentDao.save(employeeDepartment);
 
-        Role adminRole = new Role();
-        adminRole.setRoleName("ADMIN");
-        adminRole.setRoleDescription("Admin role");
-        roleDao.save(adminRole);
+//        Role adminRole = new Role();
+//        adminRole.setRoleName("ADMIN");
+//        adminRole.setRoleDescription("Admin role");
+//            roleDao.save(adminRole);
 
-        Role userRole = new Role();
-        userRole.setRoleName("USER");
-        userRole.setRoleDescription("Default role for newly created record");
-        roleDao.save(userRole);
+
+//        Role userRole = new Role();
+//        userRole.setRoleName("USER");
+//        userRole.setRoleDescription("Default role for newly created record");
+//
+//            roleDao.save(userRole);
+
 
         EmployeeDepartment adminEmployeeDepartment=new EmployeeDepartment();
         adminEmployeeDepartment.setDepartment("admin");
@@ -90,17 +94,13 @@ public class CommonService {
         adminUser.setEmpName("grootan");
         adminUser.setEmail("grootan@gmail.com");
         adminUser.setEmpPassword(getEncodedPassword("gr00tan"));
-
-
-//        List<EmployeeDepartment> departments=new ArrayList<>();
-//        departments.add(employeeDepartment);
         adminUser.setEmpDepartment("admin");
+//        adminUser.setAssignRole(adminRole.getRoleName());
+//        Collection<Role> adminRoles = new ArrayList<>();
+//        adminRoles.add(adminRole);
+//        adminUser.setRole(adminRoles);
 
-        adminUser.setAssignRole(adminRole.getRoleName());
-        Collection<Role> adminRoles = new ArrayList<>();
-        adminRoles.add(adminRole);
-        adminUser.setRole(adminRoles);
+            adminDao.save(adminUser);
 
-        adminDao.save(adminUser);
     }
 }

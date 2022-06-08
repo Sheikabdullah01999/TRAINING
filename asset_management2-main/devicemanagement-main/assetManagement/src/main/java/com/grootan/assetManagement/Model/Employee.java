@@ -1,11 +1,8 @@
 package com.grootan.assetManagement.Model;
 
-import lombok.Generated;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.Cascade;
 import org.springframework.stereotype.Component;
-
 import javax.persistence.*;
 import java.util.Collection;
 import java.util.List;
@@ -15,7 +12,8 @@ import java.util.List;
 @Setter
 @Component
 @Table(name = "employee",uniqueConstraints = @UniqueConstraint(columnNames = {"email", "id","empId"}))
-public class Employee {
+public class Employee
+{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
@@ -26,7 +24,6 @@ public class Employee {
     private String assignRole;
     private String empDepartment;
 
-
     @OneToOne(cascade = CascadeType.PERSIST)
     @JoinTable(name = "department_emp",
             joinColumns = @JoinColumn(name = "emp_id"),
@@ -36,7 +33,7 @@ public class Employee {
 
     @Transient
     private String empDevices;
-    @ManyToMany
+    @ManyToMany(cascade=CascadeType.PERSIST)
     @JoinTable(name = "user_role",
             joinColumns = {
                     @JoinColumn(name = "emp_id")

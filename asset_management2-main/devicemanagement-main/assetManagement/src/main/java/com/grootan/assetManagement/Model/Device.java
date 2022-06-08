@@ -47,8 +47,6 @@ public class Device {
                 this.deviceStatus = deviceStatus;
         }
 
-        //        @ManyToOne(fetch = FetchType.LAZY)
-//        private Employee employee;
         public Device(Integer id) {
                 this.id = id;
         }
