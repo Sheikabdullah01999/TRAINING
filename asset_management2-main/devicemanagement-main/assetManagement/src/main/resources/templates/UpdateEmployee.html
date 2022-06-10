@@ -219,6 +219,11 @@ header .image-text .profession{
     <h1>Employee Updation</h1>
 
     <form  method="post" th:object="${employee}">
+<!--        <div class="form-group">-->
+<!--            <label class="control-label" for="id">Id</label>-->
+<!--            <input id="id" class="form-control" th:field="*{Id}" required autofocus="autofocus"-->
+<!--                   readonly="readonly">-->
+<!--        </div>-->
         <div class="form-group">
             <label class="control-label" for="empId"> EmployeeId </label>
             <input id="empId" class="form-control" th:field="*{empId}"

@@ -13,6 +13,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -65,25 +66,29 @@ public class CommonService {
     public void initRoleAndUser()
     {
         EmployeeDepartment employeeDepartment=new EmployeeDepartment();
+        employeeDepartment.setId(1);
         employeeDepartment.setDepartment("FrontEnd");
         employeeDepartmentDao.save(employeeDepartment);
         employeeDepartment.setDepartment("BackEnd");
         employeeDepartmentDao.save(employeeDepartment);
 
-//        Role adminRole = new Role();
-//        adminRole.setRoleName("ADMIN");
-//        adminRole.setRoleDescription("Admin role");
-//            roleDao.save(adminRole);
+        Role adminRole = new Role();
+        adminRole.setId(2);
+        adminRole.setRoleName("ADMIN");
+        adminRole.setRoleDescription("Admin role");
+        roleDao.save(adminRole);
 
 
-//        Role userRole = new Role();
-//        userRole.setRoleName("USER");
-//        userRole.setRoleDescription("Default role for newly created record");
-//
-//            roleDao.save(userRole);
+        Role userRole = new Role();
+        userRole.setId(1);
+        userRole.setRoleName("USER");
+        userRole.setRoleDescription("Default role for newly created record");
+
+        roleDao.save(userRole);
 
 
         EmployeeDepartment adminEmployeeDepartment=new EmployeeDepartment();
+        adminEmployeeDepartment.setId(1);
         adminEmployeeDepartment.setDepartment("admin");
         employeeDepartmentDao.save(adminEmployeeDepartment);
 
@@ -95,12 +100,12 @@ public class CommonService {
         adminUser.setEmail("grootan@gmail.com");
         adminUser.setEmpPassword(getEncodedPassword("gr00tan"));
         adminUser.setEmpDepartment("admin");
-//        adminUser.setAssignRole(adminRole.getRoleName());
-//        Collection<Role> adminRoles = new ArrayList<>();
-//        adminRoles.add(adminRole);
-//        adminUser.setRole(adminRoles);
+        adminUser.setAssignRole(adminRole.getRoleName());
+        Collection<Role> adminRoles = new ArrayList<>();
+        adminRoles.add(adminRole);
+        adminUser.setRole(adminRoles);
 
-            adminDao.save(adminUser);
+        adminDao.save(adminUser);
 
     }
 }

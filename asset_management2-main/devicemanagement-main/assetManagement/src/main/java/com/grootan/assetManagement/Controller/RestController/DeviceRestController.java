@@ -39,7 +39,7 @@ public class DeviceRestController {
     DeviceDao deviceDao;
 
     @PostMapping("/device/add/add")
-    public ResponseEntity addDeviceDetails(@RequestBody DeviceRequest device) throws FieldEmptyException {
+    public ResponseEntity addDeviceDetails(@RequestBody Device device) throws FieldEmptyException {
         return  deviceService.addDeviceDetails(device);
     }
 
@@ -61,7 +61,7 @@ public class DeviceRestController {
     }
 
     @PutMapping("/device/update/device")
-    public ResponseEntity updateDevice(@RequestBody DeviceRequest device) throws FieldEmptyException {
+    public ResponseEntity updateDevice(@RequestBody Device device) throws FieldEmptyException {
         return deviceService.updateDeviceDetails(device);
     }
 

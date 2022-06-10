@@ -8,8 +8,6 @@ import com.grootan.assetManagement.Exception.ResourceNotFoundException;
 import com.grootan.assetManagement.Model.*;
 import com.grootan.assetManagement.Repository.*;
 import com.grootan.assetManagement.Response;
-import com.grootan.assetManagement.request.EmployeeRequest;
-import org.aspectj.apache.bcel.classfile.InnerClass;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -43,6 +41,12 @@ public class EmployeeService {
 
 
     Logger logger = Logger.getLogger("com.grootan.assetManagement.Service");
+
+    /**
+     * To check if the given email is valid or not
+     * @param email
+     * @return
+     */
     public static boolean isValid(String email)
     {
         String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\."+
@@ -57,6 +61,11 @@ public class EmployeeService {
     }
 
 
+    /**
+     * save history
+     * @param o
+     * @param constant
+     */
     public void saveHistory(Object o,String constant)
     {
         String userName=service.currentUser();
@@ -65,6 +74,12 @@ public class EmployeeService {
 
     }
     //get all departments from the table
+
+    /**
+     * this method will give all the employee department from the table
+     * @return
+     * @throws ResourceNotFoundException
+     */
     public ResponseEntity getAllEmpDepartments() throws ResourceNotFoundException {
         List<EmployeeDepartment> employeeList=employeeDepartmentDao.findAll();
         if (employeeList.isEmpty())
@@ -79,6 +94,13 @@ public class EmployeeService {
     }
 
     //list all employees
+
+    /**
+     * to get all the employee details
+     *
+     * @return
+     * @throws ResourceNotFoundException
+     */
     public ResponseEntity getAllEmployees() throws ResourceNotFoundException {
         List<Employee> employeeList = employeeDao.findAll();
         if (employeeList.isEmpty())
@@ -91,7 +113,13 @@ public class EmployeeService {
                 new HttpHeaders(), HttpStatus.OK);
     }
 
-    public Employee saveEmpDetails(EmployeeRequest employeeDetails)
+    /**
+     *update device  assign status after it assign to the employee
+     * to fill the details to the employee object to save in the data base
+     * @param employeeDetails
+     * @return
+     */
+    public Employee saveEmpDetails(Employee employeeDetails)
     {
 
         String devices= employeeDetails.getEmpDevices();
@@ -126,47 +154,59 @@ public class EmployeeService {
         return employee;
     }
 
-    public void validate(EmployeeRequest employeeDetails) throws FieldEmptyException
-    {
+    /**
+     * validation on employee mandatory filed
+     * employee email validation
+     * employee password
+     * employee email exists
+     * employee id exists or not
+     * @param employeeDetails
+     * @throws FieldEmptyException
+     */
+    public void validate(Employee employeeDetails) throws FieldEmptyException {
 
-        if(employeeDetails.getEmpPassword().isEmpty() || employeeDetails.getEmpDepartment().isEmpty()||
-                employeeDetails.getAssignRole().isEmpty()||employeeDetails.getEmpId().isEmpty()||employeeDetails.getEmpName().isEmpty())
-        {
+        if (employeeDetails.getEmpPassword().isEmpty() || employeeDetails.getEmpDepartment().isEmpty() ||
+                employeeDetails.getAssignRole().isEmpty() || employeeDetails.getEmpId().isEmpty() || employeeDetails.getEmpName().isEmpty()) {
             throw new FieldEmptyException("field should not empty");
         }
 
-        Boolean validEmail=isValid(employeeDetails.getEmail());
-        if(!validEmail)
-        {
-            throw new GeneralException(INCORRECT_EMAIL+employeeDetails.getEmail());
+        Boolean validEmail = isValid(employeeDetails.getEmail());
+        if (!validEmail) {
+            throw new GeneralException(INCORRECT_EMAIL + employeeDetails.getEmail());
         }
 
-        if(employeeDetails.getEmpPassword().length()<9)
-        {
+        if (employeeDetails.getEmpPassword().length() < 9) {
             throw new GeneralException("password must be more than 8 character");
         }
 
-        if(emailExists(employeeDetails.getEmail()))
-        {
-            throw new GeneralException(EMP_EMAIL_EXISTS+employeeDetails.getEmail());
-        }
 
-        if(employeeIdExists(employeeDetails.getEmpId()))
-        {
-            throw new GeneralException(EMP_ID_EXISTS+employeeDetails.getEmpId());
-        }
-
-//        if(String.valueOf(employeeDetails.getEmpDevices()).equals(""))
-//        {
-//            return null;
-//        }
-
-//        if(deviceExists(employeeDetails.getEmpDevices()))
-//        {
-//            throw new GeneralException("device un available");
-//        }
     }
 
+    public void employeeIdExistsValidation(String employeeID)
+    {
+        if (employeeIdExists(employeeID))
+        {
+            throw new GeneralException(EMP_ID_EXISTS + employeeID);
+        }
+    }
+
+    /**
+     * email already exists validation
+     * @param email
+     */
+    public void emailExistsValidation(String email)
+    {
+        if (emailExists(email))
+        {
+            throw new GeneralException(EMP_EMAIL_EXISTS + email);
+        }
+    }
+
+    /**
+     * to get exists device id to update the employee details
+     * @param empDevices
+     * @return
+     */
     private boolean deviceExists(String empDevices) {
         Boolean deviceExists=true;
         List<Integer> deviceID = getDeviceID(empDevices);
@@ -181,32 +221,15 @@ public class EmployeeService {
                     deviceExists=false;
                 }
             }
-
         }
         return deviceExists;
     }
 
+    /**
+     * get device by device id
+     * to get device id from the device list
+     * */
 
-    //save employee details after check all details are  correct
-    public ResponseEntity saveEmployee(EmployeeRequest employeeDetails) throws FieldEmptyException {
-         validate(employeeDetails);
-//        if(String.valueOf(employeeDetails.getEmpDevices()).equals(""))
-//        {
-//            return null;
-//        }
-//        if(validate != null){
-//            return validate;
-//        }
-
-        Employee employee=saveEmpDetails(employeeDetails);
-
-        employeeDao.save(employee);
-        return new ResponseEntity(
-                new Response<>(String.valueOf(HttpStatus.CREATED.value()), HttpStatus.CREATED.getReasonPhrase(), "successfully saved",employeeDetails),
-                new HttpHeaders(), HttpStatus.CREATED);
-    }
-
-    //get device by device id
     public List<Integer> getDeviceID(String device)
     {
         List<String> list = null;
@@ -239,15 +262,32 @@ public class EmployeeService {
         return deviceId;
     }
 
-    // check given email id is valid or not
+    /**save employee details
+     * before save  check all employee details are  correct
+     * check all the mandatory fields
+     * */
+    public ResponseEntity saveEmployee(Employee employeeDetails) throws FieldEmptyException
+    {
+        emailExistsValidation(employeeDetails.getEmail());
+        validate(employeeDetails);
+        Employee employee=saveEmpDetails(employeeDetails);
+        employeeDao.save(employee);
+        return new ResponseEntity(
+                new Response<>(String.valueOf(HttpStatus.CREATED.value()), HttpStatus.CREATED.getReasonPhrase(), "successfully saved",employeeDetails),
+                new HttpHeaders(), HttpStatus.CREATED);
+    }
 
-    //to check  email already exits or not
+
+    /**to check  email already exits or not
+     * */
     private boolean emailExists(final String email)
     {
         return employeeDao.findByEmail(email)!=null;
     }
 
-    //to check employee id  already exits or not
+    /**to check employee id  already exits or not
+     * */
+
     private boolean employeeIdExists(final String empId)
     {
         return employeeDao.findByEmpId(empId)!=null;
@@ -260,7 +300,8 @@ public class EmployeeService {
     }
 
     // list all user with devices
-    public ResponseEntity getUserDevices() throws ResourceNotFoundException {
+    public ResponseEntity getUserDevices() throws ResourceNotFoundException
+    {
         List<EmployeeDevices> userDevices = employeeDao.getUserDevice();
         if(userDevices.isEmpty())
         {
@@ -272,7 +313,10 @@ public class EmployeeService {
                 HttpStatus.OK);
     }
 
-    //find employee by employee id
+    /**find employee by employee id*
+     *
+     */
+
     public ResponseEntity findEmployeeById(String id) throws ResourceNotFoundException {
         Employee employee = employeeDao.findByEmpId(id);
         if(employee.getEmpId()==null)
@@ -285,8 +329,6 @@ public class EmployeeService {
                 HttpStatus.OK);
     }
 
-    //delete employee details
-
 
     //search by keyword using like
     public List<Employee> getByKeyword(String keyword){
@@ -294,7 +336,7 @@ public class EmployeeService {
     }
 
     //current log in user detail validation
-    public ResponseEntity currentLoggedInUserValidation(String  id)
+    public void  currentLoggedInUserValidation(String  id)
     {
         String currentUser=employeeDao.getEmployeeMail(id);
         if(currentUser!=null)
@@ -309,18 +351,19 @@ public class EmployeeService {
             }
         }
 
-        return  null;
     }
 
-    //save employee department
-
-
     //update employee details
-    public ResponseEntity updateEmployee(EmployeeRequest employeeDetails) throws FieldEmptyException {
-         validate(employeeDetails);
-//        if(validate != null){
-//            return validate;
-//        }
+    public ResponseEntity<Object> updateEmployee(Employee employeeDetails) throws FieldEmptyException, ResourceNotFoundException {
+
+
+        Employee existingEmployee=employeeDao.employee(employeeDetails.getEmpId());
+        if(existingEmployee==null)
+        {
+            throw new ResourceNotFoundException("employee didn't exists");
+        }
+
+        validate(employeeDetails);
 
         List<Integer> updatedDeviceList = new ArrayList<>();
 
@@ -330,6 +373,7 @@ public class EmployeeService {
         {
             updatedDeviceList=getDeviceID(employeeDetails.getEmpDevices());
         }
+
         List<Integer> existingDevice=deviceDao.deviceId(employeeDetails.getEmpId());
 
         if(existingDevice!=null)
@@ -344,6 +388,17 @@ public class EmployeeService {
         }
 
         EmployeeDepartment employeeDepartment=new EmployeeDepartment(employeeDetails.getEmpDepartment());
+        existingEmployee.setEmpId(employeeDetails.getEmpId());
+        existingEmployee.setEmpName(employeeDetails.getEmpName());
+        existingEmployee.setEmail(employeeDetails.getEmail());
+        existingEmployee.setEmpPassword(passwordEncoder.encode(employeeDetails.getEmpPassword()));
+        existingEmployee.setAssignRole(employeeDetails.getAssignRole());
+        existingEmployee.setDepartment(employeeDepartment);
+        existingEmployee.setRole(Arrays.asList(new Role(employeeDetails.getAssignRole())));
+        existingEmployee.setDevices(device);
+        existingEmployee.setEmpDepartment(employeeDetails.getEmpDepartment());
+        existingEmployee.setEmpDevices(employeeDetails.getEmpDevices());
+
 
         Employee employee = new Employee(employeeDetails.getEmpId(),
                 employeeDetails.getEmpName(), employeeDetails.getEmail(),
@@ -352,8 +407,9 @@ public class EmployeeService {
                 Arrays.asList(new Role(employeeDetails.getAssignRole())),device,employeeDetails.getEmpDepartment());
 
         saveHistory(employeeDetails,USER_UPDATED);
-        employeeDao.save(employee);
-        return new ResponseEntity(
+        //employeeDao.saveAndFlush(existingEmployee);
+        employeeDao.save(existingEmployee);
+        return new ResponseEntity<Object>(
                 new Response<>(String.valueOf(HttpStatus.CREATED.value()), HttpStatus.CREATED.getReasonPhrase(), "updated successfully"),
                 new HttpHeaders(),
                 HttpStatus.CREATED);

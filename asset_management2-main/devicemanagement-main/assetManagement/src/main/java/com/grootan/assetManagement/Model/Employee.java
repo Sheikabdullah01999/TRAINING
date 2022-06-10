@@ -11,14 +11,15 @@ import java.util.List;
 @Getter
 @Setter
 @Component
-@Table(name = "employee",uniqueConstraints = @UniqueConstraint(columnNames = {"email", "id","empId"}))
+@Table(name = "employee",uniqueConstraints = @UniqueConstraint(columnNames = {"email","empId"}))
 public class Employee
 {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
-    private String email;
+//    @GeneratedValue(strategy = GenerationType.AUTO)
+//    private long id;
     private String empId;
+    private String email;
+
     private String empName;
     private String empPassword;
     private String assignRole;
@@ -33,7 +34,8 @@ public class Employee
 
     @Transient
     private String empDevices;
-    @ManyToMany(cascade=CascadeType.PERSIST)
+
+    @ManyToMany(cascade = {CascadeType.PERSIST,CascadeType.MERGE})
     @JoinTable(name = "user_role",
             joinColumns = {
                     @JoinColumn(name = "emp_id")
@@ -43,8 +45,8 @@ public class Employee
             }
     )
     private Collection<Role> role;
-    //@org.hibernate.annotations.Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
-    @OneToMany(cascade = CascadeType.PERSIST)
+   // @org.hibernate.annotations.Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
+    @OneToMany(cascade = {CascadeType.PERSIST,CascadeType.MERGE})
     private List<Device> devices;
 
     public Employee()

@@ -45,7 +45,7 @@ public class EmployeeRestController {
     }
 
     @PostMapping("/employee/add")
-    public ResponseEntity employeeRegistration(@RequestBody EmployeeRequest employeeRequest) throws FieldEmptyException {
+    public ResponseEntity employeeRegistration(@RequestBody Employee employeeRequest) throws FieldEmptyException {
 
         return employeeService.saveEmployee(employeeRequest);
     }
@@ -79,7 +79,7 @@ public class EmployeeRestController {
     }
 
     @PutMapping("/employee/update")
-    public ResponseEntity updateEmployee(@RequestBody EmployeeRequest employee) throws FieldEmptyException {
+    public ResponseEntity updateEmployee(@RequestBody Employee employee) throws FieldEmptyException, ResourceNotFoundException {
         return employeeService.updateEmployee(employee);
     }
 
@@ -91,8 +91,8 @@ public class EmployeeRestController {
     }
 
     @DeleteMapping("/delete/employee/{id}")
-    public  ResponseEntity deleteEmployeeById(@PathVariable(name="id") String empId) throws ResourceNotFoundException {
-
+    public  ResponseEntity deleteEmployeeById(@PathVariable(name="id") String empId) throws ResourceNotFoundException
+    {
         return employeeService.deleteEmpDetails(empId);
     }
 

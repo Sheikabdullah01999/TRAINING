@@ -11,9 +11,11 @@ import javax.transaction.Transactional;
 import java.util.List;
 
 @Repository
+@Transactional
 public interface EmployeeDao extends JpaRepository<Employee,String> {
 
     Employee findByEmail(String email);
+
 
     Employee findByEmpId(String empId);
 
@@ -45,6 +47,10 @@ public interface EmployeeDao extends JpaRepository<Employee,String> {
     @Query(value="SELECT email FROM Employee WHERE empId= :id")
     public String getEmployeeMail(@Param("id") String empId);
 
+
+
+    @Query(value = "select * from employee where emp_id=?1",nativeQuery = true)
+    public Employee employee(String id);
 //    @Query(value= "delete from employee_department where department=:dep",nativeQuery = true)
 //    public void deleteDepartment(@Param("id") String dep);
 

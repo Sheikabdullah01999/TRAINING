@@ -56,20 +56,6 @@ public class EmployeeController {
         return "Registration";
     }
 
-//    @PostMapping("/employee/save")
-//    public String saveEmployee(@ModelAttribute("employee") Employee registrationDto, Model model)
-//    {
-//        try{
-//            employeeService.saveEmployee(registrationDto);
-//            return "redirect:/employee/registration?success";
-//        }
-//        catch(GeneralException e)
-//        {
-//            model.addAttribute("errorMessage",e.getMessage());
-//            return "Registration";
-//        }
-//    }
-
     @GetMapping("/employee/list")
     public String listOfEmployee()
     {
@@ -103,20 +89,6 @@ public class EmployeeController {
         return editView;
     }
 
-//    @PostMapping("/employee/update")
-//    public String save(@ModelAttribute("employee") Employee registrationDto,Model model)
-//    {
-//        try
-//        {
-//            employeeService.updateEmployee(registrationDto);
-//            return "redirect:/employee/list?success";
-//        }
-//        catch(GeneralException e)
-//        {
-//            model.addAttribute("errorMessage",e.getMessage());
-//            return "UpdateEmployee";
-//        }
-//    }
 
     @GetMapping("/delete/employee/{id}")
     public String deleteEmpDetails(@PathVariable(name="id") String id,Model model) {
@@ -164,25 +136,6 @@ public class EmployeeController {
         return "AddEmployeeDepartment";
     }
 
-    @PostMapping("/employee/save/department")
-    public String saveEmpDepartment(@ModelAttribute("employeeDepartment") EmployeeDepartment employeeDepartment,Model model)
-    {
-        try{
-            employeeService.saveEmpDepartment(employeeDepartment);
-            return "redirect:/employee/department?success";
-        }
-        catch(GeneralException e)
-        {
-            model.addAttribute("errorMessage",e.getMessage());
-            return "AddEmployeeDepartment";
-        } catch (FieldEmptyException e) {
-            model.addAttribute("errorMessage",e.getMessage());
-            return "AddEmployeeDepartment";
-        } catch (AlreadyExistsException e) {
-            model.addAttribute("errorMessage",e.getMessage());
-            return "AddEmployeeDepartment";
-        }
-    }
 
 
 }

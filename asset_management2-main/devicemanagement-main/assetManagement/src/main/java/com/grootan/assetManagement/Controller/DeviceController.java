@@ -1,8 +1,6 @@
 package com.grootan.assetManagement.Controller;
 
 import com.google.gson.Gson;
-import com.grootan.assetManagement.Exception.AlreadyExistsException;
-import com.grootan.assetManagement.Exception.FieldEmptyException;
 import com.grootan.assetManagement.Exception.GeneralException;
 import com.grootan.assetManagement.Exception.ResourceNotFoundException;
 import com.grootan.assetManagement.Model.*;
@@ -14,11 +12,9 @@ import com.grootan.assetManagement.Service.DeviceService;
 import com.grootan.assetManagement.Service.CommonService;
 import com.grootan.assetManagement.Service.EmployeeService;
 import com.grootan.assetManagement.Service.RoleService;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -28,7 +24,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
-import java.util.logging.Logger;
 
 @Controller
 public class DeviceController {
@@ -110,8 +105,16 @@ public class DeviceController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "/device/update/{id}", method = RequestMethod.GET)
-    // @GetMapping("/device/update/{id}")
+    @RequestMapping(value="loadIdsByCategory/{name}", method=RequestMethod.GET)
+    public long loadIdsByCategory(@PathVariable("name") String name)
+    {
+        Gson gson = new Gson();
+        return Long.parseLong(gson.toJson(deviceCategoryDao.findByDeviceCategoryId(name)));
+    }
+
+//    @ResponseBody
+//    @RequestMapping(value = "/device/update/{id}", method = RequestMethod.GET)
+    @GetMapping("/device/update/{id}")
     public ModelAndView showUpdateDevicePage(@PathVariable(name="id") int id,Model model)
     {
         ModelAndView editView = new ModelAndView("UpdateDevice");
@@ -121,7 +124,7 @@ public class DeviceController {
         model.addAttribute("ListOfDeviceCategory",devicesCategory);
         List<DeviceName> devicesNameList = (List<DeviceName>) deviceNameDao.findAll();
         model.addAttribute("ListOfDeviceName",devicesNameList);
-        ResponseEntity allDevice = deviceService.findDeviceById(id);
+        Optional<Device> allDevice = deviceDao.findById(id);
         editView.addObject("device", allDevice);
         return editView;
     }

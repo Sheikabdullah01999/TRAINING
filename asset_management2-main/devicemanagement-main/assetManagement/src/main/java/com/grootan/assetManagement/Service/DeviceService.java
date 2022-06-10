@@ -75,7 +75,7 @@ public class DeviceService {
     }
 
 
-    public void emptyFieldCheck(DeviceRequest deviceRequest) throws FieldEmptyException {
+    public void emptyFieldCheck(Device deviceRequest) throws FieldEmptyException {
         if(deviceRequest.getCategory().isEmpty()||deviceRequest.getDeviceName().isEmpty()||
                 deviceRequest.getManufacturedId().isEmpty()||deviceRequest.getAssignStatus().isEmpty()||
                 deviceRequest.getDevicePurchaseDate()==null||deviceRequest.getDeviceStatus().isEmpty())
@@ -84,7 +84,7 @@ public class DeviceService {
         }
     }
     /*Add device details*/
-    public ResponseEntity addDeviceDetails(DeviceRequest deviceRequest) throws FieldEmptyException
+    public ResponseEntity addDeviceDetails(Device deviceRequest) throws FieldEmptyException
     {
         emptyFieldCheck(deviceRequest);
         if(deviceIdExists(deviceRequest.getManufacturedId()))
@@ -106,14 +106,22 @@ public class DeviceService {
     }
 
     //update device details
-    public ResponseEntity<Object> updateDeviceDetails(DeviceRequest deviceRequest) throws FieldEmptyException {
+    public ResponseEntity<Object> updateDeviceDetails(Device deviceRequest) throws FieldEmptyException {
 
         emptyFieldCheck(deviceRequest);
 
+        Device device=deviceDao.getDeviceId(deviceRequest.getId());
+        device.setDeviceName(deviceRequest.getDeviceName());
+        device.setDeviceStatus(deviceRequest.getDeviceStatus());
+        device.setCategory(deviceRequest.getCategory());
+        device.setDevicePurchaseDate(deviceRequest.getDevicePurchaseDate());
+        device.setAssignStatus(deviceRequest.getAssignStatus());
+        device.setManufacturedId(deviceRequest.getManufacturedId());
+
         saveHistory(deviceRequest,DEVICE_UPDATED);
-        Device device=new Device(deviceRequest.getManufacturedId(), deviceRequest.getCategory(),
-                deviceRequest.getDeviceName(),deviceRequest.getDevicePurchaseDate(),
-                deviceRequest.getAssignStatus(),deviceRequest.getDeviceStatus());
+//        Device device=new Device(deviceRequest.getManufacturedId(), deviceRequest.getCategory(),
+//                deviceRequest.getDeviceName(),deviceRequest.getDevicePurchaseDate(),
+//                deviceRequest.getAssignStatus(),deviceRequest.getDeviceStatus());
 
         deviceDao.save(device);
 
@@ -219,8 +227,8 @@ public class DeviceService {
         }
 
 
-        DeviceName deviceName1=new DeviceName();
-        deviceName1.setDeviceCategory(new DeviceCategory(id,device));
+        deviceName.setName(lowerCase);
+        deviceName.setDeviceCategory(new DeviceCategory(id,device));
         saveHistory(deviceName,DEVICE_NAME_ADD);
         deviceName.setName(lowerCase);
 
@@ -316,7 +324,8 @@ public class DeviceService {
         return deviceNameDao.getDeviceNames(id);
     }
 
-    public int findByCategoryId(String name){
+    public int findByCategoryId(String name)
+    {
         return deviceNameDao.getDeviceCategoryId(name);
     }
 
