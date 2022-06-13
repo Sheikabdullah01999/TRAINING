@@ -75,7 +75,7 @@ public class DeviceService {
     }
 
 
-    public void emptyFieldCheck(Device deviceRequest) throws FieldEmptyException {
+    public void emptyFieldCheck(DeviceRequest deviceRequest) throws FieldEmptyException {
         if(deviceRequest.getCategory().isEmpty()||deviceRequest.getDeviceName().isEmpty()||
                 deviceRequest.getManufacturedId().isEmpty()||deviceRequest.getAssignStatus().isEmpty()||
                 deviceRequest.getDevicePurchaseDate()==null||deviceRequest.getDeviceStatus().isEmpty())
@@ -83,8 +83,10 @@ public class DeviceService {
             throw new FieldEmptyException("field should not empty");
         }
     }
-    /*Add device details*/
-    public ResponseEntity addDeviceDetails(Device deviceRequest) throws FieldEmptyException
+    /**
+     * Add device details
+     */
+    public ResponseEntity<Object> addDeviceDetails(DeviceRequest deviceRequest) throws FieldEmptyException
     {
         emptyFieldCheck(deviceRequest);
         if(deviceIdExists(deviceRequest.getManufacturedId()))
@@ -99,18 +101,19 @@ public class DeviceService {
 
         deviceDao.save(device);
 
-        return new ResponseEntity(
-                new Response<>(String.valueOf(HttpStatus.CREATED.value()), HttpStatus.CREATED.getReasonPhrase(), "successfully saved",deviceRequest),
+        return new ResponseEntity<>(
+                new Response<>(String.valueOf(HttpStatus.CREATED.value()), HttpStatus.CREATED.getReasonPhrase(),
+                        "successfully saved",deviceRequest),
                 new HttpHeaders(),
                 HttpStatus.CREATED);
     }
 
     //update device details
-    public ResponseEntity<Object> updateDeviceDetails(Device deviceRequest) throws FieldEmptyException {
+    public ResponseEntity<Object> updateDeviceDetails(Integer id,DeviceRequest deviceRequest) throws FieldEmptyException {
 
         emptyFieldCheck(deviceRequest);
 
-        Device device=deviceDao.getDeviceId(deviceRequest.getId());
+        Device device=deviceDao.getDeviceId(id);
         device.setDeviceName(deviceRequest.getDeviceName());
         device.setDeviceStatus(deviceRequest.getDeviceStatus());
         device.setCategory(deviceRequest.getCategory());
@@ -119,13 +122,10 @@ public class DeviceService {
         device.setManufacturedId(deviceRequest.getManufacturedId());
 
         saveHistory(deviceRequest,DEVICE_UPDATED);
-//        Device device=new Device(deviceRequest.getManufacturedId(), deviceRequest.getCategory(),
-//                deviceRequest.getDeviceName(),deviceRequest.getDevicePurchaseDate(),
-//                deviceRequest.getAssignStatus(),deviceRequest.getDeviceStatus());
 
         deviceDao.save(device);
 
-        return new ResponseEntity(
+        return new ResponseEntity<>(
                 new Response<>(String.valueOf(HttpStatus.OK.value()), HttpStatus.OK.getReasonPhrase(), "Updated saved",deviceRequest),
                 new HttpHeaders(),
                 HttpStatus.OK);
@@ -133,14 +133,15 @@ public class DeviceService {
 
 
     //get all devices
-    public ResponseEntity getAllDevices() throws ResourceNotFoundException {
+    public ResponseEntity<Object> getAllDevices() throws ResourceNotFoundException {
         List<Device> deviceList=deviceDao.findAll();
+        System.out.println(deviceList.get(0).getDeviceId());
         if (deviceList.isEmpty())
         {
             throw new ResourceNotFoundException("device not found");
         }
 
-        return   new ResponseEntity(
+        return   new ResponseEntity<>(
                 new Response<>(String.valueOf(HttpStatus.FOUND.value()), HttpStatus.FOUND.getReasonPhrase(), "device found", deviceList),
                 new HttpHeaders(),
                 HttpStatus.FOUND);
@@ -148,7 +149,7 @@ public class DeviceService {
 
 
     //get device by device id
-    public ResponseEntity findDeviceById(int id)
+    public ResponseEntity<Object> findDeviceById(int id)
     {
         Optional<Device> device = deviceDao.findById(id);
         return device.map(value -> new ResponseEntity(
@@ -171,7 +172,7 @@ public class DeviceService {
     }
 
     //save device category
-    public ResponseEntity saveDeviceCategory(DeviceCategory category) throws FieldEmptyException, AlreadyExistsException {
+    public ResponseEntity<Object> saveDeviceCategory(DeviceCategory category) throws FieldEmptyException, AlreadyExistsException {
         String lowerCase = category.getCategory().toLowerCase();
         if(category.getCategory().isEmpty())
         {
@@ -189,7 +190,7 @@ public class DeviceService {
         category.setCategory(lowerCase);
 
         deviceCategoryDao.save(category);
-        return new ResponseEntity(
+        return new ResponseEntity<>(
                 new Response<>(String.valueOf(HttpStatus.CREATED.value()), HttpStatus.CREATED.getReasonPhrase(), "successfully saved",category),
                 new HttpHeaders(),
                 HttpStatus.CREATED);
@@ -198,21 +199,22 @@ public class DeviceService {
 
 
     //get device category
-    public ResponseEntity getCategory() throws ResourceNotFoundException
+    public ResponseEntity<Object> getCategory() throws ResourceNotFoundException
     {
         List<DeviceCategory> deviceCategoryList=deviceCategoryDao.findAll();
         if(deviceCategoryList.isEmpty())
         {
             throw new ResourceNotFoundException("no device found");
         }
-        return   new ResponseEntity(
-                new Response<>(String.valueOf(HttpStatus.OK.value()), HttpStatus.OK.getReasonPhrase(), "device found", deviceCategoryList),
+        return   new ResponseEntity<>(
+                new Response<>(String.valueOf(HttpStatus.OK.value()), HttpStatus.OK.getReasonPhrase(),
+                        "device found", deviceCategoryList),
                 new HttpHeaders(),
                 HttpStatus.OK);
     }
 
     //save device name
-    public ResponseEntity saveDeviceName(DeviceName deviceName) throws FieldEmptyException, AlreadyExistsException {
+    public ResponseEntity<Object> saveDeviceName(DeviceName deviceName) throws FieldEmptyException, AlreadyExistsException {
         DeviceCategory deviceCategory = deviceName.getDeviceCategory();
         String device= deviceCategory.getCategory();
         long id = deviceCategoryDao.findByDeviceCategoryId(device);
@@ -226,14 +228,13 @@ public class DeviceService {
             throw new AlreadyExistsException("This device Name is Already Exists: "+deviceName.getName());
         }
 
-
         deviceName.setName(lowerCase);
         deviceName.setDeviceCategory(new DeviceCategory(id,device));
         saveHistory(deviceName,DEVICE_NAME_ADD);
         deviceName.setName(lowerCase);
 
         deviceNameDao.save(deviceName);
-        return new ResponseEntity(
+        return new ResponseEntity<>(
                 new Response<>(String.valueOf(HttpStatus.CREATED.value()),
                         HttpStatus.CREATED.getReasonPhrase(), "successfully saved",deviceName),
                 new HttpHeaders(),
@@ -249,27 +250,27 @@ public class DeviceService {
     }
 
     //get device name
-    public ResponseEntity getDeviceName() throws ResourceNotFoundException {
+    public ResponseEntity<Object> getDeviceName() throws ResourceNotFoundException {
         List<DeviceName> list=deviceNameDao.findAll();
         if(list.isEmpty())
         {
             throw new ResourceNotFoundException("no device found");
         }
-        return   new ResponseEntity(
+        return new ResponseEntity<>(
                 new Response<>(String.valueOf(HttpStatus.FOUND.value()),
                         HttpStatus.FOUND.getReasonPhrase(), "device name found", list),
                 new HttpHeaders(),
                 HttpStatus.OK);
     }
 
-    public ResponseEntity getHistory() throws ResourceNotFoundException {
+    public ResponseEntity<Object> getHistory() throws ResourceNotFoundException {
         List<History> list=historyDao.findAll();
         if(list.isEmpty())
         {
             throw new ResourceNotFoundException("history not found");
 
         }
-        return   new ResponseEntity(
+        return   new ResponseEntity<>(
                 new Response<>(String.valueOf(HttpStatus.FOUND.value()), HttpStatus.FOUND.getReasonPhrase(), "history  found", list),
                 new HttpHeaders(),
                 HttpStatus.FOUND);
@@ -289,7 +290,7 @@ public class DeviceService {
         return deviceCategoryDao.findAll();
     }
 
-    public ResponseEntity deleteDeviceCategory(String id) throws ResourceNotFoundException {
+    public ResponseEntity<Object> deleteDeviceCategory(String id) throws ResourceNotFoundException {
         DeviceCategory deviceCategory=deviceCategoryDao.findByDeviceCategory(id);
         if(deviceCategory==null)
         {
@@ -297,13 +298,13 @@ public class DeviceService {
         }
         deviceCategoryDao.deleteById(id);
 
-        return   new ResponseEntity(
+        return   new ResponseEntity<>(
                 new Response<>(String.valueOf(HttpStatus.OK.value()), HttpStatus.OK.getReasonPhrase(), "deleted successful"),
                 new HttpHeaders(),
                 HttpStatus.OK);
     }
 
-    public ResponseEntity deleteDeviceDetails(Integer id) throws ResourceNotFoundException {
+    public ResponseEntity<Object> deleteDeviceDetails(Integer id) throws ResourceNotFoundException {
         Device device=deviceDao.getByDeviceId(id);
         if(device==null)
         {
@@ -314,7 +315,7 @@ public class DeviceService {
         saveHistory(device,DEVICE_DELETE);
         deviceDao.deleteForiegnKey(id);
         deviceDao.deleteById(id);
-        return new ResponseEntity(
+        return new ResponseEntity<>(
                 new Response<>(String.valueOf(HttpStatus.OK.value()),
                         HttpStatus.OK.getReasonPhrase(), "deleted successful"),
                 new HttpHeaders(), HttpStatus.OK);

@@ -35,16 +35,13 @@ public interface DeviceDao extends JpaRepository<Device,Integer>
 
     @Transactional
     @Modifying
-    @Query("UPDATE  Device u set u.assignStatus = 'assigned' , u.deviceStatus = 'working' where id=?1")
+    @Query("UPDATE  Device u set u.assignStatus = 'assigned' , u.deviceStatus = 'working' where DeviceId=?1")
     public void updateAssignStatus(@Param("id") Integer id);
 
     @Transactional
     @Modifying
     @Query("UPDATE  Device u set u.assignStatus = 'unassigned' , u.deviceStatus = 'new' where id=?1")
     public void updateAssignStatusAndDeviceStatus(@Param("id") Integer id);
-
-//    @Query("Select  empDevices from Employee u where u.empId = :id")
-//    public String getDevice(@Param("id") String id);
 
     @Transactional
     @Modifying
@@ -63,10 +60,10 @@ public interface DeviceDao extends JpaRepository<Device,Integer>
     @Query(value="SELECT employee_emp_id FROM employee_devices where devices_id=?1",nativeQuery = true)
     public String getEmpId(@Param("id") Integer id);
 
-    @Query(value = "SELECT devices_id from employee_devices where employee_emp_id=?1",nativeQuery = true)
+    @Query(value = "SELECT devices_device_id from employee_devices where employee_emp_id=?1",nativeQuery = true)
     public List<Integer> deviceId(String empId);
 
-    @Query(value = "select * from Device where id=?1",nativeQuery = true)
+    @Query(value = "select * from device where device_id=?1",nativeQuery = true)
     public Device getByDeviceId(Integer id);
 
     @Query(value = "select * from Device where id=?1",nativeQuery = true)

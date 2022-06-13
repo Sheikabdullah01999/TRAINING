@@ -103,15 +103,16 @@ dataType : 'json',
 success: function(response){
 						$.each(response, function (key, value) {
 						var Id = value.id;
+
 							$('#devices').append('<tr>\
-										<td>'+value.id+'</td>\
+										<td>'+value.DeviceId+'</td>\
 										<td>'+value.category+'</td>\
 										<td>'+value.deviceName+'</td>\
 										<td>'+value.devicePurchaseDate+'</td>\
 										<td>'+value.manufacturedId+'</td>\
 										<td>'+value.assignStatus+'</td>\
 										<td>'+value.deviceStatus+'</td>\
-										<td><a href="/device/update/'+value.id+'" class="btn btn-success">update</a></td>\
+										<td><a href="/device/update/device/'+value.DeviceId+'" class="btn btn-success">update</a></td>\
 										<td><button  class="btn btn-danger" onclick="Delete('+Id+')">delete</button></td>\
 										</tr>');
 

@@ -15,8 +15,6 @@ import java.util.List;
 public class Employee
 {
     @Id
-//    @GeneratedValue(strategy = GenerationType.AUTO)
-//    private long id;
     private String empId;
     private String email;
 
@@ -45,7 +43,7 @@ public class Employee
             }
     )
     private Collection<Role> role;
-   // @org.hibernate.annotations.Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
+
     @OneToMany(cascade = {CascadeType.PERSIST,CascadeType.MERGE})
     private List<Device> devices;
 

@@ -8,6 +8,7 @@ import com.grootan.assetManagement.Exception.ResourceNotFoundException;
 import com.grootan.assetManagement.Model.*;
 import com.grootan.assetManagement.Repository.*;
 import com.grootan.assetManagement.Response;
+import com.grootan.assetManagement.request.EmployeeRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -30,6 +31,16 @@ public class EmployeeService {
     DeviceDao deviceDao;
     @Autowired
     private EmployeeDao employeeDao;
+
+    public EmployeeDao getEmployeeDao() {
+        return employeeDao;
+    }
+
+    @Autowired
+    public void setEmployeeDao(EmployeeDao employeeDao) {
+        this.employeeDao = employeeDao;
+    }
+
     @Autowired
     EmployeeDepartmentDao employeeDepartmentDao;
     @Autowired
@@ -70,7 +81,7 @@ public class EmployeeService {
     {
         String userName=service.currentUser();
         History saveHistory=new History(userName,constant,new Gson().toJson(o),service.DateAndTime());
-          historyDao.save(saveHistory);
+//          historyDao.save(saveHistory);
 
     }
     //get all departments from the table
@@ -80,7 +91,7 @@ public class EmployeeService {
      * @return
      * @throws ResourceNotFoundException
      */
-    public ResponseEntity getAllEmpDepartments() throws ResourceNotFoundException {
+    public ResponseEntity<Object> getAllEmpDepartments() throws ResourceNotFoundException {
         List<EmployeeDepartment> employeeList=employeeDepartmentDao.findAll();
         if (employeeList.isEmpty())
         {
@@ -101,14 +112,14 @@ public class EmployeeService {
      * @return
      * @throws ResourceNotFoundException
      */
-    public ResponseEntity getAllEmployees() throws ResourceNotFoundException {
+    public ResponseEntity<Object> getAllEmployees() throws ResourceNotFoundException {
         List<Employee> employeeList = employeeDao.findAll();
         if (employeeList.isEmpty())
         {
             throw new ResourceNotFoundException(NO_RECORDS);
         }
 
-        return   new ResponseEntity(
+        return   new ResponseEntity<>(
                 new Response<>(String.valueOf(HttpStatus.OK.value()), HttpStatus.OK.getReasonPhrase(), "employee found", employeeList),
                 new HttpHeaders(), HttpStatus.OK);
     }
@@ -136,7 +147,9 @@ public class EmployeeService {
 
             for(Integer deviceId : id)
             {
-                device.add(new Device(deviceId));
+                Device device1=deviceDao.getByDeviceId(deviceId);
+                device.add(new Device(device1.getDeviceId(),device1.getManufacturedId(),device1.getCategory(),device1.getDeviceName(),device1.getDevicePurchaseDate(),device1.getAssignStatus(),device1.getDeviceStatus()));
+               // device.add(new Device(deviceId));
             }
         }
 
@@ -150,7 +163,6 @@ public class EmployeeService {
                 Arrays.asList(new Role(employeeDetails.getAssignRole())),device,
                 employeeDetails.getEmpDepartment());
 
-        System.out.println(device);
         return employee;
     }
 
@@ -163,6 +175,7 @@ public class EmployeeService {
      * @param employeeDetails
      * @throws FieldEmptyException
      */
+
     public void validate(Employee employeeDetails) throws FieldEmptyException {
 
         if (employeeDetails.getEmpPassword().isEmpty() || employeeDetails.getEmpDepartment().isEmpty() ||
@@ -266,17 +279,72 @@ public class EmployeeService {
      * before save  check all employee details are  correct
      * check all the mandatory fields
      * */
-    public ResponseEntity saveEmployee(Employee employeeDetails) throws FieldEmptyException
+    public ResponseEntity<Object> saveEmployee(Employee employeeDetails) throws FieldEmptyException
     {
         emailExistsValidation(employeeDetails.getEmail());
         validate(employeeDetails);
         Employee employee=saveEmpDetails(employeeDetails);
         employeeDao.save(employee);
-        return new ResponseEntity(
+        return new ResponseEntity<>(
                 new Response<>(String.valueOf(HttpStatus.CREATED.value()), HttpStatus.CREATED.getReasonPhrase(), "successfully saved",employeeDetails),
                 new HttpHeaders(), HttpStatus.CREATED);
     }
 
+
+    public ResponseEntity<Object> updateEmployee(Employee employeeDetails) throws FieldEmptyException, ResourceNotFoundException
+    {
+        Employee existingEmployee=employeeDao.findByEmpId(employeeDetails.getEmpId());
+        if(existingEmployee==null)
+        {
+            throw new ResourceNotFoundException("employee didn't exists");
+        }
+
+        validate(employeeDetails);
+
+        List<Integer> updatedDeviceList = new ArrayList<>();
+
+        List<Device> device=new ArrayList<>();
+
+        List<Integer> existingDevice=deviceDao.deviceId(employeeDetails.getEmpId());
+
+        if(existingDevice.size()>0)
+        {
+            updatedDeviceList.addAll(existingDevice);
+        }
+
+        if(employeeDetails.getEmpDevices()!=null)
+        {
+            updatedDeviceList=getDeviceID(employeeDetails.getEmpDevices());
+            for(Integer Id : updatedDeviceList)
+            {
+                Device device1=deviceDao.getByDeviceId(Id);
+                device.add(new Device(device1.getDeviceId(),device1.getManufacturedId(),device1.getCategory(),device1.getDeviceName(),device1.getDevicePurchaseDate(),device1.getAssignStatus(),device1.getDeviceStatus()));
+            }
+            updateAssignStatus(updatedDeviceList);
+        }
+
+        EmployeeDepartment employeeDepartment=new EmployeeDepartment(employeeDetails.getEmpDepartment());
+
+//        existingEmployee.setEmpId(employeeDetails.getEmpId());
+//        existingEmployee.setEmpName(employeeDetails.getEmpName());
+//        existingEmployee.setEmail(employeeDetails.getEmail());
+//        existingEmployee.setEmpPassword(passwordEncoder.encode(employeeDetails.getEmpPassword()));
+//        existingEmployee.setAssignRole(employeeDetails.getAssignRole());
+//        existingEmployee.setDepartment(employeeDepartment);
+//        existingEmployee.setRole(Arrays.asList(new Role(employeeDetails.getAssignRole())));
+//        existingEmployee.setDevices(device);
+//        existingEmployee.setEmpDepartment(employeeDetails.getEmpDepartment());
+        //employeeDetails.setDepartment(employeeDepartment);
+        employeeDetails.setDevices(device);
+
+        //saveHistory(employeeDetails,USER_UPDATED);
+        //employeeDao.saveAndFlush(existingEmployee);
+        employeeDao.save(employeeDetails);
+        return new ResponseEntity<>(
+                new Response<>(String.valueOf(HttpStatus.CREATED.value()), HttpStatus.CREATED.getReasonPhrase(), "updated successfully"),
+                new HttpHeaders(),
+                HttpStatus.CREATED);
+    }
 
     /**to check  email already exits or not
      * */
@@ -285,7 +353,8 @@ public class EmployeeService {
         return employeeDao.findByEmail(email)!=null;
     }
 
-    /**to check employee id  already exits or not
+    /**
+     * to check employee id  already exits or not
      * */
 
     private boolean employeeIdExists(final String empId)
@@ -300,30 +369,30 @@ public class EmployeeService {
     }
 
     // list all user with devices
-    public ResponseEntity getUserDevices() throws ResourceNotFoundException
+    public ResponseEntity<Object> getUserDevices() throws ResourceNotFoundException
     {
         List<EmployeeDevices> userDevices = employeeDao.getUserDevice();
         if(userDevices.isEmpty())
         {
             throw new ResourceNotFoundException(NO_RECORDS);
         }
-        return   new ResponseEntity(
+        return   new ResponseEntity<>(
                 new Response<>(String.valueOf(HttpStatus.OK.value()), HttpStatus.OK.getReasonPhrase(), "deleted successful",userDevices),
                 new HttpHeaders(),
                 HttpStatus.OK);
     }
 
-    /**find employee by employee id*
-     *
+    /**
+     * find employee by employee id
      */
 
-    public ResponseEntity findEmployeeById(String id) throws ResourceNotFoundException {
+    public ResponseEntity<Object> findEmployeeById(String id) throws ResourceNotFoundException {
         Employee employee = employeeDao.findByEmpId(id);
         if(employee.getEmpId()==null)
         {
             throw new ResourceNotFoundException(NO_RECORDS);
         }
-        return   new ResponseEntity(
+        return   new ResponseEntity<>(
                 new Response<>(String.valueOf(HttpStatus.OK.value()), HttpStatus.OK.getReasonPhrase(), "deleted successful",employee),
                 new HttpHeaders(),
                 HttpStatus.OK);
@@ -354,66 +423,7 @@ public class EmployeeService {
     }
 
     //update employee details
-    public ResponseEntity<Object> updateEmployee(Employee employeeDetails) throws FieldEmptyException, ResourceNotFoundException {
 
-
-        Employee existingEmployee=employeeDao.employee(employeeDetails.getEmpId());
-        if(existingEmployee==null)
-        {
-            throw new ResourceNotFoundException("employee didn't exists");
-        }
-
-        validate(employeeDetails);
-
-        List<Integer> updatedDeviceList = new ArrayList<>();
-
-        List<Device> device=new ArrayList<>();
-
-        if(employeeDetails.getEmpDevices()!=null)
-        {
-            updatedDeviceList=getDeviceID(employeeDetails.getEmpDevices());
-        }
-
-        List<Integer> existingDevice=deviceDao.deviceId(employeeDetails.getEmpId());
-
-        if(existingDevice!=null)
-        {
-            updatedDeviceList.addAll(existingDevice);
-
-            for(Integer Id : updatedDeviceList)
-            {
-                device.add(new Device(Id));
-            }
-            updateAssignStatus(updatedDeviceList);
-        }
-
-        EmployeeDepartment employeeDepartment=new EmployeeDepartment(employeeDetails.getEmpDepartment());
-        existingEmployee.setEmpId(employeeDetails.getEmpId());
-        existingEmployee.setEmpName(employeeDetails.getEmpName());
-        existingEmployee.setEmail(employeeDetails.getEmail());
-        existingEmployee.setEmpPassword(passwordEncoder.encode(employeeDetails.getEmpPassword()));
-        existingEmployee.setAssignRole(employeeDetails.getAssignRole());
-        existingEmployee.setDepartment(employeeDepartment);
-        existingEmployee.setRole(Arrays.asList(new Role(employeeDetails.getAssignRole())));
-        existingEmployee.setDevices(device);
-        existingEmployee.setEmpDepartment(employeeDetails.getEmpDepartment());
-        existingEmployee.setEmpDevices(employeeDetails.getEmpDevices());
-
-
-        Employee employee = new Employee(employeeDetails.getEmpId(),
-                employeeDetails.getEmpName(), employeeDetails.getEmail(),
-                employeeDetails.getEmpPassword(), employeeDepartment,
-                employeeDetails.getAssignRole(),
-                Arrays.asList(new Role(employeeDetails.getAssignRole())),device,employeeDetails.getEmpDepartment());
-
-        saveHistory(employeeDetails,USER_UPDATED);
-        //employeeDao.saveAndFlush(existingEmployee);
-        employeeDao.save(existingEmployee);
-        return new ResponseEntity<Object>(
-                new Response<>(String.valueOf(HttpStatus.CREATED.value()), HttpStatus.CREATED.getReasonPhrase(), "updated successfully"),
-                new HttpHeaders(),
-                HttpStatus.CREATED);
-    }
 
     //updated device size
     public void updateAssignStatus(List<Integer> updatedDevice)
@@ -426,7 +436,7 @@ public class EmployeeService {
 
 
     //delete employee devices by employeeId
-    public ResponseEntity deleteEmpDevices(int id) throws ResourceNotFoundException {
+    public ResponseEntity<Object> deleteEmpDevices(int id) throws ResourceNotFoundException {
         EmployeeDevices device=employeeDao.getUserDevices(id);
         if (device==null)
         {
@@ -435,26 +445,26 @@ public class EmployeeService {
 
         deviceDao.updateAssignStatusAndDeviceStatus(id);
         employeeDao.deleteEmployeeByEmpDevice(id);
-        return   new ResponseEntity(
+        return   new ResponseEntity<>(
                 new Response<>(String.valueOf(HttpStatus.OK.value()), HttpStatus.OK.getReasonPhrase(), "deleted successful"),
                 new HttpHeaders(),
                 HttpStatus.OK);
     }
 
-    public ResponseEntity deleteEmployeeDepartment(String department) throws ResourceNotFoundException {
+    public ResponseEntity<Object> deleteEmployeeDepartment(String department) throws ResourceNotFoundException {
         EmployeeDepartment empDep= employeeDepartmentDao.findByDepartmentName(department);
         if(empDep==null)
         {
             throw new ResourceNotFoundException(NO_RECORDS);
         }
         employeeDepartmentDao.deleteDepartment(department);
-        return   new ResponseEntity(
+        return   new ResponseEntity<>(
                 new Response<>(String.valueOf(HttpStatus.OK.value()), HttpStatus.OK.getReasonPhrase(), "deleted successful"),
                 new HttpHeaders(),
                 HttpStatus.OK);
     }
 
-    public ResponseEntity deleteEmpDetails(String empID) throws ResourceNotFoundException {
+    public ResponseEntity<Object> deleteEmpDetails(String empID) throws ResourceNotFoundException {
         if(employeeDao.findByEmpId(empID)==null)
         {
             throw new ResourceNotFoundException(NO_RECORDS);
@@ -470,13 +480,13 @@ public class EmployeeService {
         // String newDeletedDeviceHistory="employee Id "+empID+"Records deleted ";
         saveHistory(empID,EMP_DELETE);
 
-        return   new ResponseEntity(
+        return   new ResponseEntity<>(
                 new Response<>(String.valueOf(HttpStatus.OK.value()), HttpStatus.OK.getReasonPhrase(), "employee deleted success"),
                 new HttpHeaders(),
                 HttpStatus.OK);
     }
 
-    public ResponseEntity saveEmpDepartment(EmployeeDepartment employeeDepartment) throws FieldEmptyException, AlreadyExistsException {
+    public ResponseEntity<Object> saveEmpDepartment(EmployeeDepartment employeeDepartment) throws FieldEmptyException, AlreadyExistsException {
 
         String lower = employeeDepartment.getDepartment().toLowerCase();
         if(employeeDepartment.getDepartment().isEmpty())
@@ -494,7 +504,7 @@ public class EmployeeService {
 
         logger.info("saved success");
         employeeDepartmentDao.save(employeeDepartment);
-        return new ResponseEntity(
+        return new ResponseEntity<>(
                 new Response<>(String.valueOf(HttpStatus.CREATED.value()), HttpStatus.CREATED.getReasonPhrase(), "successfully saved",employeeDepartment),
                 new HttpHeaders(),
                 HttpStatus.CREATED);

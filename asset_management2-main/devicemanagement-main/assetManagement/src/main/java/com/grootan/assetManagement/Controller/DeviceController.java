@@ -147,29 +147,11 @@ public class DeviceController {
     @GetMapping("/device/add/name")
     public String addName(Model model) throws ResourceNotFoundException {
         List<DeviceCategory> devices =  deviceCategoryDao.findAll();
-       // System.out.println(devices.get(0).getCategory());
         model.addAttribute("ListOfDeviceCategory",devices);
         DeviceName deviceName=new DeviceName();
         model.addAttribute("deviceName",deviceName);
         return "AddDeviceName";
     }
-
-//    @PostMapping("/device/save/name")
-//    public String saveDeviceName(@ModelAttribute("deviceName") DeviceName deviceName,Model model)
-//    {
-//        try
-//        {
-//            List<DeviceCategory> devices = (List<DeviceCategory>) deviceService.getCategory();
-//            model.addAttribute("ListOfDeviceCategory",devices);
-//            deviceService.saveDeviceName(deviceName);
-//            return "redirect:/device/add/name?success";
-//        }
-//        catch(GeneralException | ResourceNotFoundException | FieldEmptyException | AlreadyExistsException e)
-//        {
-//            model.addAttribute("errorMessage",e.getMessage());
-//            return "AddDeviceName";
-//        }
-//    }
 
     @GetMapping("/history")
     public String history(Model model)

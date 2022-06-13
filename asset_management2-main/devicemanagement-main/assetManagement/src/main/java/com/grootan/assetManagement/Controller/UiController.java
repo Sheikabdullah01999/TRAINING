@@ -24,11 +24,11 @@ public class UiController
 
     @Autowired
     private EmployeeDao employeeDao;
-    //@Bean
+
     @PostConstruct
     public void initRoleAndUser()
     {
-       // service.initRoleAndUser();
+        service.initRoleAndUser();
     }
 
     @GetMapping("/")

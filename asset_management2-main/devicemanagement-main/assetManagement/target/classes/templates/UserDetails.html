@@ -96,7 +96,7 @@ success: function(response){
 							$('#employees').append('<tr>\
 										<td>'+value.empId+'</td>\
 										<td>'+value.deviceName+'</td>\
-										<td>'+value.id+'</td>\
+										<td>'+value.DeviceId+'</td>\
 										<td>'+value.devicePurchaseDate+'</td>\
 										<td>'+value.category+'</td>\
 										<td><button  class="btn btn-danger" onclick="Delete('+id+')">delete</button></td>\
@@ -115,14 +115,15 @@ function Delete(id)
 			dataType : 'json',
 			success : function() {
 				alert("Deleted Successfully");
-				window.location.href='http://localhost:9092/employee/user/device';
+				window.location.href='http:/employee/user/device';
 			},
 			error : function(request,status,error) {
 				alert(request.responseText);
 			}
 		});
 }
-/* Loop through all dropdown buttons to toggle between hiding and showing its dropdown content - This allows the user to have multiple dropdowns without any conflict */
+/* Loop through all dropdown buttons to toggle between hiding and showing its dropdown content -
+ This allows the user to have multiple dropdowns without any conflict */
 var dropdown = document.getElementsByClassName("dropdown-btn");
 var i;
 

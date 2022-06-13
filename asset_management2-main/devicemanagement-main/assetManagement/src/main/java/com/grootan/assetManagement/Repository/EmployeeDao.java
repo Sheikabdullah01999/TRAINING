@@ -12,6 +12,7 @@ import java.util.List;
 
 @Repository
 @Transactional
+
 public interface EmployeeDao extends JpaRepository<Employee,String> {
 
     Employee findByEmail(String email);
@@ -27,7 +28,7 @@ public interface EmployeeDao extends JpaRepository<Employee,String> {
     @Query(value="DELETE FROM Employee u where u.empId= :id")
     int deleteByEmpId(@Param("id") String empId);
 
-    @Query("SELECT new com.grootan.assetManagement.Model.EmployeeDevices(e.empId, d.deviceName, d.id, d.devicePurchaseDate, d.category) FROM Employee e join e.devices d")
+    @Query("SELECT new com.grootan.assetManagement.Model.EmployeeDevices(e.empId, d.deviceName, d.DeviceId, d.devicePurchaseDate, d.category) FROM Employee e join e.devices d")
     List<EmployeeDevices> getUserDevice();
 
     @Query("SELECT new com.grootan.assetManagement.Model.EmployeeDevices(e.empId, d.deviceName, d.id, d.devicePurchaseDate, d.category) FROM Employee e join e.devices d where d.id=?1")
