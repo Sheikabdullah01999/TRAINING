@@ -139,15 +139,15 @@ function Delete(empId)
  $.ajax({
 			type : "DELETE",
 			contentType : "application/json",
-			url : 'http://localhost:9090/delete/employee/'+empId,
+			url : '/delete/employee/'+empId,
 			dataType : 'json',
 			success : function() {
 				alert("Deleted Successfully");
-				window.location.href='http://localhost:9090/employee/list';
+				window.location.href='/employee/list';
 			},
 			error : function(request,status,error) {
 				alert("Cannot delete default admin");
-				window.location.href='http://localhost:9090/employee/list';
+				window.location.href='/employee/list';
 			}
 		});
 }

@@ -212,8 +212,8 @@ header .image-text .profession{
 
     <form  method="post" th:object="${device}">
         <div class="form-group">
-            <label class="control-label" for="id"> DeviceId </label>
-            <input id="id" class="form-control" th:field="*{id}" readonly="readonly"
+            <label class="control-label" for="deviceId"> DeviceId </label>
+            <input id="deviceId" class="form-control" th:field="*{deviceId}" readonly="readonly"
                    required autofocus="autofocus" />
         </div>
 
@@ -263,7 +263,7 @@ header .image-text .profession{
 <script type="text/javascript">
 function ajaxUpdate()
 {
-var id = $("#id").val();
+var deviceId = $("#deviceId").val();
 var category = $("#category").val();
 var deviceName = $("#deviceName").val();
 var manufacturedId = $("#manufacturedId").val();
@@ -274,7 +274,7 @@ $.ajax({
 			type : "PUT",
 			contentType : "application/json",
 			url : '/device/update/device',
-			data : JSON.stringify({id:id,category:category,deviceName:deviceName,manufacturedId:manufacturedId,devicePurchaseDate:devicePurchaseDate,assignStatus:assignStatus,deviceStatus:deviceStatus}),
+			data : JSON.stringify({deviceId:deviceId,category:category,deviceName:deviceName,manufacturedId:manufacturedId,devicePurchaseDate:devicePurchaseDate,assignStatus:assignStatus,deviceStatus:deviceStatus}),
 			dataType : 'json',
 			success : function(result) {
 				console.log(result);
@@ -285,14 +285,6 @@ $.ajax({
 				alert(request.responseText);
 			}
 		});
-		resetData();
-}
-function resetData()
-{
- $("#category").val("");
- $("#deviceName").val("");
- $("#manufacturedId").val("");
- $("#devicePurchaseDate").val("");
 }
 $("#category").change(function() {
         var x = $("#category").val();

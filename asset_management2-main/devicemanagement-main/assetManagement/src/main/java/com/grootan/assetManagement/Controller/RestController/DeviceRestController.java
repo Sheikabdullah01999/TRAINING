@@ -80,9 +80,9 @@ public class DeviceRestController {
 
     }
 
-    @PutMapping("/device/update/device/{id}")
-    public ResponseEntity updateDevice(@RequestParam Integer id,@RequestBody DeviceRequest device) throws FieldEmptyException {
-        return deviceService.updateDeviceDetails(id,device);
+    @PutMapping("/device/update/device")
+    public ResponseEntity updateDevice(@RequestBody DeviceRequest device) throws FieldEmptyException {
+        return deviceService.updateDeviceDetails(device);
     }
 
     @DeleteMapping("/device/delete/{id}")

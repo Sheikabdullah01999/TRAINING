@@ -45,7 +45,7 @@ public interface DeviceDao extends JpaRepository<Device,Integer>
 
     @Transactional
     @Modifying
-    @Query(nativeQuery = true,value = "delete  FROM employee_devices where devices_id=?1")
+    @Query(nativeQuery = true,value = "delete  FROM employee_devices where devices_device_id=?1")
     void deleteForiegnKey(@Param("id") Integer id);
 
     @Query("SELECT DISTINCT id,deviceName,category from Device")
@@ -57,7 +57,7 @@ public interface DeviceDao extends JpaRepository<Device,Integer>
     @Query("SELECT id,deviceName,category from Device where id=?1")
     public Device getDeviceId(@Param("id") Integer id);
 
-    @Query(value="SELECT employee_emp_id FROM employee_devices where devices_id=?1",nativeQuery = true)
+    @Query(value="SELECT employee_emp_id FROM employee_devices where devices_device_id=?1",nativeQuery = true)
     public String getEmpId(@Param("id") Integer id);
 
     @Query(value = "SELECT devices_device_id from employee_devices where employee_emp_id=?1",nativeQuery = true)

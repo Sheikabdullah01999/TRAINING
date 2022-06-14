@@ -6,6 +6,7 @@ import java.sql.Date;
 
 @NoArgsConstructor
 public class DeviceRequest {
+    private Integer deviceId;
 
     private String manufacturedId;
 
@@ -74,5 +75,13 @@ public class DeviceRequest {
 
     public void setDeviceStatus(String deviceStatus) {
         this.deviceStatus = deviceStatus;
+    }
+
+    public Integer getDeviceId() {
+        return deviceId;
+    }
+
+    public void setDeviceId(Integer deviceId) {
+        this.deviceId = deviceId;
     }
 }
