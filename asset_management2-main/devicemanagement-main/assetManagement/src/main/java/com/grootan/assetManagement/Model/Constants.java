@@ -27,4 +27,12 @@ public class Constants {
     public static final String DEVICE_CATEGORY=" device category:  ";
     public static final String DEVICE_ID="device id:";
     public static final String NO_RECORDS="no records found";
+    public static final String FIELD_EMPTY="field should not empty";
+    public static final String PASSWORD_LENGTH="password must be more than 8 character";
+    public static final String DEPARTMENT_FOUND="department found";
+    public static final String EMPLOYEE_FOUND="employee found";
+    public static final String SAVED_SUCCESSFUL="employee successfully saved";
+
+
+
 }

@@ -4,24 +4,18 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.stereotype.Component;
-import javax.persistence.*;
-
 
 @Getter
 @Setter
 @Component
 @NoArgsConstructor
 public class EmployeeRequest {
-
-
-        @Id
         private String empId;
         private String email;
         private String empName;
         private String empPassword;
         private String assignRole;
         private String empDepartment;
-
         private String empDevices;
 
         public EmployeeRequest(String empId, String email, String empName, String empPassword, String assignRole, String empDepartment, String empDevices) {

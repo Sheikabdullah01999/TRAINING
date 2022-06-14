@@ -9,9 +9,10 @@ import javax.persistence.*;
 @Getter
 @Setter
 @Table(name = "role",uniqueConstraints = @UniqueConstraint(columnNames = {"id","roleName"}))
-public class Role {
+public class Role
+{
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
     private String roleName;
     private String roleDescription;

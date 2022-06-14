@@ -212,15 +212,15 @@ header .image-text .profession{
 
     <form  method="post" th:object="${device}">
         <div class="form-group">
-            <label class="control-label" for="id"> DeviceId </label>
-            <input id="id" class="form-control" th:field="*{id}" readonly="readonly"
+            <label class="control-label" for="deviceId"> DeviceId </label>
+            <input id="deviceId" class="form-control" th:field="*{deviceId}" readonly="readonly"
                    required autofocus="autofocus" />
         </div>
 
         <div class="form-group">
             <label class="control-label" > DeviceCategory </label>
-            <select class="form-control" id="category"  th:name="device"  th:field="*{category}">
-                <option value="please select a category">Please Select a Device Category</option>
+            <select class="form-control" id="category"  th:name="device">
+                <option value="">Please Select a Device Category</option>
                 <option th:each="device:${ListOfDeviceCategory}" th:value="${device.category}" th:text="${device.category}"></option>
             </select>
         </div>
@@ -263,7 +263,7 @@ header .image-text .profession{
 <script type="text/javascript">
 function ajaxUpdate()
 {
-var id = $("#id").val();
+var deviceId = $("#deviceId").val();
 var category = $("#category").val();
 var deviceName = $("#deviceName").val();
 var manufacturedId = $("#manufacturedId").val();
@@ -274,7 +274,7 @@ $.ajax({
 			type : "PUT",
 			contentType : "application/json",
 			url : '/device/update/device',
-			data : JSON.stringify({id:id,category:category,deviceName:deviceName,manufacturedId:manufacturedId,devicePurchaseDate:devicePurchaseDate,assignStatus:assignStatus,deviceStatus:deviceStatus}),
+			data : JSON.stringify({deviceId:deviceId,category:category,deviceName:deviceName,manufacturedId:manufacturedId,devicePurchaseDate:devicePurchaseDate,assignStatus:assignStatus,deviceStatus:deviceStatus}),
 			dataType : 'json',
 			success : function(result) {
 				console.log(result);

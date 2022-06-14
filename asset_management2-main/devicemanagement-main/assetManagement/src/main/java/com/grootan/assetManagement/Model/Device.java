@@ -1,8 +1,5 @@
 package com.grootan.assetManagement.Model;
 
-import jdk.jfr.Timestamp;
-import lombok.Getter;
-import lombok.Setter;
 import javax.persistence.*;
 import java.sql.Date;
 
@@ -13,7 +10,7 @@ public class Device {
         @Id
         @Column(name="DeviceId")
         @GeneratedValue(strategy = GenerationType.AUTO)
-        private Integer DeviceId;
+        private Integer deviceId;
 
         @Column(name="manufacturedId")
 
@@ -35,11 +32,11 @@ public class Device {
         private String deviceStatus;
 
         public Integer getDeviceId() {
-                return DeviceId;
+                return deviceId;
         }
 
         public void setDeviceId(Integer deviceId) {
-                DeviceId = deviceId;
+                this.deviceId = deviceId;
         }
 
         public String getManufacturedId() {
@@ -91,7 +88,7 @@ public class Device {
         }
 
         public Device(Integer id, String manufacturedId, String category, String deviceName, Date devicePurchaseDate, String assignStatus, String deviceStatus) {
-                this.DeviceId=id;
+                this.deviceId =id;
                 this.manufacturedId = manufacturedId;
                 this.category = category;
                 this.deviceName = deviceName;
@@ -110,7 +107,7 @@ public class Device {
         }
 
         public Device(Integer id) {
-                this.DeviceId = id;
+                this.deviceId = id;
         }
         public Device()
         {

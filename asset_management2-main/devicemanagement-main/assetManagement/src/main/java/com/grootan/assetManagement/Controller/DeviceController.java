@@ -56,7 +56,7 @@ public class DeviceController {
     }
 
     @GetMapping("/device/list")
-    public String list_of_devices(Model model)
+    public String userDevices(Model model)
     {
         try{
             model.addAttribute("DeviceDetails", deviceService.getAllDevices());
@@ -100,7 +100,7 @@ public class DeviceController {
     @RequestMapping(value = "loadNamesByCategory/{name}", method = RequestMethod.GET)
     public String loadNamesByCategory(@PathVariable("name") String name) {
         Gson gson = new Gson();
-        long id = deviceService.findByCategoryId(name);
+        Integer id = deviceService.findByCategoryId(name);
         return gson.toJson(deviceService.findByCategory(id));
     }
 
@@ -112,8 +112,7 @@ public class DeviceController {
         return Long.parseLong(gson.toJson(deviceCategoryDao.findByDeviceCategoryId(name)));
     }
 
-//    @ResponseBody
-//    @RequestMapping(value = "/device/update/{id}", method = RequestMethod.GET)
+
     @GetMapping("/device/update/{id}")
     public ModelAndView showUpdateDevicePage(@PathVariable(name="id") int id,Model model)
     {

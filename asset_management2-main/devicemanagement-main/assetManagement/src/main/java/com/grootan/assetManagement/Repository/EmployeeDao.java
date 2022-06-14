@@ -28,21 +28,21 @@ public interface EmployeeDao extends JpaRepository<Employee,String> {
     @Query(value="DELETE FROM Employee u where u.empId= :id")
     int deleteByEmpId(@Param("id") String empId);
 
-    @Query("SELECT new com.grootan.assetManagement.Model.EmployeeDevices(e.empId, d.deviceName, d.DeviceId, d.devicePurchaseDate, d.category) FROM Employee e join e.devices d")
+    @Query("SELECT new com.grootan.assetManagement.Model.EmployeeDevices(e.empId, d.deviceName, d.deviceId, d.devicePurchaseDate, d.category) FROM Employee e join e.devices d")
     List<EmployeeDevices> getUserDevice();
 
-    @Query("SELECT new com.grootan.assetManagement.Model.EmployeeDevices(e.empId, d.deviceName, d.id, d.devicePurchaseDate, d.category) FROM Employee e join e.devices d where d.id=?1")
+    @Query("SELECT new com.grootan.assetManagement.Model.EmployeeDevices(e.empId, d.deviceName, d.deviceId, d.devicePurchaseDate, d.category) FROM Employee e join e.devices d where d.id=?1")
     EmployeeDevices getUserDevices(int id);
 
-    @Query(value = "select employee_emp_id from employee_devices where devices_id= :id",nativeQuery = true)
+    @Query(value = "select employee_emp_id from employee_devices where devices_device_id= :id",nativeQuery = true)
     String deleteByEmpDevicesId(@Param("id") int id);
 
-    @Query(value = "select devices_id from employee_devices where employee_emp_id= :id",nativeQuery = true)
+    @Query(value = "select devices_device_id from employee_devices where employee_emp_id= :id",nativeQuery = true)
     int deviceId(@Param("id") String id);
 
     @Transactional
     @Modifying
-    @Query(value = "delete from employee_devices where devices_id=:id",nativeQuery = true)
+    @Query(value = "delete from employee_devices where devices_device_id=:id",nativeQuery = true)
     public void deleteEmployeeByEmpDevice(@Param("id") int id);
 
     @Query(value="SELECT email FROM Employee WHERE empId= :id")

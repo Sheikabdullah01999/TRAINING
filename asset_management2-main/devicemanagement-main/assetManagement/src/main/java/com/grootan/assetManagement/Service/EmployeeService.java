@@ -17,6 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
@@ -81,7 +82,7 @@ public class EmployeeService {
     {
         String userName=service.currentUser();
         History saveHistory=new History(userName,constant,new Gson().toJson(o),service.DateAndTime());
-//          historyDao.save(saveHistory);
+          historyDao.save(saveHistory);
 
     }
     //get all departments from the table
@@ -98,9 +99,9 @@ public class EmployeeService {
             throw new ResourceNotFoundException(NO_RECORDS);
         }
 
-        return   new ResponseEntity(
+        return   new ResponseEntity<>(
                 new Response<>(String.valueOf(HttpStatus.OK.value()),
-                        HttpStatus.OK.getReasonPhrase(), "department found", employeeList),
+                        HttpStatus.OK.getReasonPhrase(), DEPARTMENT_FOUND, employeeList),
                 new HttpHeaders(), HttpStatus.OK);
     }
 
@@ -120,7 +121,7 @@ public class EmployeeService {
         }
 
         return   new ResponseEntity<>(
-                new Response<>(String.valueOf(HttpStatus.OK.value()), HttpStatus.OK.getReasonPhrase(), "employee found", employeeList),
+                new Response<>(String.valueOf(HttpStatus.OK.value()), HttpStatus.OK.getReasonPhrase(), EMPLOYEE_FOUND, employeeList),
                 new HttpHeaders(), HttpStatus.OK);
     }
 
@@ -130,7 +131,7 @@ public class EmployeeService {
      * @param employeeDetails
      * @return
      */
-    public Employee saveEmpDetails(Employee employeeDetails)
+    public Employee saveEmpDetails(EmployeeRequest employeeDetails)
     {
 
         String devices= employeeDetails.getEmpDevices();
@@ -148,8 +149,8 @@ public class EmployeeService {
             for(Integer deviceId : id)
             {
                 Device device1=deviceDao.getByDeviceId(deviceId);
-                device.add(new Device(device1.getDeviceId(),device1.getManufacturedId(),device1.getCategory(),device1.getDeviceName(),device1.getDevicePurchaseDate(),device1.getAssignStatus(),device1.getDeviceStatus()));
-               // device.add(new Device(deviceId));
+                device.add(new Device(device1.getDeviceId(),device1.getManufacturedId(),device1.getCategory(),device1.getDeviceName(),
+                        device1.getDevicePurchaseDate(),device1.getAssignStatus(),device1.getDeviceStatus()));
             }
         }
 
@@ -160,7 +161,8 @@ public class EmployeeService {
                 passwordEncoder.encode(employeeDetails.getEmpPassword()),
                 employeeDepartment,
                 employeeDetails.getAssignRole(),
-                Arrays.asList(new Role(employeeDetails.getAssignRole())),device,
+                List.of(new Role(employeeDetails.getAssignRole())),
+                device,
                 employeeDetails.getEmpDepartment());
 
         return employee;
@@ -176,11 +178,11 @@ public class EmployeeService {
      * @throws FieldEmptyException
      */
 
-    public void validate(Employee employeeDetails) throws FieldEmptyException {
+    public void validate(EmployeeRequest employeeDetails) throws FieldEmptyException {
 
         if (employeeDetails.getEmpPassword().isEmpty() || employeeDetails.getEmpDepartment().isEmpty() ||
                 employeeDetails.getAssignRole().isEmpty() || employeeDetails.getEmpId().isEmpty() || employeeDetails.getEmpName().isEmpty()) {
-            throw new FieldEmptyException("field should not empty");
+            throw new FieldEmptyException(FIELD_EMPTY);
         }
 
         Boolean validEmail = isValid(employeeDetails.getEmail());
@@ -189,7 +191,7 @@ public class EmployeeService {
         }
 
         if (employeeDetails.getEmpPassword().length() < 9) {
-            throw new GeneralException("password must be more than 8 character");
+            throw new GeneralException(PASSWORD_LENGTH);
         }
 
 
@@ -279,19 +281,20 @@ public class EmployeeService {
      * before save  check all employee details are  correct
      * check all the mandatory fields
      * */
-    public ResponseEntity<Object> saveEmployee(Employee employeeDetails) throws FieldEmptyException
+    public ResponseEntity<Object> saveEmployee(EmployeeRequest employeeDetails) throws FieldEmptyException
     {
         emailExistsValidation(employeeDetails.getEmail());
         validate(employeeDetails);
         Employee employee=saveEmpDetails(employeeDetails);
         employeeDao.save(employee);
+        logger.info("new employee registered success");
         return new ResponseEntity<>(
-                new Response<>(String.valueOf(HttpStatus.CREATED.value()), HttpStatus.CREATED.getReasonPhrase(), "successfully saved",employeeDetails),
+                new Response<>(String.valueOf(HttpStatus.CREATED.value()), HttpStatus.CREATED.getReasonPhrase(), SAVED_SUCCESSFUL,employeeDetails),
                 new HttpHeaders(), HttpStatus.CREATED);
     }
 
 
-    public ResponseEntity<Object> updateEmployee(Employee employeeDetails) throws FieldEmptyException, ResourceNotFoundException
+    public ResponseEntity<Object> updateEmployee(EmployeeRequest employeeDetails) throws FieldEmptyException, ResourceNotFoundException
     {
         Employee existingEmployee=employeeDao.findByEmpId(employeeDetails.getEmpId());
         if(existingEmployee==null)
@@ -301,20 +304,26 @@ public class EmployeeService {
 
         validate(employeeDetails);
 
-        List<Integer> updatedDeviceList = new ArrayList<>();
+        List<Integer> updatedDeviceList=new ArrayList<>();
 
         List<Device> device=new ArrayList<>();
 
         List<Integer> existingDevice=deviceDao.deviceId(employeeDetails.getEmpId());
-
         if(existingDevice.size()>0)
         {
-            updatedDeviceList.addAll(existingDevice);
+            for(Integer id:existingDevice)
+            {
+                updatedDeviceList.add(id);
+            }
         }
 
         if(employeeDetails.getEmpDevices()!=null)
         {
-            updatedDeviceList=getDeviceID(employeeDetails.getEmpDevices());
+            List<Integer> newDevice=getDeviceID(employeeDetails.getEmpDevices());
+            for(Integer id:newDevice)
+            {
+                updatedDeviceList.add(id);
+            }
             for(Integer Id : updatedDeviceList)
             {
                 Device device1=deviceDao.getByDeviceId(Id);
@@ -325,29 +334,26 @@ public class EmployeeService {
 
         EmployeeDepartment employeeDepartment=new EmployeeDepartment(employeeDetails.getEmpDepartment());
 
-//        existingEmployee.setEmpId(employeeDetails.getEmpId());
-//        existingEmployee.setEmpName(employeeDetails.getEmpName());
-//        existingEmployee.setEmail(employeeDetails.getEmail());
-//        existingEmployee.setEmpPassword(passwordEncoder.encode(employeeDetails.getEmpPassword()));
-//        existingEmployee.setAssignRole(employeeDetails.getAssignRole());
-//        existingEmployee.setDepartment(employeeDepartment);
-//        existingEmployee.setRole(Arrays.asList(new Role(employeeDetails.getAssignRole())));
-//        existingEmployee.setDevices(device);
-//        existingEmployee.setEmpDepartment(employeeDetails.getEmpDepartment());
-        //employeeDetails.setDepartment(employeeDepartment);
-        employeeDetails.setDevices(device);
+        existingEmployee.setEmpId(employeeDetails.getEmpId());
+        existingEmployee.setEmpName(employeeDetails.getEmpName());
+        existingEmployee.setEmail(employeeDetails.getEmail());
+        existingEmployee.setAssignRole(employeeDetails.getAssignRole());
+        existingEmployee.setDepartment(employeeDepartment);
+        existingEmployee.setRole(new LinkedList<>(Arrays.asList(new Role(employeeDetails.getAssignRole()))));
+        existingEmployee.setDevices(device);
+        existingEmployee.setEmpDepartment(employeeDetails.getEmpDepartment());
 
-        //saveHistory(employeeDetails,USER_UPDATED);
-        //employeeDao.saveAndFlush(existingEmployee);
-        employeeDao.save(employeeDetails);
+        employeeDao.save(existingEmployee);
+        logger.info("employee updated  success");
         return new ResponseEntity<>(
                 new Response<>(String.valueOf(HttpStatus.CREATED.value()), HttpStatus.CREATED.getReasonPhrase(), "updated successfully"),
                 new HttpHeaders(),
                 HttpStatus.CREATED);
     }
 
-    /**to check  email already exits or not
-     * */
+    /**
+     * to check  email already exits or not
+     **/
     private boolean emailExists(final String email)
     {
         return employeeDao.findByEmail(email)!=null;
@@ -386,17 +392,17 @@ public class EmployeeService {
      * find employee by employee id
      */
 
-    public ResponseEntity<Object> findEmployeeById(String id) throws ResourceNotFoundException {
-        Employee employee = employeeDao.findByEmpId(id);
-        if(employee.getEmpId()==null)
-        {
-            throw new ResourceNotFoundException(NO_RECORDS);
-        }
-        return   new ResponseEntity<>(
-                new Response<>(String.valueOf(HttpStatus.OK.value()), HttpStatus.OK.getReasonPhrase(), "deleted successful",employee),
-                new HttpHeaders(),
-                HttpStatus.OK);
-    }
+//    public ResponseEntity<Object> findEmployeeById(String id) throws ResourceNotFoundException {
+//        Employee employee = employeeDao.findByEmpId(id);
+//        if(employee.getEmpId()==null)
+//        {
+//            throw new ResourceNotFoundException(NO_RECORDS);
+//        }
+//        return   new ResponseEntity<>(
+//                new Response<>(String.valueOf(HttpStatus.OK.value()), HttpStatus.OK.getReasonPhrase(), "",employee),
+//                new HttpHeaders(),
+//                HttpStatus.OK);
+//    }
 
 
     //search by keyword using like
@@ -422,9 +428,6 @@ public class EmployeeService {
 
     }
 
-    //update employee details
-
-
     //updated device size
     public void updateAssignStatus(List<Integer> updatedDevice)
     {
@@ -445,6 +448,7 @@ public class EmployeeService {
 
         deviceDao.updateAssignStatusAndDeviceStatus(id);
         employeeDao.deleteEmployeeByEmpDevice(id);
+        logger.info("employee device deleted success");
         return   new ResponseEntity<>(
                 new Response<>(String.valueOf(HttpStatus.OK.value()), HttpStatus.OK.getReasonPhrase(), "deleted successful"),
                 new HttpHeaders(),
@@ -477,7 +481,7 @@ public class EmployeeService {
         {
             deviceDao.updateAssignStatusAndDeviceStatus(dId);
         }
-        // String newDeletedDeviceHistory="employee Id "+empID+"Records deleted ";
+        logger.info("employee deleted  successful");
         saveHistory(empID,EMP_DELETE);
 
         return   new ResponseEntity<>(

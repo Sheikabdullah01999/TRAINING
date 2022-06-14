@@ -109,11 +109,11 @@ public class DeviceService {
     }
 
     //update device details
-    public ResponseEntity<Object> updateDeviceDetails(Integer id,DeviceRequest deviceRequest) throws FieldEmptyException {
+    public ResponseEntity<Object> updateDeviceDetails(DeviceRequest deviceRequest) throws FieldEmptyException {
 
         emptyFieldCheck(deviceRequest);
 
-        Device device=deviceDao.getDeviceId(id);
+        Device device=deviceDao.getDeviceId(deviceRequest.getDeviceId());
         device.setDeviceName(deviceRequest.getDeviceName());
         device.setDeviceStatus(deviceRequest.getDeviceStatus());
         device.setCategory(deviceRequest.getCategory());
@@ -135,7 +135,6 @@ public class DeviceService {
     //get all devices
     public ResponseEntity<Object> getAllDevices() throws ResourceNotFoundException {
         List<Device> deviceList=deviceDao.findAll();
-        System.out.println(deviceList.get(0).getDeviceId());
         if (deviceList.isEmpty())
         {
             throw new ResourceNotFoundException("device not found");
@@ -146,7 +145,6 @@ public class DeviceService {
                 new HttpHeaders(),
                 HttpStatus.FOUND);
     }
-
 
     //get device by device id
     public ResponseEntity<Object> findDeviceById(int id)
@@ -325,7 +323,7 @@ public class DeviceService {
         return deviceNameDao.getDeviceNames(id);
     }
 
-    public int findByCategoryId(String name)
+    public Integer findByCategoryId(String name)
     {
         return deviceNameDao.getDeviceCategoryId(name);
     }

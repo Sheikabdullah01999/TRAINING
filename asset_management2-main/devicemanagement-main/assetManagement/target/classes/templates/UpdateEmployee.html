@@ -239,7 +239,7 @@ header .image-text .profession{
         <div class="form-group">
             <label class="control-label" for="email"> EmployeeEmail </label>
             <input id="email" class="form-control" th:field="*{email}"
-                   autofocus="autofocus" />
+                   autofocus="autofocus" readonly="readonly" />
         </div>
 
         <div class="form-group">
@@ -282,7 +282,10 @@ var empName = $("#empName").val();
 var email = $("#email").val();
 var empPassword = $("#empPassword").val();
 var empDepartment = $("#empDepartment").val();
-var empDevices = $("#empDevices").val();
+var empDevices = '';
+$(":checked").each(function() {
+  empDevices+=$(this).val();
+});
 var assignRole = $("#assignRole").val();
 $.ajax({
 			type : "PUT",

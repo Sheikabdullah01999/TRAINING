@@ -92,11 +92,11 @@ contentType : "application/json",
 dataType : 'json',
 success: function(response){
 						$.each(response, function (key, value) {
-						var id = value.id;
+						var id = value.deviceId;
 							$('#employees').append('<tr>\
 										<td>'+value.empId+'</td>\
 										<td>'+value.deviceName+'</td>\
-										<td>'+value.DeviceId+'</td>\
+										<td>'+value.deviceId+'</td>\
 										<td>'+value.devicePurchaseDate+'</td>\
 										<td>'+value.category+'</td>\
 										<td><button  class="btn btn-danger" onclick="Delete('+id+')">delete</button></td>\

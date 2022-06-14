@@ -55,6 +55,7 @@ public class RoleService {
         }
         String roleHistory=NEW_ROLE+role.getRoleName();
         History history=new History(service.currentUser(),ROLE_ADD,new Gson().toJson(role),service.DateAndTime());
+        System.out.println(role);
         historyDao.save(history);
         return roleDao.save(role);
     }

@@ -17,18 +17,16 @@ public class Employee
     @Id
     private String empId;
     private String email;
-
     private String empName;
     private String empPassword;
     private String assignRole;
     private String empDepartment;
 
     @OneToOne(cascade = CascadeType.PERSIST)
-    @JoinTable(name = "department_emp",
+    @JoinTable(name = "mapped_department",
             joinColumns = @JoinColumn(name = "emp_id"),
             inverseJoinColumns = @JoinColumn(name = "department_id"))
     private EmployeeDepartment department;
-
 
     @Transient
     private String empDevices;
@@ -44,12 +42,11 @@ public class Employee
     )
     private Collection<Role> role;
 
-    @OneToMany(cascade = {CascadeType.PERSIST,CascadeType.MERGE})
+    @OneToMany(cascade = CascadeType.PERSIST)
     private List<Device> devices;
 
     public Employee()
     {
-
     }
 
     public Employee(String empId, String empName, String email, String empPassword, EmployeeDepartment empDepartment, String assignRole, Collection<Role> role, List<Device> devices,String department)

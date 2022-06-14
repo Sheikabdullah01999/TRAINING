@@ -70,30 +70,24 @@ public class DeviceRestController {
     @PostMapping("/device/add/category/device")
     public ResponseEntity<Object> addDeviceCategory(@RequestBody DeviceCategory deviceCategory) throws FieldEmptyException, AlreadyExistsException
     {
-
         return deviceService.saveDeviceCategory(deviceCategory);
     }
 
     @PostMapping("/device/name/add")
-    public ResponseEntity addDeviceName(@RequestBody DeviceName deviceName) throws FieldEmptyException, AlreadyExistsException {
+    public ResponseEntity<Object> addDeviceName(@RequestBody DeviceName deviceName) throws FieldEmptyException, AlreadyExistsException {
         return  deviceService.saveDeviceName(deviceName);
 
     }
 
-    @PutMapping("/device/update/device/{id}")
-    public ResponseEntity updateDevice(@RequestParam Integer id,@RequestBody DeviceRequest device) throws FieldEmptyException {
-        return deviceService.updateDeviceDetails(id,device);
+    @PutMapping("/device/update/device")
+    public ResponseEntity<Object> updateDevice(@RequestBody DeviceRequest device) throws FieldEmptyException
+    {
+        return deviceService.updateDeviceDetails(device);
     }
 
     @DeleteMapping("/device/delete/{id}")
-    public ResponseEntity deleteDevice(@PathVariable(name="id") Integer id) throws ResourceNotFoundException {
+    public ResponseEntity<Object> deleteDevice(@PathVariable(name="id") Integer id) throws ResourceNotFoundException {
         return deviceService.deleteDeviceDetails(id);
-    }
-
-    @DeleteMapping("/device/category/delete/{id}")
-    public ResponseEntity deleteDeviceCategory(@PathVariable(name="id") String  category) throws ResourceNotFoundException {
-
-        return deviceService.deleteDeviceCategory(category);
     }
 
 }
