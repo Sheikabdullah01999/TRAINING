@@ -282,9 +282,20 @@ $.ajax({
 				window.location.href='/device/list';
 			},
 			error : function(request,status,error) {
-				alert(request.responseText);
+				var err = JSON.parse(request.responseText);
+                alert(err.description);
 			}
 		});
+		resetData();
+}
+function resetData()
+{
+ $("#category").val("");
+ $("#deviceName").val("");
+ $("#manufacturedId").val("");
+ $("#devicePurchaseDate").val("");
+ $("#assignStatus").val("");
+ $("#deviceStatus").val("");
 }
 $("#category").change(function() {
         var x = $("#category").val();

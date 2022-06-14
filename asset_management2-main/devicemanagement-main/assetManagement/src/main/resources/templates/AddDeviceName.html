@@ -36,8 +36,8 @@
     </nav>
     <br>
     <br>
-    <button class="dropdown-btn"><i class="fa fa-user" aria-hidden="true"></i>&nbsp;Employee
-        <i class="fa fa-caret-down"></i>
+    <button class="dropdown-btn"><i class='bx bx-user bx-sm' ></i>&nbsp;Employee
+        <i class='bx bx-chevron-down'></i>
     </button>
     <div class="dropdown-container">
         <a th:href="@{/employee/registration}">Employee Registration</a>
@@ -46,16 +46,16 @@
         <a th:href="@{/employee/department}">Add Employee Department</a>
     </div>
     <br>
-    <button class="dropdown-btn"><i class='fa fa-users'></i>&nbsp;Roles
-        <i class="fa fa-caret-down"></i>
+    <button class="dropdown-btn"><i class='bx bx-user-plus'></i>&nbsp;Roles
+        <i class='bx bx-chevron-down'></i>
     </button>
     <div class="dropdown-container">
         <a th:href="@{/role/registration}">Roles Registration</a>
         <a th:href="@{/roles/list}">List Of Roles</a>
     </div>
     <br>
-    <button class="dropdown-btn"><i class='bx bxs-devices'></i>&nbsp;Devices
-        <i class="fa fa-caret-down"></i>
+    <button class="dropdown-btn"><i class='bx bx-devices bx-sm' ></i>&nbsp;Devices
+        <i class='bx bx-chevron-down'></i>
     </button>
     <div class="dropdown-container">
         <a th:href="@{/device/add}">Add Device Details</a>
@@ -64,9 +64,9 @@
         <a th:href="@{/device/add/name}">Add Device Name</a>
     </div>
     <br>
-    <a th:href="@{/history}" class="dropdown-btn"><i class="fa fa-history" aria-hidden="true"></i>&nbsp;History</a>
+    <a th:href="@{/history}" class="dropdown-btn"><i class='bx bx-history bx-sm' ></i>&nbsp;History</a>
     <br>
-    <a sec:authorize="isAuthenticated()" th:href="@{/logout}" class="dropdown-btn"><i class="fa fa-sign-out" aria-hidden="true"></i>&nbsp;Logout</a>
+    <a sec:authorize="isAuthenticated()" th:href="@{/logout}" class="dropdown-btn" ><i class='bx bx-log-out bx-sm'></i>&nbsp;Logout</a>
 </div>
 <div class="main">
     <div th:if="${param.success}">
@@ -124,7 +124,8 @@ $.ajax({
 				alert("Registered Successfully");
 			},
 			error : function(request,status,error) {
-				alert(request.responseText);
+				var err = JSON.parse(request.responseText);
+                alert(err.description);
 			}
 		});
 }

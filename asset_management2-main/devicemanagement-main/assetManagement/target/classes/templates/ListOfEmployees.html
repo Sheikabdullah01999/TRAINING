@@ -16,6 +16,7 @@
     <link href='https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css' rel='stylesheet'/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="/css/table.css">
+    <link rel="stylesheet" href="/css/style.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 </head>
 <body>
@@ -36,8 +37,8 @@
     </nav>
     <br>
     <br>
-    <button class="dropdown-btn"><i class="fa fa-user" aria-hidden="true"></i>&nbsp;Employee
-        <i class="fa fa-caret-down"></i>
+    <button class="dropdown-btn"><i class="bx bx-user bx-sm" aria-hidden="true"></i>&nbsp;Employee
+        <i class="bx bx-chevron-down"></i>
     </button>
     <div class="dropdown-container">
         <a th:href="@{/employee/registration}" class="row1">Employee Registration</a>
@@ -46,16 +47,16 @@
         <a th:href="@{/employee/department}" class="row1">Add Employee Department</a>
     </div>
     <br>
-    <button class="dropdown-btn"><i class='fa fa-users'></i>&nbsp;Roles
-        <i class="fa fa-caret-down"></i>
+    <button class="dropdown-btn"><i class='bx bx-user-plus'></i>&nbsp;Roles
+        <i class="bx bx-chevron-down"></i>
     </button>
     <div class="dropdown-container">
         <a th:href="@{/role/registration}" class="row1">Roles Registration</a>
         <a th:href="@{/roles/list}" class="row1">List Of Roles</a>
     </div>
     <br>
-    <button class="dropdown-btn"><i class='bx bxs-devices'></i>&nbsp;Devices
-        <i class="fa fa-caret-down"></i>
+    <button class="dropdown-btn"><i class='bx bx-devices bx-sm'></i>&nbsp;Devices
+        <i class="bx bx-chevron-down"></i>
     </button>
     <div class="dropdown-container">
         <a th:href="@{/device/add}" class="row1">Add Device Details</a>
@@ -64,9 +65,9 @@
         <a th:href="@{/device/add/name}" class="row1">Add Device Name</a>
     </div>
     <br>
-    <a th:href="@{/history}" class="dropdown-btn"><i class="fa fa-history" aria-hidden="true"></i>&nbsp;History</a>
+    <a th:href="@{/history}" class="dropdown-btn"><i class="bx bx-history bx-sm" aria-hidden="true"></i>&nbsp;History</a>
     <br>
-    <a sec:authorize="isAuthenticated()" th:href="@{/logout}" class="dropdown-btn"><i class="fa fa-sign-out" aria-hidden="true"></i>&nbsp;Logout</a>
+    <a sec:authorize="isAuthenticated()" th:href="@{/logout}" class="dropdown-btn"><i class="bx bx-log-out bx-sm" aria-hidden="true"></i>&nbsp;Logout</a>
 </div>
 <div class="listuser_main">
     <div th:if="${errorMessage!=null}">
@@ -106,7 +107,7 @@
     </tbody>
 </table>
 </div>
-<a th:href="@{/}" class="btn btn-primary btn1">Back</a>
+<a th:href="@{/}" class="btn btn-primary btn3">Back</a>
 <script>
 $(document).ready(function(){
 $.ajax({

@@ -282,7 +282,10 @@ var empName = $("#empName").val();
 var email = $("#email").val();
 var empPassword = $("#empPassword").val();
 var empDepartment = $("#empDepartment").val();
-var empDevices = $("#empDevices").val();
+var empDevices = '';
+$(":checked").each(function() {
+  empDevices+=$(this).val();
+});
 var assignRole = $("#assignRole").val();
 $.ajax({
 			type : "PUT",
@@ -296,9 +299,21 @@ $.ajax({
 				window.location.href='/employee/list';
 			},
 			error : function(request,status,error) {
-				alert(request.responseText);
+				var err = JSON.parse(request.responseText);
+                alert(err.description);
 			}
 		});
+		resetData();
+}
+function resetData()
+{
+ $("#empId").val("");
+ $("#empName").val("");
+ $("#email").val("");
+ $("#empPassword").val("");
+ $("#empDepartment").val("");
+ $("#empDevices").val("");
+ $("#assignRole").val("");
 }
 /* Loop through all dropdown buttons to toggle between hiding and showing its dropdown content - This allows the user to have multiple dropdowns without any conflict */
 var dropdown = document.getElementsByClassName("dropdown-btn");

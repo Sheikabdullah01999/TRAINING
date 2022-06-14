@@ -66,6 +66,18 @@ color:#707070;
   margin-left: 370px; /* Same as the width of the sidenav */
   padding: 0px 10px;
 }
+.list_user_table
+{
+  outline:2px solid grey;
+  margin-left: 120px; /* Same as the width of the sidenav */
+  padding: 0px 10px;
+}
+.list_device_table
+{
+  outline:2px solid grey;
+  margin-left: 60px; /* Same as the width of the sidenav */
+  padding: 0px 10px;
+}
 .history_main
 {
 margin-left: 350px; /* Same as the width of the sidenav */

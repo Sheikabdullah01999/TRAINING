@@ -12,9 +12,6 @@ import javax.persistence.*;
 @Component
 @NoArgsConstructor
 public class EmployeeRequest {
-
-
-        @Id
         private String empId;
         private String email;
         private String empName;

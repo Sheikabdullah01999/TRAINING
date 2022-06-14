@@ -114,7 +114,7 @@
 
                 <ul>
                     <li th:each="device : ${ListOfDevices}">
-                        <input type="checkbox"  th:value="${device}" th:text="${device}" id="empDevices"/>
+                        <input type="checkbox"  th:value="${device}" th:text="${device}" id="empDevices" name="devices"/>
                     </li>
                 </ul>
 
@@ -145,7 +145,10 @@ var empName = $("#empName").val();
 var email = $("#email").val();
 var empPassword = $("#empPassword").val();
 var empDepartment = $("#empDepartment").val();
-var empDevices = $("#empDevices").val();
+var empDevices = '';
+$(":checked").each(function() {
+  empDevices+=$(this).val();
+});
 var assignRole = $("#assignRole").val();
 $.ajax({
 			type : "POST",
