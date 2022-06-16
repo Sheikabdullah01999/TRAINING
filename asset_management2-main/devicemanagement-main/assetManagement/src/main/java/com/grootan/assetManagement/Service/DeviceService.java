@@ -19,6 +19,10 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -88,12 +92,23 @@ public class DeviceService {
     /**
      * Add device details
      */
-    public ResponseEntity<Object> addDeviceDetails(DeviceRequest deviceRequest) throws FieldEmptyException
-    {
+    public ResponseEntity<Object> addDeviceDetails(DeviceRequest deviceRequest) throws FieldEmptyException, ResourceNotFoundException {
         emptyFieldCheck(deviceRequest);
         if(deviceIdExists(deviceRequest.getManufacturedId()))
         {
             throw new GeneralException("manufactured id already exits");
+        }
+
+        String strDate = String.valueOf(deviceRequest.getDevicePurchaseDate());
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Date date;
+
+        try {
+            date = dateFormat.parse(strDate);
+
+        }
+        catch (ParseException e) {
+            throw new ResourceNotFoundException(strDate);
         }
 
         saveHistory(deviceRequest,DEVICE_ADD);
@@ -111,11 +126,11 @@ public class DeviceService {
     }
 
     //update device details
-    public ResponseEntity<Object> updateDeviceDetails(DeviceRequest deviceRequest) throws FieldEmptyException {
+    public ResponseEntity<Object> updateDeviceDetails(Integer id,DeviceRequest deviceRequest) throws FieldEmptyException {
 
         emptyFieldCheck(deviceRequest);
 
-        Device device=deviceDao.getDeviceId(deviceRequest.getDeviceId());
+        Device device=deviceDao.getDeviceId(id);
         device.setDeviceName(deviceRequest.getDeviceName());
         device.setDeviceStatus(deviceRequest.getDeviceStatus());
         device.setCategory(deviceRequest.getCategory());
