@@ -12,8 +12,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import javax.annotation.PostConstruct;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -46,9 +44,7 @@ public class CommonService {
     }
 
     public Authentication getCurrentUser() {
-        Authentication authentication =
-                SecurityContextHolder.getContext().getAuthentication();
-        return authentication;
+        return SecurityContextHolder.getContext().getAuthentication();
     }
 
     //current date and time in AM PM format
@@ -59,8 +55,7 @@ public class CommonService {
     }
 
     public Employee loginEmployeeDetails(String name) {
-        Employee employee=employeeDao.findByEmail(name);
-        return  employee;
+        return employeeDao.findByEmail(name);
     }
 
     public void initRoleAndUser()
@@ -97,8 +92,8 @@ public class CommonService {
 
         adminUser.setEmpId("G001");
         adminUser.setEmpName("grootan");
-        adminUser.setEmail("grootan@gmail.com");
-        adminUser.setEmpPassword(getEncodedPassword("gr00tan"));
+        adminUser.setEmail("g@g.com");
+        adminUser.setEmpPassword(getEncodedPassword("root"));
         adminUser.setEmpDepartment("admin");
         adminUser.setAssignRole(adminRole.getRoleName());
         Collection<Role> adminRoles = new ArrayList<>();

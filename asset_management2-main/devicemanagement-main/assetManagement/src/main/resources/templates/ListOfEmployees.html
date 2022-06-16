@@ -40,9 +40,9 @@
         <i class="fa fa-caret-down"></i>
     </button>
     <div class="dropdown-container">
-        <a th:href="@{/employee/registration}" class="row1">Employee Registration</a>
-        <a th:href="@{/employee/list}" class="row1">List Of Employees</a>
-        <a th:href="@{/employee/user/device}" class="row1">List Of Employee Devices</a>
+        <a th:href="@{/employee/add}" class="row1"> Employee Registration</a>
+        <a th:href="@{/employee/all/list}" class="row1">List Of Employees</a>
+        <a th:href="@{/employee/all/user/device}" class="row1">List Of Employee Devices</a>
         <a th:href="@{/employee/department}" class="row1">Add Employee Department</a>
     </div>
     <br>
@@ -58,9 +58,9 @@
         <i class="fa fa-caret-down"></i>
     </button>
     <div class="dropdown-container">
-        <a th:href="@{/device/add}" class="row1">Add Device Details</a>
-        <a th:href="@{/device/list}" class="row1">List Of Device Details</a>
-        <a th:href="@{/device/add/category}" class="row1">Add Device Category</a>
+        <a th:href="@{/device/add/device}" class="row1">Add Device Details</a>
+        <a th:href="@{/device/list/device}" class="row1">List Of Device Details</a>
+        <a th:href="@{/device/category/add}" class="row1">Add Device Category</a>
         <a th:href="@{/device/add/name}" class="row1">Add Device Name</a>
     </div>
     <br>
@@ -76,16 +76,6 @@
 <div class="container-fluid">
     <h1>List Of Employees</h1>
     <br>
-    <form th:action="@{/employee/search}" method="get" style="margin-left:320px;">
-        <div class="container">
-            <div>
-                <input type="text" class="form-control" name="keyword" th:value="${keyword}" placeholder="Find by EmployeeName and EmployeeId" size="50" id="search">
-            </div>
-            <div>
-                <button type="submit" class="btn btn-info" >Search</button>
-            </div>
-        </div>
-    </form>
     <br>
     <br>
 <table class="table  table-bordered list_table">
@@ -110,7 +100,7 @@
 <script>
 $(document).ready(function(){
 $.ajax({
-url:"/employee/all/list",
+url:"/v1/employees",
 type:"GET",
 contentType : "application/json",
 dataType : 'json',
@@ -121,6 +111,7 @@ success: function(response){
 							$('#employees').append('<tr>\
 										<td>'+empId+'</td>\
 										<td>'+value.empName+'</td>\
+										console.log(empName)
 										<td>'+value.email+'</td>\
 										<td>'+value.empDepartment+'</td>\
 										<td>'+value.assignRole+'</td>\
@@ -139,15 +130,15 @@ function Delete(empId)
  $.ajax({
 			type : "DELETE",
 			contentType : "application/json",
-			url : 'http://localhost:9090/delete/employee/'+empId,
+			url : 'v1/employee/'+empId,
 			dataType : 'json',
 			success : function() {
 				alert("Deleted Successfully");
-				window.location.href='http://localhost:9090/employee/list';
+				window.location.href='/employee/all/list';
 			},
 			error : function(request,status,error) {
 				alert("Cannot delete default admin");
-				window.location.href='http://localhost:9090/employee/list';
+				window.location.href='/employee/all/list';
 			}
 		});
 }

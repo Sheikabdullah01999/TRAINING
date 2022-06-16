@@ -102,7 +102,7 @@ public class DeviceService {
         deviceDao.save(device);
 
         return new ResponseEntity<>(
-                new Response<>(String.valueOf(HttpStatus.CREATED.value()), HttpStatus.CREATED.getReasonPhrase(),
+                new Response<>(String.valueOf(HttpStatus.CREATED.value()), HttpStatus.CREATED,
                         "successfully saved",deviceRequest),
                 new HttpHeaders(),
                 HttpStatus.CREATED);
@@ -126,7 +126,7 @@ public class DeviceService {
         deviceDao.save(device);
 
         return new ResponseEntity<>(
-                new Response<>(String.valueOf(HttpStatus.OK.value()), HttpStatus.OK.getReasonPhrase(), "Updated saved",deviceRequest),
+                new Response<>(String.valueOf(HttpStatus.OK.value()), HttpStatus.OK, "Updated saved",deviceRequest),
                 new HttpHeaders(),
                 HttpStatus.OK);
     }
@@ -141,7 +141,7 @@ public class DeviceService {
         }
 
         return   new ResponseEntity<>(
-                new Response<>(String.valueOf(HttpStatus.FOUND.value()), HttpStatus.FOUND.getReasonPhrase(), "device found", deviceList),
+                new Response<>(String.valueOf(HttpStatus.FOUND.value()), HttpStatus.FOUND, "device found", deviceList),
                 new HttpHeaders(),
                 HttpStatus.FOUND);
     }
@@ -151,10 +151,10 @@ public class DeviceService {
     {
         Optional<Device> device = deviceDao.findById(id);
         return device.map(value -> new ResponseEntity(
-                new Response<>(String.valueOf(HttpStatus.OK.value()), HttpStatus.OK.getReasonPhrase(), "device found", value),
+                new Response<>(String.valueOf(HttpStatus.OK.value()), HttpStatus.OK, "device found", value),
                 new HttpHeaders(),
                 HttpStatus.OK)).orElseGet(() -> new ResponseEntity(
-                new Response<>(String.valueOf(HttpStatus.NOT_FOUND.value()), HttpStatus.NOT_FOUND.getReasonPhrase(), "device not found"),
+                new Response<>(String.valueOf(HttpStatus.NOT_FOUND.value()), HttpStatus.NOT_FOUND, "device not found"),
                 new HttpHeaders(),
                 HttpStatus.NOT_FOUND
         ));
@@ -189,7 +189,7 @@ public class DeviceService {
 
         deviceCategoryDao.save(category);
         return new ResponseEntity<>(
-                new Response<>(String.valueOf(HttpStatus.CREATED.value()), HttpStatus.CREATED.getReasonPhrase(), "successfully saved",category),
+                new Response<>(String.valueOf(HttpStatus.CREATED.value()), HttpStatus.CREATED, "successfully saved",category),
                 new HttpHeaders(),
                 HttpStatus.CREATED);
     }
@@ -205,8 +205,8 @@ public class DeviceService {
             throw new ResourceNotFoundException("no device found");
         }
         return   new ResponseEntity<>(
-                new Response<>(String.valueOf(HttpStatus.OK.value()), HttpStatus.OK.getReasonPhrase(),
-                        "device found", deviceCategoryList),
+                new Response<>(String.valueOf(HttpStatus.OK.value()), HttpStatus.OK,
+                        "category found", deviceCategoryList),
                 new HttpHeaders(),
                 HttpStatus.OK);
     }
@@ -234,7 +234,7 @@ public class DeviceService {
         deviceNameDao.save(deviceName);
         return new ResponseEntity<>(
                 new Response<>(String.valueOf(HttpStatus.CREATED.value()),
-                        HttpStatus.CREATED.getReasonPhrase(), "successfully saved",deviceName),
+                        HttpStatus.CREATED, "successfully saved",deviceName),
                 new HttpHeaders(),
                 HttpStatus.CREATED);
     }
@@ -256,7 +256,7 @@ public class DeviceService {
         }
         return new ResponseEntity<>(
                 new Response<>(String.valueOf(HttpStatus.FOUND.value()),
-                        HttpStatus.FOUND.getReasonPhrase(), "device name found", list),
+                        HttpStatus.FOUND, "device name found", list),
                 new HttpHeaders(),
                 HttpStatus.OK);
     }
@@ -269,7 +269,7 @@ public class DeviceService {
 
         }
         return   new ResponseEntity<>(
-                new Response<>(String.valueOf(HttpStatus.FOUND.value()), HttpStatus.FOUND.getReasonPhrase(), "history  found", list),
+                new Response<>(String.valueOf(HttpStatus.FOUND.value()), HttpStatus.FOUND, "history  found", list),
                 new HttpHeaders(),
                 HttpStatus.FOUND);
 
@@ -297,7 +297,7 @@ public class DeviceService {
         deviceCategoryDao.deleteById(id);
 
         return   new ResponseEntity<>(
-                new Response<>(String.valueOf(HttpStatus.OK.value()), HttpStatus.OK.getReasonPhrase(), "deleted successful"),
+                new Response<>(String.valueOf(HttpStatus.OK.value()), HttpStatus.OK, "deleted successful"),
                 new HttpHeaders(),
                 HttpStatus.OK);
     }
@@ -315,7 +315,7 @@ public class DeviceService {
         deviceDao.deleteById(id);
         return new ResponseEntity<>(
                 new Response<>(String.valueOf(HttpStatus.OK.value()),
-                        HttpStatus.OK.getReasonPhrase(), "deleted successful"),
+                        HttpStatus.OK, "deleted successful"),
                 new HttpHeaders(), HttpStatus.OK);
     }
 

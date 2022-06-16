@@ -33,7 +33,7 @@ public class SimpleAuthenticationSuccessHandler implements AuthenticationSuccess
         }
 
         if (hasUserRole) {
-            redirectStrategy.sendRedirect(arg0, arg1, "/List_Of_EmployeesById");
+            redirectStrategy.sendRedirect(arg0, arg1, "/employee/list");
         } else if (hasAdminRole) {
             redirectStrategy.sendRedirect(arg0, arg1, "/");
         } else {

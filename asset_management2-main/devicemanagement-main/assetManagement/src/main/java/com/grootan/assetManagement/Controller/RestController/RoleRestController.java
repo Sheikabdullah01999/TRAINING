@@ -18,7 +18,7 @@ public class RoleRestController {
     @Autowired
     RoleService roleService;
 
-    @GetMapping("/role/list/role")
+    @GetMapping("/role/list")
     public ResponseEntity<List<Role>> getAllRoles() {
         return ResponseEntity.status(HttpStatus.OK).body(roleService.getAllRoles());
     }

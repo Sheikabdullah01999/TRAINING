@@ -178,10 +178,10 @@ header .image-text .profession{
         <i class="fa fa-caret-down"></i>
     </button>
     <div class="dropdown-container">
-        <a th:href="@{/employee/registration}">Employee Registration</a>
-        <a th:href="@{/employee/list}">List Of Employees</a>
-        <a th:href="@{/employee/user/device}">List Of Employee Devices</a>
-        <a th:href="@{/employee/department}">Add Employee Department</a>
+        <a th:href="@{/employee/add}" class="row1"> Employee Registration</a>
+        <a th:href="@{/employee/all/list}" class="row1">List Of Employees</a>
+        <a th:href="@{/employee/all/user/device}" class="row1">List Of Employee Devices</a>
+        <a th:href="@{/employee/department}" class="row1">Add Employee Department</a>
     </div>
     <br>
     <button class="dropdown-btn">Roles
@@ -196,10 +196,10 @@ header .image-text .profession{
         <i class="fa fa-caret-down"></i>
     </button>
     <div class="dropdown-container">
-        <a th:href="@{/device/add}">Add Device Details</a>
-        <a th:href="@{/device/list}">List Of Device Details</a>
-        <a th:href="@{/device/add/category}">Add Device Category</a>
-        <a th:href="@{/device/add/name}">Add Device Name</a>
+        <a th:href="@{/device/add/device}" class="row1">Add Device Details</a>
+        <a th:href="@{/device/list/device}" class="row1">List Of Device Details</a>
+        <a th:href="@{/device/category/add}" class="row1">Add Device Category</a>
+        <a th:href="@{/device/add/name}" class="row1">Add Device Name</a>
     </div>
     <br>
     <a th:href="@{/history}">History</a>
@@ -219,11 +219,6 @@ header .image-text .profession{
     <h1>Employee Updation</h1>
 
     <form  method="post" th:object="${employee}">
-<!--        <div class="form-group">-->
-<!--            <label class="control-label" for="id">Id</label>-->
-<!--            <input id="id" class="form-control" th:field="*{Id}" required autofocus="autofocus"-->
-<!--                   readonly="readonly">-->
-<!--        </div>-->
         <div class="form-group">
             <label class="control-label" for="empId"> EmployeeId </label>
             <input id="empId" class="form-control" th:field="*{empId}"
@@ -290,7 +285,7 @@ var assignRole = $("#assignRole").val();
 $.ajax({
 			type : "PUT",
 			contentType : "application/json",
-			url : '/employee/update',
+			url : 'v1/employee',
 			data : JSON.stringify({empId:empId,empName:empName,email:email,empPassword:empPassword,empDepartment:empDepartment,empDevices:empDevices,assignRole:assignRole}),
 			dataType : 'json',
 			success : function(result) {

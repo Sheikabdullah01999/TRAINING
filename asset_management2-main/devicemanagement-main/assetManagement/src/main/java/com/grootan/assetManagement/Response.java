@@ -1,8 +1,12 @@
 package com.grootan.assetManagement;
 
-public class Response<T> {
+import org.springframework.http.HttpStatus;
+
+public class Response<T>
+{
+    private String subsystem;
     private String code;
-    private String status;
+    private HttpStatus status;
     private String description;
     private T data;
 
@@ -11,13 +15,13 @@ public class Response<T> {
 
     }
 
-    public Response(String code, String status, String description) {
+    public Response(String code, HttpStatus status, String description) {
         this.code = code;
         this.status = status;
         this.description = description;
     }
 
-    public Response(String code, String status, String description, T data) {
+    public Response(String code, HttpStatus status, String description, T data) {
         this.code = code;
         this.status = status;
         this.description = description;
@@ -32,11 +36,11 @@ public class Response<T> {
         this.code = code;
     }
 
-    public String getStatus() {
+    public HttpStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(HttpStatus status) {
         this.status = status;
     }
 

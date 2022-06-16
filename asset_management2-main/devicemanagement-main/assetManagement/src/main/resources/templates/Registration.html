@@ -39,10 +39,10 @@
         <i class='bx bx-chevron-down'></i>
     </button>
     <div class="dropdown-container">
-        <a th:href="@{/employee/registration}">Employee Registration</a>
-        <a th:href="@{/employee/list}">List Of Employees</a>
-        <a th:href="@{/employee/user/device}">List Of Employee Devices</a>
-        <a th:href="@{/employee/department}">Add Employee Department</a>
+        <a th:href="@{/employee/add}" class="row1"> Employee Registration</a>
+        <a th:href="@{/employee/all/list}" class="row1">List Of Employees</a>
+        <a th:href="@{/employee/all/user/device}" class="row1">List Of Employee Devices</a>
+        <a th:href="@{/employee/department}" class="row1">Add Employee Department</a>
     </div>
     <br>
     <button class="dropdown-btn"><i class='bx bx-user-plus'></i>&nbsp;Roles
@@ -57,10 +57,10 @@
         <i class='bx bx-chevron-down'></i>
     </button>
     <div class="dropdown-container">
-        <a th:href="@{/device/add}">Add Device Details</a>
-        <a th:href="@{/device/list}">List Of Device Details</a>
-        <a th:href="@{/device/add/category}">Add Device Category</a>
-        <a th:href="@{/device/add/name}">Add Device Name</a>
+        <a th:href="@{/device/add/device}" class="row1">Add Device Details</a>
+        <a th:href="@{/device/list/device}" class="row1">List Of Device Details</a>
+        <a th:href="@{/device/category/add}" class="row1">Add Device Category</a>
+        <a th:href="@{/device/add/name}" class="row1">Add Device Name</a>
     </div>
     <br>
     <a th:href="@{/history}" class="dropdown-btn"><i class='bx bx-history bx-sm' ></i>&nbsp;History</a>
@@ -101,11 +101,6 @@
                     <option th:each="department:${ListOfEmpDepartment}" th:value="${department.department}" th:text="${department.department}"></option>
                 </select>
 
-                <!--            <ul>-->
-                <!--                <li th:each="device : ${ListOfEmpDepartment}">-->
-                <!--                    <input type="checkbox" th:field="*{empDepartment}" th:value="${EmployeeDepartment}" th:text="${EmployeeDepartment}" />-->
-                <!--                </li>-->
-                <!--            </ul>-->
             </div>
 
 
@@ -117,10 +112,6 @@
                         <input type="checkbox"  th:value="${device}" th:text="${device}" id="empDevices"/>
                     </li>
                 </ul>
-
-<!--                          <select class="form-control" th:name="device" th:field="*{empDevices}" multiple>-->
-<!--                            <option th:each="device:${List_Of_Devices}" th:value="${device}" th:text="${device}"></option>-->
-<!--                          </select>-->
 
             </div>
             <div class="form-group">
@@ -153,30 +144,24 @@ var assignRole = $("#assignRole").val();
 $.ajax({
 			type : "POST",
 			contentType : "application/json",
-			url : '/employee/add',
+			url : '/v1/employee',
 			data : JSON.stringify({empId:empId,empName:empName,email:email,empPassword:empPassword,empDepartment:empDepartment,empDevices:empDevices,assignRole:assignRole}),
 			dataType : 'json',
 			success : function(result) {
 				console.log(result);
 				alert("Registered Successfully");
-				window.location.href='/employee/list';
+				window.location.href='/employee/all/list';
 			},
 			error : function(request,status,error) {
 				alert(request.responseText);
-				window.location.href='/employee/registration';
+				window.location.href='/employee/add';
 			}
 		});
 		resetData();
 }
 function resetData()
 {
- $("#empId").val("");
- $("#empName").val("");
- $("#email").val("");
  $("#empPassword").val("");
- $("#empDepartment").val("");
- $("#empDevices").val("");
- $("#assignRole").val("");
 }
 /* Loop through all dropdown buttons to toggle between hiding and showing its dropdown content - This allows the user to have multiple dropdowns without any conflict */
 var dropdown = document.getElementsByClassName("dropdown-btn");

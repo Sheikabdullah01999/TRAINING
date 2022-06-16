@@ -38,9 +38,9 @@
         <i class="fa fa-caret-down"></i>
     </button>
     <div class="dropdown-container">
-        <a th:href="@{/employee/registration}" class="row1">Employee Registration</a>
-        <a th:href="@{/employee/list}" class="row1">List Of Employees</a>
-        <a th:href="@{/employee/user/device}" class="row1">List Of Employee Devices</a>
+        <a th:href="@{/employee/add}" class="row1"> Employee Registration</a>
+        <a th:href="@{/employee/all/list}" class="row1">List Of Employees</a>
+        <a th:href="@{/employee/all/user/device}" class="row1">List Of Employee Devices</a>
         <a th:href="@{/employee/department}" class="row1">Add Employee Department</a>
     </div>
     <br>
@@ -56,9 +56,9 @@
         <i class="fa fa-caret-down"></i>
     </button>
     <div class="dropdown-container">
-        <a th:href="@{/device/add}" class="row1">Add Device Details</a>
-        <a th:href="@{/device/list}" class="row1">List Of Device Details</a>
-        <a th:href="@{/device/add/category}" class="row1">Add Device Category</a>
+        <a th:href="@{/device/add/device}" class="row1">Add Device Details</a>
+        <a th:href="@{/device/list/device}" class="row1">List Of Device Details</a>
+        <a th:href="@{/device/category/add}" class="row1">Add Device Category</a>
         <a th:href="@{/device/add/name}" class="row1">Add Device Name</a>
     </div>
     <br>
@@ -68,10 +68,8 @@
 </div>
 <div class="main">
     <h1>Device List</h1>
-    <form th:action="@{/device/searching}" method="get">
-        <input type="text" name="keyword" th:value="${keyword}" placeholder="Find by Category and DeviceStatus" size="50">
-        <button type="submit" class="btn btn-info" >Search</button>
-    </form>
+        <input type="text" name="keyword" id="keyword" th:value="${keyword}" placeholder="Find by Category and DeviceStatus" size="50">
+        <button type="submit" class="btn btn-info" onclick="ajaxSearch()" >Search</button>
     <br>
     <br>
     <table class="table table-stripped table-bordered">
@@ -94,9 +92,11 @@
     <a th:href="@{/}" class="btn btn-primary btn1">Back</a>
 </div>
 <script>
+
+
 $(document).ready(function(){
 $.ajax({
-url:"/device/list/device",
+url:"/device/list",
 type:"GET",
 contentType : "application/json",
 dataType : 'json',
@@ -129,7 +129,7 @@ function Delete(id)
 			dataType : 'json',
 			success : function() {
 				alert("Deleted Successfully");
-				window.location.href='/device/list';
+				window.location.href='/device/list/device';
 			},
 			error : function(request,status,error) {
 				alert(request.responseText);

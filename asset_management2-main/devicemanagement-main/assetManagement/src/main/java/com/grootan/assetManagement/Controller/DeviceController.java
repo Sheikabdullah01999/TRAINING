@@ -46,7 +46,7 @@ public class DeviceController {
 
 
 
-    @GetMapping("/device/add")
+    @GetMapping("/device/add/device")
     public String addDeviceDetails(Model model)
     {
         List<DeviceCategory> devices = (List<DeviceCategory>) deviceCategoryDao.findAll();
@@ -55,7 +55,7 @@ public class DeviceController {
         return "AddDeviceDetails";
     }
 
-    @GetMapping("/device/list")
+    @GetMapping("/device/list/device")
     public String userDevices(Model model)
     {
         try{
@@ -73,21 +73,6 @@ public class DeviceController {
             model.addAttribute("message",e.getMessage());
             return "Error";
         }
-    }
-
-    @GetMapping("/device/searching")
-    public String search(Device device, Model model, String keyword) throws ResourceNotFoundException {
-        if(keyword!=null)
-        {
-            List<Device> list = deviceService.getByKeywordDevice(keyword);
-            model.addAttribute("DeviceDetails",list);
-        }
-        else
-        {
-            List<Device> list = (List<Device>) deviceService.getAllDevices();
-            model.addAttribute("Device_details",list);
-        }
-        return "DeviceDetails";
     }
 
     @RequestMapping(method = RequestMethod.GET)
@@ -135,7 +120,7 @@ public class DeviceController {
         return "redirect:/device/list";
     }
 
-    @GetMapping("/device/add/category")
+    @GetMapping("/device/category/add")
     public String addCategory(Model model)
     {
         model.addAttribute("deviceCategory",new DeviceCategory());

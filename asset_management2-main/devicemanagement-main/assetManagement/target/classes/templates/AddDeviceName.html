@@ -40,10 +40,10 @@
         <i class="fa fa-caret-down"></i>
     </button>
     <div class="dropdown-container">
-        <a th:href="@{/employee/registration}">Employee Registration</a>
-        <a th:href="@{/employee/list}">List Of Employees</a>
-        <a th:href="@{/employee/user/device}">List Of Employee Devices</a>
-        <a th:href="@{/employee/department}">Add Employee Department</a>
+        <a th:href="@{/employee/add}" class="row1"> Employee Registration</a>
+        <a th:href="@{/employee/all/list}" class="row1">List Of Employees</a>
+        <a th:href="@{/employee/all/user/device}" class="row1">List Of Employee Devices</a>
+        <a th:href="@{/employee/department}" class="row1">Add Employee Department</a>
     </div>
     <br>
     <button class="dropdown-btn"><i class='fa fa-users'></i>&nbsp;Roles
@@ -58,10 +58,10 @@
         <i class="fa fa-caret-down"></i>
     </button>
     <div class="dropdown-container">
-        <a th:href="@{/device/add}">Add Device Details</a>
-        <a th:href="@{/device/list}">List Of Device Details</a>
-        <a th:href="@{/device/add/category}">Add Device Category</a>
-        <a th:href="@{/device/add/name}">Add Device Name</a>
+        <a th:href="@{/device/add/device}" class="row1">Add Device Details</a>
+        <a th:href="@{/device/list/device}" class="row1">List Of Device Details</a>
+        <a th:href="@{/device/category/add}" class="row1">Add Device Category</a>
+        <a th:href="@{/device/add/name}" class="row1">Add Device Name</a>
     </div>
     <br>
     <a th:href="@{/history}" class="dropdown-btn"><i class="fa fa-history" aria-hidden="true"></i>&nbsp;History</a>
@@ -116,7 +116,7 @@ id:deviceId
 $.ajax({
 			type : "POST",
 			contentType : "application/json",
-			url : '/device/name/add',
+			url : '/device/add/name',
 			data : JSON.stringify({name:name,deviceCategory:deviceCategory}),
 			dataType : 'json',
 			success : function(result) {

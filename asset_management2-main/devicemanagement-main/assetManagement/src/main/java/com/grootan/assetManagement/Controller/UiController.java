@@ -25,11 +25,11 @@ public class UiController
     @Autowired
     private EmployeeDao employeeDao;
 
-    @PostConstruct
-    public void initRoleAndUser()
-    {
-        service.initRoleAndUser();
-    }
+//    @PostConstruct
+//    public void initRoleAndUser()
+//    {
+//        //service.initRoleAndUser();
+//    }
 
     @GetMapping("/")
     public String home(Model model)

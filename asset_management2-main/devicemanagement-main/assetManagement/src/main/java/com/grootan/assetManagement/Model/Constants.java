@@ -33,6 +33,6 @@ public class Constants {
     public static final String EMPLOYEE_FOUND="employee found";
     public static final String SAVED_SUCCESSFUL="employee successfully saved";
 
-
+    public static final String WEB_URL = "https://www.grootan.com/";
 
 }

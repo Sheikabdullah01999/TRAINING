@@ -8,7 +8,9 @@ import com.grootan.assetManagement.Exception.ResourceNotFoundException;
 import com.grootan.assetManagement.Model.*;
 import com.grootan.assetManagement.Repository.*;
 import com.grootan.assetManagement.Response;
+import com.grootan.assetManagement.request.EmployeeDepartmentRequest;
 import com.grootan.assetManagement.request.EmployeeRequest;
+import com.grootan.assetManagement.response.EmployeeResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -22,7 +24,6 @@ import java.util.List;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import static com.grootan.assetManagement.Model.Constants.*;
-
 
 @Service
 public class EmployeeService {
@@ -93,15 +94,15 @@ public class EmployeeService {
      * @throws ResourceNotFoundException
      */
     public ResponseEntity<Object> getAllEmpDepartments() throws ResourceNotFoundException {
-        List<EmployeeDepartment> employeeList=employeeDepartmentDao.findAll();
-        if (employeeList.isEmpty())
+        List<EmployeeDepartment> employeeDepartments=employeeDepartmentDao.findAll();
+        if (employeeDepartments.isEmpty())
         {
             throw new ResourceNotFoundException(NO_RECORDS);
         }
 
         return   new ResponseEntity<>(
                 new Response<>(String.valueOf(HttpStatus.OK.value()),
-                        HttpStatus.OK.getReasonPhrase(), DEPARTMENT_FOUND, employeeList),
+                        HttpStatus.OK, DEPARTMENT_FOUND, employeeDepartments),
                 new HttpHeaders(), HttpStatus.OK);
     }
 
@@ -114,14 +115,19 @@ public class EmployeeService {
      * @throws ResourceNotFoundException
      */
     public ResponseEntity<Object> getAllEmployees() throws ResourceNotFoundException {
-        List<Employee> employeeList = employeeDao.findAll();
+        List<Employee> employeeList = (List<Employee>) employeeDao.findAll();
+        List<EmployeeResponse> employeeInformation=new ArrayList<>();
+        for(Employee employee:employeeList)
+        {
+            employeeInformation.add(new EmployeeResponse(employee.getEmpId(),employee.getEmail(),employee.getEmpName(),employee.getEmpPassword(),employee.getDepartment(),employee.getRole(),employee.getDevices()));
+        }
         if (employeeList.isEmpty())
         {
             throw new ResourceNotFoundException(NO_RECORDS);
         }
 
         return   new ResponseEntity<>(
-                new Response<>(String.valueOf(HttpStatus.OK.value()), HttpStatus.OK.getReasonPhrase(), EMPLOYEE_FOUND, employeeList),
+                new Response<>(String.valueOf(HttpStatus.OK.value()), HttpStatus.OK, EMPLOYEE_FOUND, employeeInformation),
                 new HttpHeaders(), HttpStatus.OK);
     }
 
@@ -131,8 +137,7 @@ public class EmployeeService {
      * @param employeeDetails
      * @return
      */
-    public Employee saveEmpDetails(EmployeeRequest employeeDetails)
-    {
+    public Employee saveEmpDetails(EmployeeRequest employeeDetails) throws ResourceNotFoundException {
 
         String devices= employeeDetails.getEmpDevices();
 
@@ -155,8 +160,39 @@ public class EmployeeService {
         }
 
         EmployeeDepartment employeeDepartment=new EmployeeDepartment(employeeDetails.getEmpDepartment());
+        List<EmployeeDepartment> employeeList=  employeeDepartmentDao.findAll();
 
-        Employee employee = new Employee(employeeDetails.getEmpId(),
+        int flag=0;
+        for(EmployeeDepartment department:employeeList)
+        {
+
+            if((department.getDepartment().equals(employeeDetails.getEmpDepartment())))
+            {
+                flag=1;
+                break;
+            }
+        }
+        if(flag==0)
+        {
+            throw new ResourceNotFoundException("department unavailable");
+        }
+
+//        List<Role> roles= (List<Role>) roleDao.findAll();
+//        for(Role role:roles)
+//        {
+//            flag=0;
+//            if(role.getRoleName().equals(employeeDetails.getAssignRole()))
+//            {
+//                flag=1;
+//            }
+//        }
+//        if(flag==0)
+//        {
+//            throw new ResourceNotFoundException("role unavailable");
+//        }
+
+
+        return new Employee(employeeDetails.getEmpId(),
                 employeeDetails.getEmpName(), employeeDetails.getEmail(),
                 passwordEncoder.encode(employeeDetails.getEmpPassword()),
                 employeeDepartment,
@@ -164,8 +200,6 @@ public class EmployeeService {
                 List.of(new Role(employeeDetails.getAssignRole())),
                 device,
                 employeeDetails.getEmpDepartment());
-
-        return employee;
     }
 
     /**
@@ -186,15 +220,13 @@ public class EmployeeService {
         }
 
         Boolean validEmail = isValid(employeeDetails.getEmail());
-        if (!validEmail) {
+        if (Boolean.FALSE.equals(validEmail)) {
             throw new GeneralException(INCORRECT_EMAIL + employeeDetails.getEmail());
         }
 
         if (employeeDetails.getEmpPassword().length() < 9) {
             throw new GeneralException(PASSWORD_LENGTH);
         }
-
-
     }
 
     public void employeeIdExistsValidation(String employeeID)
@@ -217,28 +249,6 @@ public class EmployeeService {
         }
     }
 
-    /**
-     * to get exists device id to update the employee details
-     * @param empDevices
-     * @return
-     */
-    private boolean deviceExists(String empDevices) {
-        Boolean deviceExists=true;
-        List<Integer> deviceID = getDeviceID(empDevices);
-        for (Integer id:deviceID)
-        {
-            List<String> device=deviceDao.getDeviceByName();
-            List<Integer> availableDeviceID = getDeviceID(String.valueOf(device));
-            for(Integer availableID:availableDeviceID)
-            {
-                if(availableID==id)
-                {
-                    deviceExists=false;
-                }
-            }
-        }
-        return deviceExists;
-    }
 
     /**
      * get device by device id
@@ -281,21 +291,19 @@ public class EmployeeService {
      * before save  check all employee details are  correct
      * check all the mandatory fields
      * */
-    public ResponseEntity<Object> saveEmployee(EmployeeRequest employeeDetails) throws FieldEmptyException
-    {
+    public ResponseEntity<Object> saveEmployee(EmployeeRequest employeeDetails) throws FieldEmptyException, ResourceNotFoundException {
         emailExistsValidation(employeeDetails.getEmail());
         validate(employeeDetails);
         Employee employee=saveEmpDetails(employeeDetails);
         employeeDao.save(employee);
         logger.info("new employee registered success");
         return new ResponseEntity<>(
-                new Response<>(String.valueOf(HttpStatus.CREATED.value()), HttpStatus.CREATED.getReasonPhrase(), SAVED_SUCCESSFUL,employeeDetails),
+                new Response<>(String.valueOf(HttpStatus.CREATED.value()), HttpStatus.CREATED, SAVED_SUCCESSFUL,employeeDetails),
                 new HttpHeaders(), HttpStatus.CREATED);
     }
 
 
-    public ResponseEntity<Object> updateEmployee(EmployeeRequest employeeDetails) throws FieldEmptyException, ResourceNotFoundException
-    {
+    public ResponseEntity<Object> updateEmployee(EmployeeRequest employeeDetails) throws FieldEmptyException, ResourceNotFoundException, AlreadyExistsException {
         Employee existingEmployee=employeeDao.findByEmpId(employeeDetails.getEmpId());
         if(existingEmployee==null)
         {
@@ -309,6 +317,18 @@ public class EmployeeService {
         List<Device> device=new ArrayList<>();
 
         List<Integer> existingDevice=deviceDao.deviceId(employeeDetails.getEmpId());
+        List<Integer> newDevice=getDeviceID(employeeDetails.getEmpDevices());
+        for(Integer existingId:existingDevice)
+        {
+            for(Integer newID:newDevice)
+            {
+                if(existingId==newID)
+                {
+                    throw new AlreadyExistsException("device unavailable: "+newID);
+                }
+            }
+        }
+
         if(existingDevice.size()>0)
         {
             for(Integer id:existingDevice)
@@ -317,36 +337,66 @@ public class EmployeeService {
             }
         }
 
-        if(employeeDetails.getEmpDevices()!=null)
+        if(employeeDetails.getEmpDevices()!="")
         {
-            List<Integer> newDevice=getDeviceID(employeeDetails.getEmpDevices());
+
             for(Integer id:newDevice)
             {
                 updatedDeviceList.add(id);
             }
             for(Integer Id : updatedDeviceList)
             {
-                Device device1=deviceDao.getByDeviceId(Id);
-                device.add(new Device(device1.getDeviceId(),device1.getManufacturedId(),device1.getCategory(),device1.getDeviceName(),device1.getDevicePurchaseDate(),device1.getAssignStatus(),device1.getDeviceStatus()));
+                Device addDevices=deviceDao.getByDeviceId(Id);
+                device.add(addDevices);
+                //device.add(new Device(addDevices.getDeviceId(),addDevices.getManufacturedId(),addDevices.getCategory(),addDevices.getDeviceName(),addDevices.getDevicePurchaseDate(),addDevices.getAssignStatus(),addDevices.getDeviceStatus()));
             }
             updateAssignStatus(updatedDeviceList);
         }
 
         EmployeeDepartment employeeDepartment=new EmployeeDepartment(employeeDetails.getEmpDepartment());
+        List<EmployeeDepartment> employeeList=  employeeDepartmentDao.findAll();
 
+//        int flag=0;
+//        for(EmployeeDepartment department:employeeList)
+//        {
+//
+//            if((department.getDepartment().equals(employeeDetails.getEmpDepartment())))
+//            {
+//                flag=1;
+//                break;
+//            }
+//        }
+//        if(flag==0)
+//        {
+//            throw new ResourceNotFoundException("department unavailable");
+//        }
+//
+//        List<Role> roles= (List<Role>) roleDao.findAll();
+//        for(Role role:roles)
+//        {
+//            flag=0;
+//            if(role.getRoleName().equals(employeeDetails.getAssignRole()))
+//            {
+//                flag=1;
+//            }
+//        }
+//        if(flag==0)
+//        {
+//            throw new ResourceNotFoundException("role unavailable");
+//        }
         existingEmployee.setEmpId(employeeDetails.getEmpId());
         existingEmployee.setEmpName(employeeDetails.getEmpName());
         existingEmployee.setEmail(employeeDetails.getEmail());
         existingEmployee.setAssignRole(employeeDetails.getAssignRole());
         existingEmployee.setDepartment(employeeDepartment);
-        existingEmployee.setRole(new LinkedList<>(Arrays.asList(new Role(employeeDetails.getAssignRole()))));
+        existingEmployee.setRole(new LinkedList<>(List.of(new Role(employeeDetails.getAssignRole()))));
         existingEmployee.setDevices(device);
         existingEmployee.setEmpDepartment(employeeDetails.getEmpDepartment());
 
         employeeDao.save(existingEmployee);
         logger.info("employee updated  success");
         return new ResponseEntity<>(
-                new Response<>(String.valueOf(HttpStatus.CREATED.value()), HttpStatus.CREATED.getReasonPhrase(), "updated successfully"),
+                new Response<>(String.valueOf(HttpStatus.CREATED.value()), HttpStatus.CREATED, "updated successfully"),
                 new HttpHeaders(),
                 HttpStatus.CREATED);
     }
@@ -383,7 +433,7 @@ public class EmployeeService {
             throw new ResourceNotFoundException(NO_RECORDS);
         }
         return   new ResponseEntity<>(
-                new Response<>(String.valueOf(HttpStatus.OK.value()), HttpStatus.OK.getReasonPhrase(), "deleted successful",userDevices),
+                new Response<>(String.valueOf(HttpStatus.OK.value()), HttpStatus.OK, "device found",userDevices),
                 new HttpHeaders(),
                 HttpStatus.OK);
     }
@@ -392,17 +442,22 @@ public class EmployeeService {
      * find employee by employee id
      */
 
-//    public ResponseEntity<Object> findEmployeeById(String id) throws ResourceNotFoundException {
-//        Employee employee = employeeDao.findByEmpId(id);
-//        if(employee.getEmpId()==null)
-//        {
-//            throw new ResourceNotFoundException(NO_RECORDS);
-//        }
-//        return   new ResponseEntity<>(
-//                new Response<>(String.valueOf(HttpStatus.OK.value()), HttpStatus.OK.getReasonPhrase(), "",employee),
-//                new HttpHeaders(),
-//                HttpStatus.OK);
-//    }
+    public ResponseEntity<Object> findEmployeeById(String id) throws ResourceNotFoundException {
+        Employee employee = employeeDao.findByEmpId(id);
+        if(employee==null)
+        {
+            throw new ResourceNotFoundException(NO_RECORDS);
+        }
+        EmployeeResponse employeeResponse= new EmployeeResponse(employee.getEmpId(),employee.getEmail(),
+                employee.getEmpName(),employee.getEmpPassword(),employee.getDepartment(),
+                        employee.getRole(),employee.getDevices());
+
+
+        return   new ResponseEntity<>(
+                new Response<>(String.valueOf(HttpStatus.OK.value()), HttpStatus.OK, "employee found",employeeResponse),
+                new HttpHeaders(),
+                HttpStatus.OK);
+    }
 
 
     //search by keyword using like
@@ -418,11 +473,11 @@ public class EmployeeService {
         {
             if(currentUser.equals(service.currentUser()))
             {
-                throw  new GeneralException("can not delete current user");
+                throw  new GeneralException("cannot delete current user");
             }
             else if(id.equals("G001"))
             {
-                throw  new GeneralException("can not delete default admin account");
+                throw  new GeneralException("cannot delete default admin account");
             }
         }
 
@@ -450,7 +505,7 @@ public class EmployeeService {
         employeeDao.deleteEmployeeByEmpDevice(id);
         logger.info("employee device deleted success");
         return   new ResponseEntity<>(
-                new Response<>(String.valueOf(HttpStatus.OK.value()), HttpStatus.OK.getReasonPhrase(), "deleted successful"),
+                new Response<>(String.valueOf(HttpStatus.OK.value()), HttpStatus.OK, "deleted successful"),
                 new HttpHeaders(),
                 HttpStatus.OK);
     }
@@ -463,7 +518,7 @@ public class EmployeeService {
         }
         employeeDepartmentDao.deleteDepartment(department);
         return   new ResponseEntity<>(
-                new Response<>(String.valueOf(HttpStatus.OK.value()), HttpStatus.OK.getReasonPhrase(), "deleted successful"),
+                new Response<>(String.valueOf(HttpStatus.OK.value()), HttpStatus.OK, "deleted successful"),
                 new HttpHeaders(),
                 HttpStatus.OK);
     }
@@ -485,12 +540,12 @@ public class EmployeeService {
         saveHistory(empID,EMP_DELETE);
 
         return   new ResponseEntity<>(
-                new Response<>(String.valueOf(HttpStatus.OK.value()), HttpStatus.OK.getReasonPhrase(), "employee deleted success"),
+                new Response<>(String.valueOf(HttpStatus.OK.value()), HttpStatus.OK, "employee deleted success"),
                 new HttpHeaders(),
                 HttpStatus.OK);
     }
 
-    public ResponseEntity<Object> saveEmpDepartment(EmployeeDepartment employeeDepartment) throws FieldEmptyException, AlreadyExistsException {
+    public ResponseEntity<Object> saveEmpDepartment(EmployeeDepartmentRequest employeeDepartment) throws FieldEmptyException, AlreadyExistsException {
 
         String lower = employeeDepartment.getDepartment().toLowerCase();
         if(employeeDepartment.getDepartment().isEmpty())
@@ -507,9 +562,10 @@ public class EmployeeService {
         employeeDepartment.setDepartment(lower);
 
         logger.info("saved success");
-        employeeDepartmentDao.save(employeeDepartment);
+        EmployeeDepartment department= new EmployeeDepartment(employeeDepartment.getDepartment());
+        employeeDepartmentDao.save(department);
         return new ResponseEntity<>(
-                new Response<>(String.valueOf(HttpStatus.CREATED.value()), HttpStatus.CREATED.getReasonPhrase(), "successfully saved",employeeDepartment),
+                new Response<>(String.valueOf(HttpStatus.CREATED.value()), HttpStatus.CREATED, "successfully saved",employeeDepartment),
                 new HttpHeaders(),
                 HttpStatus.CREATED);
     }

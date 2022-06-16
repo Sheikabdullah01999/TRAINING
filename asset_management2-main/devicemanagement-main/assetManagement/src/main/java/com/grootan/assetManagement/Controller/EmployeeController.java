@@ -1,12 +1,9 @@
 package com.grootan.assetManagement.Controller;
 
-import com.grootan.assetManagement.Exception.AlreadyExistsException;
-import com.grootan.assetManagement.Exception.FieldEmptyException;
 import com.grootan.assetManagement.Exception.GeneralException;
 import com.grootan.assetManagement.Exception.ResourceNotFoundException;
 import com.grootan.assetManagement.Model.Employee;
 import com.grootan.assetManagement.Model.EmployeeDepartment;
-import com.grootan.assetManagement.Model.EmployeeDevices;
 import com.grootan.assetManagement.Model.Role;
 import com.grootan.assetManagement.Repository.EmployeeDao;
 import com.grootan.assetManagement.Repository.EmployeeDepartmentDao;
@@ -15,12 +12,10 @@ import com.grootan.assetManagement.Service.EmployeeService;
 import com.grootan.assetManagement.Service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
-
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -42,7 +37,7 @@ public class EmployeeController {
     @Autowired
     EmployeeDao employeeDao;
 
-    @GetMapping("/employee/registration")
+    @GetMapping("/employee/add")
     public String showRegistrationForm(Model model)
     {
         List<Role> roles = roleService.getAllRoles();
@@ -56,13 +51,13 @@ public class EmployeeController {
         return "Registration";
     }
 
-    @GetMapping("/employee/list")
+    @GetMapping("/employee/all/list")
     public String listOfEmployee()
     {
         return "ListOfEmployees";
     }
 
-    @GetMapping("/employee/user/device")
+    @GetMapping("/employee/all/user/device")
     public String userDevices()
     {
         return "UserDetails";
@@ -95,7 +90,7 @@ public class EmployeeController {
         try
         {
             employeeService.deleteEmpDetails(id);
-            return "redirect:/employee/list";
+            return "redirect:/employee/all/list";
         }
         catch(GeneralException e)
         {
