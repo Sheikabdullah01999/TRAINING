@@ -75,20 +75,20 @@ public class DeviceController {
         }
     }
 
-    @GetMapping("/device/searching")
-    public String search(Device device, Model model, String keyword) throws ResourceNotFoundException {
-        if(keyword!=null)
-        {
-            List<Device> list = deviceService.getByKeywordDevice(keyword);
-            model.addAttribute("DeviceDetails",list);
-        }
-        else
-        {
-            List<Device> list = (List<Device>) deviceService.getAllDevices();
-            model.addAttribute("Device_details",list);
-        }
-        return "DeviceDetails";
-    }
+//    @GetMapping("/device/searching")
+//    public String search(Device device, Model model, String keyword) throws ResourceNotFoundException {
+//        if(keyword!=null)
+//        {
+//            List<Device> list = deviceService.getByKeywordDevice(keyword);
+//            model.addAttribute("DeviceDetails",list);
+//        }
+//        else
+//        {
+//            List<Device> list = (List<Device>) deviceService.getAllDevices();
+//            model.addAttribute("DeviceDetails",list);
+//        }
+//        return "DeviceDetails";
+//    }
 
     @RequestMapping(method = RequestMethod.GET)
     public String index(ModelMap modelMap) {
@@ -96,21 +96,21 @@ public class DeviceController {
         return "AddDeviceDetails";
     }
 
-    @ResponseBody
-    @RequestMapping(value = "loadNamesByCategory/{name}", method = RequestMethod.GET)
-    public String loadNamesByCategory(@PathVariable("name") String name) {
-        Gson gson = new Gson();
-        long id = deviceService.findByCategoryId(name);
-        return gson.toJson(deviceService.findByCategory(id));
-    }
-
-    @ResponseBody
-    @RequestMapping(value="loadIdsByCategory/{name}", method=RequestMethod.GET)
-    public long loadIdsByCategory(@PathVariable("name") String name)
-    {
-        Gson gson = new Gson();
-        return Long.parseLong(gson.toJson(deviceCategoryDao.findByDeviceCategoryId(name)));
-    }
+//    @ResponseBody
+//    @RequestMapping(value = "loadNamesByCategory/{name}", method = RequestMethod.GET)
+//    public String loadNamesByCategory(@PathVariable("name") String name) {
+//        Gson gson = new Gson();
+//        long id = deviceService.findByCategoryId(name);
+//        return gson.toJson(deviceService.findByCategory(id));
+//    }
+//
+//    @ResponseBody
+//    @RequestMapping(value="loadIdsByCategory/{name}", method=RequestMethod.GET)
+//    public long loadIdsByCategory(@PathVariable("name") String name)
+//    {
+//        Gson gson = new Gson();
+//        return Long.parseLong(gson.toJson(deviceCategoryDao.findByDeviceCategoryId(name)));
+//    }
 
 //    @ResponseBody
 //    @RequestMapping(value = "/device/update/{id}", method = RequestMethod.GET)
@@ -153,7 +153,7 @@ public class DeviceController {
         return "AddDeviceName";
     }
 
-    @GetMapping("/history")
+    @GetMapping("/historyList")
     public String history(Model model)
     {
         try
@@ -186,11 +186,11 @@ public class DeviceController {
         return "HistoryDetails";
     }
 
-    @GetMapping("category/delete/{id}")
-    public String deleteDeviceCategoryDetails(@PathVariable(name="id") String  id) throws ResourceNotFoundException {
-        deviceService.deleteDeviceCategory(id);
-        return "redirect:/getAllDeviceCategory";
-    }
+//    @GetMapping("category/delete/{id}")
+//    public String deleteDeviceCategoryDetails(@PathVariable(name="id") String  id) throws ResourceNotFoundException {
+//        deviceService.deleteDeviceCategory(id);
+//        return "redirect:/getAllDeviceCategory";
+//    }
 
 
     @GetMapping("/CategoryUpdate/{category}")

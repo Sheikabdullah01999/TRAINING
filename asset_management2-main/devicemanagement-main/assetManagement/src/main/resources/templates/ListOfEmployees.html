@@ -77,16 +77,14 @@
 <div class="container-fluid">
     <h1>List Of Employees</h1>
     <br>
-    <form th:action="@{/employee/search}" method="get" style="margin-left:320px;">
         <div class="container">
             <div>
-                <input type="text" class="form-control" name="keyword" th:value="${keyword}" placeholder="Find by EmployeeName and EmployeeId" size="50" id="search">
+                <input type="text" class="form-control" name="keyword" id="keyword" th:value="${keyword}" placeholder="Find by EmployeeName and EmployeeId" size="50">
             </div>
             <div>
-                <button type="submit" class="btn btn-info" >Search</button>
+                <button type="submit" class="btn btn-info" onclick="ajaxSearch()" >Search</button>
             </div>
         </div>
-    </form>
     <br>
     <br>
 <table class="table  table-bordered list_table">
@@ -103,6 +101,9 @@
     </tr>
     </thead>
     <tbody id="employees">
+
+    </tbody>
+    <tbody id="searchResult">
 
     </tbody>
 </table>
@@ -134,6 +135,35 @@ success: function(response){
                   }
 });
 });
+function ajaxSearch()
+{
+var keyword = $("#keyword").val();
+$.ajax({
+            type : "GET",
+			contentType : "application/json",
+            url:'/employee/searching?keyword='+keyword,
+            dataType : 'json',
+            success: function(response){
+            console.log(response)
+                    $('#employees').hide();
+					$.each(response, function (key, value) {
+						var empId = value.empId;
+						console.log("val",value.empId);
+
+							$('#searchResult').append('<tr>\
+										<td>'+empId+'</td>\
+										<td>'+value.empName+'</td>\
+										<td>'+value.email+'</td>\
+										<td>'+value.empDepartment+'</td>\
+										<td>'+value.assignRole+'</td>\
+										<td><a href="/update/employee/'+value.empId+'" class="btn btn-success">update</a></td>\
+										<td><button href="/delete/employee/'+value.empId+'" class="btn btn-danger" onclick="Delete(\''+empId+'\')">delete</button></td>\
+										</tr>');
+
+						})
+                  }
+		});
+}
 function Delete(empId)
 {
  console.log(empId);

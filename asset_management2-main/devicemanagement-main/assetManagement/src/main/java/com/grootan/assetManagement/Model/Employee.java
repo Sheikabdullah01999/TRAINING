@@ -23,7 +23,19 @@ public class Employee
     private String assignRole;
     private String empDepartment;
 
-    @OneToOne(cascade = CascadeType.PERSIST)
+    public Employee(String empId, String email, String empName, String empPassword, String assignRole, String empDepartment, EmployeeDepartment department, Collection<Role> role, List<Device> devices) {
+        this.empId = empId;
+        this.email = email;
+        this.empName = empName;
+        this.empPassword = empPassword;
+        this.assignRole = assignRole;
+        this.empDepartment = empDepartment;
+        this.department = department;
+        this.role = role;
+        this.devices = devices;
+    }
+
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinTable(name = "department_emp",
             joinColumns = @JoinColumn(name = "emp_id"),
             inverseJoinColumns = @JoinColumn(name = "department_id"))
@@ -33,7 +45,7 @@ public class Employee
     @Transient
     private String empDevices;
 
-    @ManyToMany(cascade = {CascadeType.PERSIST,CascadeType.MERGE})
+    @ManyToMany(cascade = {CascadeType.ALL})
     @JoinTable(name = "user_role",
             joinColumns = {
                     @JoinColumn(name = "emp_id")
@@ -52,16 +64,4 @@ public class Employee
 
     }
 
-    public Employee(String empId, String empName, String email, String empPassword, EmployeeDepartment empDepartment, String assignRole, Collection<Role> role, List<Device> devices,String department)
-    {
-        this.empId = empId;
-        this.empName = empName;
-        this.email = email;
-        this.empPassword = empPassword;
-        this.department = empDepartment;
-        this.assignRole = assignRole;
-        this.role = role;
-        this.devices = devices;
-        this.empDepartment=department;
-    }
 }

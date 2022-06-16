@@ -69,8 +69,10 @@ public class CommonService {
         employeeDepartment.setId(1);
         employeeDepartment.setDepartment("FrontEnd");
         employeeDepartmentDao.save(employeeDepartment);
+        employeeDepartment.setId(2);
         employeeDepartment.setDepartment("BackEnd");
         employeeDepartmentDao.save(employeeDepartment);
+
 
         Role adminRole = new Role();
         adminRole.setId(2);

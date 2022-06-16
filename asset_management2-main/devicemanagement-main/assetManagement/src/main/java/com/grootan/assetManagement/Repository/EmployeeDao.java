@@ -20,7 +20,9 @@ public interface EmployeeDao extends JpaRepository<Employee,String> {
 
     Employee findByEmpId(String empId);
 
-    @Query(value = "select * from employee s where s.emp_name ilike :keyword% or s.emp_id ilike :keyword% or s.emp_department ilike :keyword%  or s.assign_role ilike :keyword%  or s.email ilike :keyword%", nativeQuery = true)
+    //or s.emp_id ilike :keyword% or s.emp_department ilike :keyword%  or s.assign_role ilike :keyword%  or s.email ilike :keyword%
+
+    @Query(value = "select * from employee where emp_name ilike :keyword%",nativeQuery = true)
     List<Employee> findByKeyword(@Param("keyword") String keyword);
 
     @Transactional
@@ -52,7 +54,5 @@ public interface EmployeeDao extends JpaRepository<Employee,String> {
 
     @Query(value = "select * from employee where emp_id=?1",nativeQuery = true)
     public Employee employee(String id);
-//    @Query(value= "delete from employee_department where department=:dep",nativeQuery = true)
-//    public void deleteDepartment(@Param("id") String dep);
 
 }

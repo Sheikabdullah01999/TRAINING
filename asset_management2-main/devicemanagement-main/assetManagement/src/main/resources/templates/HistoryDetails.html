@@ -70,13 +70,13 @@
 </div>
     <div class="history_main">
         <h1>History</h1>
-        <table class="table table-bordered">
+        <table class="table table-bordered" style="min-width:200px;">
             <thead class="thead-light">
             <tr>
                 <th scope="col">Id</th>
                 <th scope="col">Created By</th>
                 <th scope="col">Created Date</th>
-                <th scope="col" class="change">History</th>
+                <th scope="col">History</th>
                 <th scope="col">Action</th>
             </tr>
             </thead>
@@ -84,39 +84,41 @@
             <tr th:each="history:${maintainHistory}" class="pages">
                 <td th:text="${history.id}" class="row"></td>
                 <td th:text="${history.createdBy}" class="row"></td>
-                <td th:text="${history.creationDate}" class="row"></td>
+                <td th:text="${history.creationDate}" class="row change"></td>
                 <td th:text="${history.history}" class="row"></td>
                 <td th:text="${history.action}" class="row"></td>
 
             </tr>
             </tbody>
         </table>
-        <div th:if="${totalPages>1}" class="pages">
-            <div class="row col-sm-10">
-                <div class="col-sm-2">
-                    TotalRows:[[${totalItems}]]
-                </div>
-                <div class="col-sm-3">
+    </div>
+</div>
+<div class="pagination_main">
+    <div th:if="${totalPages>1}" class="pages">
+        <div class="row col-sm-10">
+            <div class="col-sm-2">
+                TotalRows:[[${totalItems}]]
+            </div>
+            <div class="col-sm-3">
             <span th:each="i:${#numbers.sequence(1,totalPages)}">
                 <a th:if="${currentPage!=i}" th:href="@{'/page/'+${i}}">[[${i}]]</a>
                 <span th:unless="${currentPage!=i}">[[${i}]]</span>
             </span>
-                </div>
-                <div class="col-sm-1">
-                    <a th:if="${currentPage<=totalPages and currentPage>1}" th:href="@{'/page/'+${currentPage - 1}}">Prev</a>
-                    <span th:unless="${currentPage<=totalPages and currentPage>1}">Prev</span>
-                </div>
-                <div class="col-sm-1">
-                    <a th:if="${currentPage<totalPages}" th:href="@{'/page/'+${currentPage + 1}}">Next</a>
-                    <span th:unless="${currentPage<totalPages}">Next</span>
-                </div>
+            </div>
+            <div class="col-sm-1">
+                <a th:if="${currentPage<=totalPages and currentPage>1}" th:href="@{'/page/'+${currentPage - 1}}">Prev</a>
+                <span th:unless="${currentPage<=totalPages and currentPage>1}">Prev</span>
+            </div>
+            <div class="col-sm-1">
+                <a th:if="${currentPage<totalPages}" th:href="@{'/page/'+${currentPage + 1}}">Next</a>
+                <span th:unless="${currentPage<totalPages}">Next</span>
             </div>
         </div>
-        <br>
-        <br>
-        <a th:href="@{/}" class="btn btn-primary btn1">Back</a>
     </div>
-
+    <br>
+    <br>
+    <a th:href="@{/}" class="btn btn-primary btn1">Back</a>
+</div>
 </div>
 <script>
 /* Loop through all dropdown buttons to toggle between hiding and showing its dropdown content - This allows the user to have multiple dropdowns without any conflict */

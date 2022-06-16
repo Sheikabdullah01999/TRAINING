@@ -111,7 +111,8 @@ $.ajax({
 				alert("Registered Successfully");
 			},
 			error : function(request,status,error) {
-				alert(request.responseText);
+				var err = JSON.parse(request.responseText);
+                alert(err.description);
 			}
 		});
 }

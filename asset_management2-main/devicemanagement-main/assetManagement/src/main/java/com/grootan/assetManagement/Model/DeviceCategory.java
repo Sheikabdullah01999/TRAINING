@@ -18,6 +18,10 @@ public class DeviceCategory {
     private long id;
     private String category;
 
+    public DeviceCategory(String category) {
+        this.category = category;
+    }
+
     public DeviceCategory(long id, String category) {
         this.id = id;
         this.category = category;

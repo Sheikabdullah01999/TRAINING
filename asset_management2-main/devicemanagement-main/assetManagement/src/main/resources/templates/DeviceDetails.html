@@ -71,10 +71,8 @@
 </div>
 <div class="main">
     <h1>Device List</h1>
-    <form th:action="@{/device/searching}" method="get">
-        <input type="text" name="keyword" th:value="${keyword}" placeholder="Find by Category and DeviceStatus" size="50">
-        <button type="submit" class="btn btn-info" >Search</button>
-    </form>
+        <input type="text" name="keyword" id="keyword" th:value="${keyword}" placeholder="Find by Category and DeviceStatus" size="50">
+        <button class="btn btn-info" onclick="ajaxSearch()">Search</button>
     <br>
     <br>
     <table class="table table-stripped table-bordered list_device_table">
@@ -91,6 +89,9 @@
         </tr>
         </thead>
         <tbody id="devices">
+
+        </tbody>
+        <tbody id="searchResult">
 
         </tbody>
     </table>
@@ -140,6 +141,39 @@ function Delete(id)
 			}
 		});
 }
+function ajaxSearch()
+{
+console.log("search")
+var keyword = $("#keyword").val();
+$.ajax({
+            type : "GET",
+			contentType : "application/json",
+            url:'/device/searching?keyword='+keyword,
+            dataType : 'json',
+            success: function(response){
+            console.log(response)
+                    $('#devices').hide();
+					$.each(response, function (key, value) {
+					    console.log("val",value.category)
+						var Id = value.deviceId;
+
+							$('#searchResult').append('<tr>\
+										<td>'+Id+'</td>\
+										<td>'+value.category+'</td>\
+										<td>'+value.deviceName+'</td>\
+										<td>'+value.devicePurchaseDate+'</td>\
+										<td>'+value.manufacturedId+'</td>\
+										<td>'+value.assignStatus+'</td>\
+										<td>'+value.deviceStatus+'</td>\
+										<td><a href="/device/update/'+value.deviceId+'" class="btn btn-success">update</a></td>\
+										<td><button  class="btn btn-danger" onclick="Delete('+Id+')">delete</button></td>\
+										</tr>');
+
+						})
+                  }
+		});
+}
+
 /* Loop through all dropdown buttons to toggle between hiding and showing its dropdown content - This allows the user to have multiple dropdowns without any conflict */
 var dropdown = document.getElementsByClassName("dropdown-btn");
 var i;

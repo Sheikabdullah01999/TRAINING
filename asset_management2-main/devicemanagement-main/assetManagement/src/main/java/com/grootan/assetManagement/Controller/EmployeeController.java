@@ -113,21 +113,6 @@ public class EmployeeController {
 
     }
 
-    @GetMapping("/employee/search")
-    public String home(Employee employee, Model model, String keyword) throws ResourceNotFoundException
-    {
-        if(keyword!=null)
-        {
-            List<Employee> list = employeeService.getByKeyword(keyword);
-            model.addAttribute("List_Of_Employees", list);
-        }else
-        {
-            List<Employee> list = (List<Employee>) employeeService.getAllEmployees();
-            model.addAttribute("List_Of_Employees", list);
-        }
-        return "ListOfEmployees";
-    }
-
     @GetMapping("/employee/department")
     public String addDepartment(Model model)
     {

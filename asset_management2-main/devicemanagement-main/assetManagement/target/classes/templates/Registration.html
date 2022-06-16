@@ -17,6 +17,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/fontawesome.min.css">
     <link rel="stylesheet" href="/css/style.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+</head>
 <body>
 <div class="sidenav">
     <nav class="sidebar">
@@ -162,21 +163,15 @@ $.ajax({
 				window.location.href='/employee/list';
 			},
 			error : function(request,status,error) {
-				alert(request.responseText);
-				window.location.href='/employee/registration';
+				var err = JSON.parse(request.responseText);
+                alert(err.description);
 			}
 		});
 		resetData();
 }
 function resetData()
 {
- $("#empId").val("");
- $("#empName").val("");
- $("#email").val("");
  $("#empPassword").val("");
- $("#empDepartment").val("");
- $("#empDevices").val("");
- $("#assignRole").val("");
 }
 /* Loop through all dropdown buttons to toggle between hiding and showing its dropdown content - This allows the user to have multiple dropdowns without any conflict */
 var dropdown = document.getElementsByClassName("dropdown-btn");

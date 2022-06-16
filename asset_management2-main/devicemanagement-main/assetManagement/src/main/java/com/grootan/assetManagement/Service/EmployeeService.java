@@ -155,13 +155,18 @@ public class EmployeeService {
 
         EmployeeDepartment employeeDepartment=new EmployeeDepartment(employeeDetails.getEmpDepartment());
 
+//        Employee employee = new Employee(employeeDetails.getEmpId(),
+//                employeeDetails.getEmpName(), employeeDetails.getEmail(),
+//                passwordEncoder.encode(employeeDetails.getEmpPassword()),
+//                employeeDepartment,
+//                employeeDetails.getAssignRole(),
+//                Arrays.asList(new Role(employeeDetails.getAssignRole())),device,
+//                employeeDetails.getEmpDepartment());
         Employee employee = new Employee(employeeDetails.getEmpId(),
-                employeeDetails.getEmpName(), employeeDetails.getEmail(),
+                employeeDetails.getEmpName(),employeeDetails.getEmail(),
                 passwordEncoder.encode(employeeDetails.getEmpPassword()),
-                employeeDepartment,
-                employeeDetails.getAssignRole(),
-                Arrays.asList(new Role(employeeDetails.getAssignRole())),device,
-                employeeDetails.getEmpDepartment());
+                employeeDetails.getAssignRole(),employeeDetails.getEmpDepartment(),
+                employeeDetails.getDepartment(),Arrays.asList(new Role(employeeDetails.getAssignRole())),device);
 
         return employee;
     }
@@ -396,12 +401,6 @@ public class EmployeeService {
                 new Response<>(String.valueOf(HttpStatus.OK.value()), HttpStatus.OK.getReasonPhrase(), "deleted successful",employee),
                 new HttpHeaders(),
                 HttpStatus.OK);
-    }
-
-
-    //search by keyword using like
-    public List<Employee> getByKeyword(String keyword){
-        return employeeDao.findByKeyword(keyword);
     }
 
     //current log in user detail validation

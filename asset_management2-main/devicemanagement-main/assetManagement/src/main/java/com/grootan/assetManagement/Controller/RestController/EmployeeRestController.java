@@ -15,6 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.Resource;
 import java.util.List;
 
 @Slf4j
@@ -102,6 +104,17 @@ public class EmployeeRestController {
     @DeleteMapping("/employee/device/delete/{id}")
     public ResponseEntity<Object> deleteEmployeeDevice(@PathVariable(name="id") int id) throws ResourceNotFoundException {
         return employeeService.deleteEmpDevices(id);
+    }
+
+    @GetMapping("/employee/searching")
+    public ResponseEntity search(@RequestParam(name="keyword") String keyword) throws ResourceNotFoundException
+    {
+        List<Employee> employees = employeeDao.findByKeyword(keyword);
+        if(employees.isEmpty())
+        {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(employees);
     }
 
 }

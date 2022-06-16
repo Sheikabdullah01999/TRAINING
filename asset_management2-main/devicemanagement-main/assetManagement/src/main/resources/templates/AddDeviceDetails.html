@@ -139,7 +139,7 @@ var deviceStatus = $("#deviceStatus").val();
 $.ajax({
 			type : "POST",
 			contentType : "application/json",
-			url : '/device/add/add',
+			url : '/v1/device',
 			data : JSON.stringify({category:category,deviceName:deviceName,manufacturedId:manufacturedId,devicePurchaseDate:devicePurchaseDate,assignStatus:assignStatus,deviceStatus:deviceStatus}),
 			dataType : 'json',
 			success : function(result) {

@@ -118,7 +118,8 @@ $.ajax({
 				window.location.href='/roles/list';
 			},
 			error : function(request,status,error) {
-				alert(request.responseText);
+				var err = JSON.parse(request.responseText);
+                alert(err.description);
 			}
 		});
 }

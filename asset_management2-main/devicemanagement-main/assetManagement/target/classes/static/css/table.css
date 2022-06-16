@@ -78,12 +78,18 @@ color:#707070;
   margin-left: 60px; /* Same as the width of the sidenav */
   padding: 0px 10px;
 }
-.history_main
+.pagination_main
 {
 margin-left: 350px; /* Same as the width of the sidenav */
   font-size: 15px; /* Increased text to enable scrolling */
   padding: 0px 10px;
   width:100%;
+}
+.history_main
+{
+margin-left: 350px; /* Same as the width of the sidenav */
+  font-size: 15px; /* Increased text to enable scrolling */
+  padding: 0px 10px;
 }
 /* Add an active class to the active dropdown button */
 .active {
@@ -92,6 +98,7 @@ margin-left: 350px; /* Same as the width of the sidenav */
 }
 .change
 {
+
 width:5%;
 height:auto;
 }
@@ -174,6 +181,7 @@ header .image-text .profession{
     .table
     {
     width:50%;
+    max-width:50%!important
     }
     .row
     {
@@ -242,6 +250,7 @@ header .image-text .profession{
     {
     margin-left:350px;
     }
+
 
 
 

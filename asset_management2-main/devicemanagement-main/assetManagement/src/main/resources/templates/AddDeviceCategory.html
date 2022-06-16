@@ -98,7 +98,7 @@ var category = $("#category").val();
 $.ajax({
 			type : "POST",
 			contentType : "application/json",
-			url : '/device/add/category/device',
+			url : '/v1/devices/category',
 			data : JSON.stringify({category:category}),
 			dataType : 'json',
 			success : function(result) {
@@ -110,6 +110,11 @@ $.ajax({
                 alert(err.description);
 			}
 		});
+		resetData();
+}
+function resetData()
+{
+$("#category").val("");
 }
 /* Loop through all dropdown buttons to toggle between hiding and showing its dropdown content - This allows the user to have multiple dropdowns without any conflict */
 var dropdown = document.getElementsByClassName("dropdown-btn");

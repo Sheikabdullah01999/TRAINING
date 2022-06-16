@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import javax.transaction.Transactional;
 
 @Repository
-public interface EmployeeDepartmentDao extends JpaRepository<EmployeeDepartment, Integer> {
+public interface EmployeeDepartmentDao extends JpaRepository<EmployeeDepartment, Long> {
     @Query("SELECT u from EmployeeDepartment u where u.department=?1")
     EmployeeDepartment findByDepartmentName(String department);
 
