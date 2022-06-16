@@ -94,6 +94,20 @@ public class DeviceService {
      */
     public ResponseEntity<Object> addDeviceDetails(DeviceRequest deviceRequest) throws FieldEmptyException, ResourceNotFoundException {
         emptyFieldCheck(deviceRequest);
+        List<DeviceCategory> categories = deviceCategoryDao.findAll();
+        int flag=0;
+        for(DeviceCategory deviceCategory:categories)
+        {
+            if(deviceCategory.equals(deviceRequest.getCategory()))
+            {
+                flag=1;
+                break;
+            }
+        }
+        if(flag==0)
+        {
+            throw new ResourceNotFoundException("Category does not exists");
+        }
         if(deviceIdExists(deviceRequest.getManufacturedId()))
         {
             throw new GeneralException("manufactured id already exits");
@@ -228,6 +242,21 @@ public class DeviceService {
         return   new ResponseEntity<>(
                 new Response<>(String.valueOf(HttpStatus.OK.value()), HttpStatus.OK.getReasonPhrase(),
                         "device found", deviceCategoryList),
+                new HttpHeaders(),
+                HttpStatus.OK);
+    }
+
+    //get device name
+    public ResponseEntity<Object> getDeviceNames() throws ResourceNotFoundException
+    {
+        List<DeviceName> deviceNameList=deviceNameDao.findAll();
+        if(deviceNameList.isEmpty())
+        {
+            throw new ResourceNotFoundException("no device found");
+        }
+        return   new ResponseEntity<>(
+                new Response<>(String.valueOf(HttpStatus.OK.value()), HttpStatus.OK.getReasonPhrase(),
+                        "device found", deviceNameList),
                 new HttpHeaders(),
                 HttpStatus.OK);
     }

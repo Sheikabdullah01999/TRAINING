@@ -143,4 +143,10 @@ public class DeviceRestController {
         Gson gson = new Gson();
         return Long.parseLong(gson.toJson(deviceCategoryDao.findByDeviceCategoryId(name)));
     }
+
+    @GetMapping("/v1/devices/deviceNames")
+    @Operation(summary = "GetDeviceNames", description = "Returns a List Of DeviceNames")
+    public ResponseEntity<Object> getDeviceName() throws ResourceNotFoundException {
+        return deviceService.getDeviceNames();
+    }
 }
