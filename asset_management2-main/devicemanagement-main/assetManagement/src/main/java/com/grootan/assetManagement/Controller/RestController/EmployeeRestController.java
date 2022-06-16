@@ -3,11 +3,6 @@ package com.grootan.assetManagement.Controller.RestController;
 import com.grootan.assetManagement.Exception.AlreadyExistsException;
 import com.grootan.assetManagement.Exception.FieldEmptyException;
 import com.grootan.assetManagement.Exception.ResourceNotFoundException;
-import com.grootan.assetManagement.Model.EmployeeDepartment;
-import com.grootan.assetManagement.Model.EmployeeDevices;
-import com.grootan.assetManagement.Repository.DeviceDao;
-import com.grootan.assetManagement.Repository.EmployeeDao;
-import com.grootan.assetManagement.Repository.EmployeeDepartmentDao;
 import com.grootan.assetManagement.Response;
 import com.grootan.assetManagement.Service.EmployeeService;
 import com.grootan.assetManagement.request.EmployeeDepartmentRequest;
@@ -21,8 +16,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.List;
-
 
 @Slf4j
 @ApiResponses(value =
@@ -35,51 +28,33 @@ import java.util.List;
         })
 
 @RestController
-public class EmployeeRestController {
-    @Autowired
-    EmployeeDepartmentDao employeeDepartmentDao;
-    @Autowired
-    EmployeeDao employeeDao;
-
-    @Autowired
-    DeviceDao deviceDao;
-    public EmployeeService getEmployeeService()
-    {
-        return employeeService;
-    }
-
-
-    @Autowired
-    public void setEmployeeService(EmployeeService employeeService) {
-        this.employeeService = employeeService;
-    }
-
+public class EmployeeRestController
+{
     @Autowired
     EmployeeService employeeService;
 
-
     @GetMapping("v1/employee/department")
-    @Operation(description = "Rest service to get employee department", summary = "EmployeeDepartment")
+    @Operation(description = "Rest service to get employee department", summary = "employeeDepartment")
     public ResponseEntity<Object> getEmployeeDepartment() throws ResourceNotFoundException {
         return  employeeService.getAllEmpDepartments();
     }
 
     @GetMapping("v1/employees")
-    @Operation(description = "Rest service to get employees details", summary = "EmployeeDetails")
+    @Operation(description = "Rest service to get employees details", summary = "employeeDetails")
     public ResponseEntity<Object> getAllEmployeeList() throws ResourceNotFoundException
     {
         return employeeService.getAllEmployees();
     }
 
     @GetMapping("v1/employee/devices")
-    @Operation(description = "Rest service to get employee Device", summary = "EmployeeDevice")
+    @Operation(description = "Rest service to get employee Device", summary = "employeeDevice")
     public ResponseEntity<Object> getAllEmployeeDevice() throws ResourceNotFoundException
     {
         return employeeService.getUserDevices();
     }
 
     @GetMapping("v1/employee/{employeeId}")
-    @Operation(description = "Rest service to get employee by employee id", summary = "EmployeeById")
+    @Operation(description = "Rest service to get employee by employee id", summary = "employeeById")
     public ResponseEntity<Object> employeeDetailsById(@PathVariable String employeeId) throws ResourceNotFoundException
     {
         return employeeService.findEmployeeById(employeeId);
