@@ -11,9 +11,12 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href='https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css' rel='stylesheet'/>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Audiowide"> <!-- Heading font -->
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand&display=swap" rel="stylesheet"> <!--label font -->
     <link href="https://fonts.googleapis.com/css2?family=Orelega+One&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="/css/table.css">
+    <link rel="stylesheet" href="/css/style.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 </head>
 <body>
@@ -34,46 +37,46 @@
     </nav>
     <br>
     <br>
-    <button class="dropdown-btn"><i class="fa fa-user" aria-hidden="true"></i>&nbsp;Employee
-        <i class="fa fa-caret-down"></i>
+    <button class="dropdown-btn"><i class='bx bx-user bx-sm' ></i>&nbsp;Employee
+        <i class='bx bx-chevron-down'></i>
     </button>
     <div class="dropdown-container">
-        <a th:href="@{/employee/add}" class="row1"> Employee Registration</a>
-        <a th:href="@{/employee/all/list}" class="row1">List Of Employees</a>
-        <a th:href="@{/employee/all/user/device}" class="row1">List Of Employee Devices</a>
-        <a th:href="@{/employee/department}" class="row1">Add Employee Department</a>
+        <a th:href="@{/employee/registration}">Employee Registration</a>
+        <a th:href="@{/employee/list}">List Of Employees</a>
+        <a th:href="@{/employee/user/device}">List Of Employee Devices</a>
+        <a th:href="@{/employee/department}">Add Employee Department</a>
     </div>
     <br>
-    <button class="dropdown-btn"><i class='fa fa-users'></i>&nbsp;Roles
-        <i class="fa fa-caret-down"></i>
+    <button class="dropdown-btn"><i class='bx bx-user-plus'></i>&nbsp;Roles
+        <i class='bx bx-chevron-down'></i>
     </button>
     <div class="dropdown-container">
-        <a th:href="@{/role/registration}" class="row1">Roles Registration</a>
-        <a th:href="@{/roles/list}" class="row1">List Of Roles</a>
+        <a th:href="@{/role/registration}">Roles Registration</a>
+        <a th:href="@{/roles/list}">List Of Roles</a>
     </div>
     <br>
-    <button class="dropdown-btn"><i class='bx bxs-devices'></i>&nbsp;Devices
-        <i class="fa fa-caret-down"></i>
+    <button class="dropdown-btn"><i class='bx bx-devices bx-sm' ></i>&nbsp;Devices
+        <i class='bx bx-chevron-down'></i>
     </button>
     <div class="dropdown-container">
-        <a th:href="@{/device/add/device}" class="row1">Add Device Details</a>
-        <a th:href="@{/device/list/device}" class="row1">List Of Device Details</a>
-        <a th:href="@{/device/category/add}" class="row1">Add Device Category</a>
-        <a th:href="@{/device/add/name}" class="row1">Add Device Name</a>
+        <a th:href="@{/device/add}">Add Device Details</a>
+        <a th:href="@{/device/list}">List Of Device Details</a>
+        <a th:href="@{/device/add/category}">Add Device Category</a>
+        <a th:href="@{/device/add/name}">Add Device Name</a>
     </div>
     <br>
-    <a th:href="@{/history}" class="dropdown-btn"><i class="fa fa-history" aria-hidden="true"></i>&nbsp;History</a>
+    <a th:href="@{/history}" class="dropdown-btn"><i class='bx bx-history bx-sm' ></i>&nbsp;History</a>
     <br>
-    <a sec:authorize="isAuthenticated()" th:href="@{/logout}" class="dropdown-btn" ><i class="fa fa-sign-out" aria-hidden="true"></i>&nbsp;Logout</a>
+    <a sec:authorize="isAuthenticated()" th:href="@{/logout}" class="dropdown-btn" ><i class='bx bx-log-out bx-sm'></i>&nbsp;Logout</a>
 </div>
 <div class="main">
     <h1>Device List</h1>
         <input type="text" name="keyword" id="keyword" th:value="${keyword}" placeholder="Find by Category and DeviceStatus" size="50">
-        <button type="submit" class="btn btn-info" onclick="ajaxSearch()" >Search</button>
+        <button class="btn btn-info" onclick="ajaxSearch()">Search</button>
     <br>
     <br>
-    <table class="table table-stripped table-bordered">
-        <thead>
+    <table class="table table-stripped table-bordered list_device_table">
+        <thead class="thead-light">
         <tr>
             <th scope="col">Id</th>
             <th scope="col">Category</th>
@@ -88,15 +91,16 @@
         <tbody id="devices">
 
         </tbody>
+        <tbody id="searchResult">
+
+        </tbody>
     </table>
-    <a th:href="@{/}" class="btn btn-primary btn1">Back</a>
+    <a th:href="@{/}" class="btn btn-primary device_btn">Back</a>
 </div>
 <script>
-
-
 $(document).ready(function(){
 $.ajax({
-url:"/device/list",
+url:"/device/list/device",
 type:"GET",
 contentType : "application/json",
 dataType : 'json',
@@ -105,7 +109,7 @@ success: function(response){
 						var Id = value.deviceId;
 
 							$('#devices').append('<tr>\
-										<td>'+value.deviceId+'</td>\
+										<td>'+Id+'</td>\
 										<td>'+value.category+'</td>\
 										<td>'+value.deviceName+'</td>\
 										<td>'+value.devicePurchaseDate+'</td>\
@@ -129,7 +133,7 @@ function Delete(id)
 			dataType : 'json',
 			success : function() {
 				alert("Deleted Successfully");
-				window.location.href='/device/list/device';
+				window.location.href='/device/list';
 			},
 			error : function(request,status,error) {
 				alert(request.responseText);
@@ -137,6 +141,39 @@ function Delete(id)
 			}
 		});
 }
+function ajaxSearch()
+{
+console.log("search")
+var keyword = $("#keyword").val();
+$.ajax({
+            type : "GET",
+			contentType : "application/json",
+            url:'/device/searching?keyword='+keyword,
+            dataType : 'json',
+            success: function(response){
+            console.log(response)
+                    $('#devices').hide();
+					$.each(response, function (key, value) {
+					    console.log("val",value.category)
+						var Id = value.deviceId;
+
+							$('#searchResult').append('<tr>\
+										<td>'+Id+'</td>\
+										<td>'+value.category+'</td>\
+										<td>'+value.deviceName+'</td>\
+										<td>'+value.devicePurchaseDate+'</td>\
+										<td>'+value.manufacturedId+'</td>\
+										<td>'+value.assignStatus+'</td>\
+										<td>'+value.deviceStatus+'</td>\
+										<td><a href="/device/update/'+value.deviceId+'" class="btn btn-success">update</a></td>\
+										<td><button  class="btn btn-danger" onclick="Delete('+Id+')">delete</button></td>\
+										</tr>');
+
+						})
+                  }
+		});
+}
+
 /* Loop through all dropdown buttons to toggle between hiding and showing its dropdown content - This allows the user to have multiple dropdowns without any conflict */
 var dropdown = document.getElementsByClassName("dropdown-btn");
 var i;

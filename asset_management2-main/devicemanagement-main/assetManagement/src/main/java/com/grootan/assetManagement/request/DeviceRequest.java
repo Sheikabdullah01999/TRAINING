@@ -6,8 +6,8 @@ import java.sql.Date;
 
 @NoArgsConstructor
 public class DeviceRequest {
-
     private Integer deviceId;
+
 
     private String manufacturedId;
 

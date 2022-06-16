@@ -1,16 +1,23 @@
 package com.grootan.assetManagement.Controller.RestController;
 
+import com.google.gson.Gson;
 import com.grootan.assetManagement.Exception.AlreadyExistsException;
 import com.grootan.assetManagement.Exception.FieldEmptyException;
 import com.grootan.assetManagement.Exception.ResourceNotFoundException;
 import com.grootan.assetManagement.Model.Device;
-import com.grootan.assetManagement.Model.DeviceCategory;
-import com.grootan.assetManagement.Model.DeviceName;
 import com.grootan.assetManagement.Repository.DeviceCategoryDao;
 import com.grootan.assetManagement.Repository.DeviceDao;
 import com.grootan.assetManagement.Repository.HistoryDao;
+import com.grootan.assetManagement.Response;
 import com.grootan.assetManagement.Service.DeviceService;
+import com.grootan.assetManagement.request.DeviceCategoryRequest;
+import com.grootan.assetManagement.request.DeviceNameRequest;
 import com.grootan.assetManagement.request.DeviceRequest;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,9 +25,14 @@ import org.springframework.web.bind.annotation.*;
 import javax.websocket.server.PathParam;
 import java.util.List;
 
-import static com.grootan.assetManagement.Model.Constants.NO_RECORDS;
-
-
+@ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "OK",content = @Content(schema = @Schema(implementation = Response.class))),
+        @ApiResponse(responseCode = "201", description = "CREATED",content = @Content(schema = @Schema(implementation = Response.class))),
+        @ApiResponse(responseCode = "302", description = "FOUND",content = @Content(schema = @Schema(implementation = Response.class))),
+        @ApiResponse(responseCode = "404", description = "NO_RECORDS",content = @Content(schema = @Schema(implementation = Response.class))),
+        @ApiResponse(responseCode = "406", description = "NOT_ACCEPTABLE",content = @Content(schema = @Schema(implementation = Response.class))),
+        @ApiResponse(responseCode = "409", description = "CONFLICT",content = @Content(schema = @Schema(implementation = Response.class)))
+})
 @RestController
 public class DeviceRestController {
     @Autowired
@@ -35,71 +47,66 @@ public class DeviceRestController {
     @Autowired
     DeviceDao deviceDao;
 
-
-    @GetMapping("/get/history")
-    public ResponseEntity<Object> history() throws ResourceNotFoundException
-    {
+    @GetMapping("/v1/history")
+    @Operation(summary = "GetHistories", description = "Returns a List Of Histories")
+    public ResponseEntity<Object> history() throws ResourceNotFoundException {
         return deviceService.getHistory();
     }
 
-    @GetMapping("/device/list")
+    @GetMapping("/v1/devices")
+    @Operation(summary = "GetDevices", description = "Returns a List Of Devices")
     public ResponseEntity<Object> getAllDeviceList() throws ResourceNotFoundException {
-
         List<Device> devices = deviceDao.findAll();
-        if(devices.isEmpty())
-        {
-            throw new ResourceNotFoundException(NO_RECORDS);
-        }
-        return ResponseEntity.status(HttpStatus.OK).body(devices);
-    }
-
-
-    @GetMapping("/device/{deviceId}")
-    public ResponseEntity<Object> getDeviceById(@PathParam("deviceId") Integer deviceId)
-    {
-        return deviceService.findDeviceById(deviceId);
-    }
-
-    @GetMapping("/device/category")
-    public ResponseEntity<Object> getDeviceCategory() throws ResourceNotFoundException {
-        return deviceService.getCategory();
-    }
-
-    @PostMapping("/device")
-    public ResponseEntity<Object> addDeviceDetails(@RequestBody DeviceRequest device) throws FieldEmptyException {
-        return  deviceService.addDeviceDetails(device);
-    }
-
-    @PostMapping("/device/category")
-    public ResponseEntity<Object> addDeviceCategory(@RequestBody DeviceCategory deviceCategory) throws FieldEmptyException, AlreadyExistsException
-    {
-        return deviceService.saveDeviceCategory(deviceCategory);
-    }
-
-    @PostMapping("/device/name")
-    public ResponseEntity<Object> addDeviceName(@RequestBody DeviceName deviceName) throws FieldEmptyException, AlreadyExistsException {
-        return  deviceService.saveDeviceName(deviceName);
-
-    }
-
-    @PutMapping("/device/update")
-    public ResponseEntity<Object> updateDevice(@RequestBody DeviceRequest device) throws FieldEmptyException
-    {
-        return deviceService.updateDeviceDetails(device);
-    }
-
-    @DeleteMapping("/device/{id}")
-    public ResponseEntity<Object> deleteDevice(@PathVariable(name="id") Integer id) throws ResourceNotFoundException {
-        return deviceService.deleteDeviceDetails(id);
-    }
-
-    @GetMapping("/device/searching")
-    public ResponseEntity<Object> search(@RequestParam(name = "keyword") String keyword) throws ResourceNotFoundException {
-        List<Device> devices = deviceDao.findByKeyword(keyword);
         if (devices.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
         return ResponseEntity.status(HttpStatus.OK).body(devices);
     }
+
+
+    @GetMapping("/v1/devices/{deviceId}")
+    @Operation(summary = "GetDevice", description = "Returns a Device By Id")
+    public ResponseEntity<Object> getDeviceById(@PathParam("deviceId") Integer deviceId) {
+        return deviceService.findDeviceById(deviceId);
+    }
+
+    @GetMapping("/v1/devices/categories")
+    @Operation(summary = "GetDeviceCategories", description = "Returns a List Of DeviceCategories")
+    public ResponseEntity<Object> getDeviceCategory() throws ResourceNotFoundException {
+        return deviceService.getCategory();
+    }
+
+    @PostMapping("/v1/device")
+    @Operation(summary = "CreateDevice", description = "Create a Device")
+    public ResponseEntity<Object> addDeviceDetails(@RequestBody DeviceRequest device) throws FieldEmptyException {
+        return deviceService.addDeviceDetails(device);
+    }
+
+    @PostMapping("/v1/devices/category")
+    @Operation(summary = "CreateDeviceCategory", description = "Create a DeviceCategory")
+    public ResponseEntity<Object> addDeviceCategory(@RequestBody DeviceCategoryRequest deviceCategory) throws FieldEmptyException, AlreadyExistsException {
+
+        return deviceService.saveDeviceCategory(deviceCategory);
+    }
+
+    @PostMapping("/v1/devices/deviceName")
+    @Operation(summary = "CreateDeviceName", description = "Create a DeviceName")
+    public ResponseEntity addDeviceName(@RequestBody DeviceNameRequest deviceName) throws FieldEmptyException, AlreadyExistsException {
+        return deviceService.saveDeviceName(deviceName);
+
+    }
+
+    @PutMapping("/v1/device")
+    @Operation(summary = "EditDevice", description = "update the device")
+    public ResponseEntity updateDevice(@RequestBody DeviceRequest device) throws FieldEmptyException {
+        return deviceService.updateDeviceDetails(device);
+    }
+
+    @DeleteMapping("/v1/devices/{id}")
+    @Operation(summary = "DeleteDevice", description = "delete the device")
+    public ResponseEntity deleteDevice(@PathVariable(name = "id") Integer id) throws ResourceNotFoundException {
+        return deviceService.deleteDeviceDetails(id);
+    }
+
 
 }

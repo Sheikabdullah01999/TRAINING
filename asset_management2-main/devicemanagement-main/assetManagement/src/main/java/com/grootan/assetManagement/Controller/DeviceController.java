@@ -46,7 +46,7 @@ public class DeviceController {
 
 
 
-    @GetMapping("/device/add/device")
+    @GetMapping("/device/add")
     public String addDeviceDetails(Model model)
     {
         List<DeviceCategory> devices = (List<DeviceCategory>) deviceCategoryDao.findAll();
@@ -55,8 +55,8 @@ public class DeviceController {
         return "AddDeviceDetails";
     }
 
-    @GetMapping("/device/list/device")
-    public String userDevices(Model model)
+    @GetMapping("/device/list")
+    public String list_of_devices(Model model)
     {
         try{
             model.addAttribute("DeviceDetails", deviceService.getAllDevices());
@@ -75,29 +75,45 @@ public class DeviceController {
         }
     }
 
+//    @GetMapping("/device/searching")
+//    public String search(Device device, Model model, String keyword) throws ResourceNotFoundException {
+//        if(keyword!=null)
+//        {
+//            List<Device> list = deviceService.getByKeywordDevice(keyword);
+//            model.addAttribute("DeviceDetails",list);
+//        }
+//        else
+//        {
+//            List<Device> list = (List<Device>) deviceService.getAllDevices();
+//            model.addAttribute("DeviceDetails",list);
+//        }
+//        return "DeviceDetails";
+//    }
+
     @RequestMapping(method = RequestMethod.GET)
     public String index(ModelMap modelMap) {
         modelMap.put("deviceCategories", deviceService.findAll());
         return "AddDeviceDetails";
     }
 
-    @ResponseBody
-    @RequestMapping(value = "loadNamesByCategory/{name}", method = RequestMethod.GET)
-    public String loadNamesByCategory(@PathVariable("name") String name) {
-        Gson gson = new Gson();
-        Integer id = deviceService.findByCategoryId(name);
-        return gson.toJson(deviceService.findByCategory(id));
-    }
+//    @ResponseBody
+//    @RequestMapping(value = "loadNamesByCategory/{name}", method = RequestMethod.GET)
+//    public String loadNamesByCategory(@PathVariable("name") String name) {
+//        Gson gson = new Gson();
+//        long id = deviceService.findByCategoryId(name);
+//        return gson.toJson(deviceService.findByCategory(id));
+//    }
+//
+//    @ResponseBody
+//    @RequestMapping(value="loadIdsByCategory/{name}", method=RequestMethod.GET)
+//    public long loadIdsByCategory(@PathVariable("name") String name)
+//    {
+//        Gson gson = new Gson();
+//        return Long.parseLong(gson.toJson(deviceCategoryDao.findByDeviceCategoryId(name)));
+//    }
 
-    @ResponseBody
-    @RequestMapping(value="loadIdsByCategory/{name}", method=RequestMethod.GET)
-    public long loadIdsByCategory(@PathVariable("name") String name)
-    {
-        Gson gson = new Gson();
-        return Long.parseLong(gson.toJson(deviceCategoryDao.findByDeviceCategoryId(name)));
-    }
-
-
+//    @ResponseBody
+//    @RequestMapping(value = "/device/update/{id}", method = RequestMethod.GET)
     @GetMapping("/device/update/{id}")
     public ModelAndView showUpdateDevicePage(@PathVariable(name="id") int id,Model model)
     {
@@ -120,7 +136,7 @@ public class DeviceController {
         return "redirect:/device/list";
     }
 
-    @GetMapping("/device/category/add")
+    @GetMapping("/device/add/category")
     public String addCategory(Model model)
     {
         model.addAttribute("deviceCategory",new DeviceCategory());
@@ -137,7 +153,7 @@ public class DeviceController {
         return "AddDeviceName";
     }
 
-    @GetMapping("/history")
+    @GetMapping("/historyList")
     public String history(Model model)
     {
         try
@@ -170,11 +186,11 @@ public class DeviceController {
         return "HistoryDetails";
     }
 
-    @GetMapping("category/delete/{id}")
-    public String deleteDeviceCategoryDetails(@PathVariable(name="id") String  id) throws ResourceNotFoundException {
-        deviceService.deleteDeviceCategory(id);
-        return "redirect:/getAllDeviceCategory";
-    }
+//    @GetMapping("category/delete/{id}")
+//    public String deleteDeviceCategoryDetails(@PathVariable(name="id") String  id) throws ResourceNotFoundException {
+//        deviceService.deleteDeviceCategory(id);
+//        return "redirect:/getAllDeviceCategory";
+//    }
 
 
     @GetMapping("/CategoryUpdate/{category}")

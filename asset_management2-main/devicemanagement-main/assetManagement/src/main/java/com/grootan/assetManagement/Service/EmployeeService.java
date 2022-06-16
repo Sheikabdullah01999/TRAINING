@@ -106,8 +106,6 @@ public class EmployeeService {
                 new HttpHeaders(), HttpStatus.OK);
     }
 
-    //list all employees
-
     /**
      * to get all the employee details
      *
@@ -312,6 +310,7 @@ public class EmployeeService {
 
         validate(employeeDetails);
 
+
         List<Integer> updatedDeviceList=new ArrayList<>();
 
         List<Device> device=new ArrayList<>();
@@ -329,12 +328,9 @@ public class EmployeeService {
             }
         }
 
-        if(existingDevice.size()>0)
+        if(!existingDevice.isEmpty())
         {
-            for(Integer id:existingDevice)
-            {
-                updatedDeviceList.add(id);
-            }
+            updatedDeviceList.addAll(existingDevice);
         }
 
         if(employeeDetails.getEmpDevices()!="")

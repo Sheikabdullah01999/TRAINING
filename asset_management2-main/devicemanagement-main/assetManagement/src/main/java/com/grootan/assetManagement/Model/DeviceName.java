@@ -17,6 +17,10 @@ public class DeviceName {
     private long id;
     private String name;
 
+    public DeviceName(String name) {
+        this.name = name;
+    }
+
     @ManyToOne()
     private DeviceCategory deviceCategory;
 

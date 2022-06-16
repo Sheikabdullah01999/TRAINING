@@ -98,7 +98,7 @@ var category = $("#category").val();
 $.ajax({
 			type : "POST",
 			contentType : "application/json",
-			url : '/device/add/category',
+			url : '/device/add/category/device',
 			data : JSON.stringify({category:category}),
 			dataType : 'json',
 			success : function(result) {

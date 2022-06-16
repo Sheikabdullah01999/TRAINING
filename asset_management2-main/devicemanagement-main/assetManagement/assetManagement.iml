@@ -65,6 +65,8 @@
     <orderEntry type="library" name="Maven: org.springframework:spring-web:5.3.18" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-webmvc:5.3.18" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: mysql:mysql-connector-java:8.0.28" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: org.postgresql:postgresql:42.3.3" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: org.checkerframework:checker-qual:3.5.0" level="project" />
     <orderEntry type="library" name="Maven: io.github.kilmajster:ngrok-spring-boot-starter:0.6.0" level="project" />
     <orderEntry type="library" name="Maven: io.vavr:vavr:0.10.4" level="project" />
     <orderEntry type="library" name="Maven: io.vavr:vavr-match:0.10.4" level="project" />
