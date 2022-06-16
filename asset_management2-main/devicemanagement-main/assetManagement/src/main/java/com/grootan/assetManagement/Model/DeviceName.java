@@ -21,7 +21,7 @@ public class DeviceName {
         this.name = name;
     }
 
-    @ManyToOne()
+    @ManyToOne(cascade = {CascadeType.PERSIST})
     private DeviceCategory deviceCategory;
 
     public DeviceName()

@@ -1,6 +1,6 @@
 package com.grootan.assetManagement.Controller.RestController;
 
-import com.google.gson.Gson;
+
 import com.grootan.assetManagement.Exception.AlreadyExistsException;
 import com.grootan.assetManagement.Exception.FieldEmptyException;
 import com.grootan.assetManagement.Exception.ResourceNotFoundException;
@@ -107,6 +107,7 @@ public class DeviceRestController {
     public ResponseEntity deleteDevice(@PathVariable(name = "id") Integer id) throws ResourceNotFoundException {
         return deviceService.deleteDeviceDetails(id);
     }
+
 
 
 }

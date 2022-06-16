@@ -99,18 +99,6 @@ public class DeviceService {
             throw new GeneralException("manufactured id already exits");
         }
 
-        String strDate = String.valueOf(deviceRequest.getDevicePurchaseDate());
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        Date date;
-
-        try {
-            date = dateFormat.parse(strDate);
-
-        }
-        catch (ParseException e) {
-            throw new ResourceNotFoundException(strDate);
-        }
-
         saveHistory(deviceRequest,DEVICE_ADD);
         Device device=new Device(deviceRequest.getManufacturedId(), deviceRequest.getCategory(),
                 deviceRequest.getDeviceName(),deviceRequest.getDevicePurchaseDate(),
@@ -234,10 +222,10 @@ public class DeviceService {
 
     //save device name
     public ResponseEntity<Object> saveDeviceName(DeviceNameRequest deviceNameRequest) throws FieldEmptyException, AlreadyExistsException {
-        DeviceCategoryRequest deviceCategory = deviceNameRequest.getDeviceCategory();
-        String device= deviceCategory.getCategory();
+        //DeviceCategoryRequest deviceCategory = deviceNameRequest.getDeviceCategory();
+        String device= deviceNameRequest.getDeviceCategory().getCategory();
         String lowerCase = deviceNameRequest.getName().toLowerCase();
-        if(deviceNameRequest.getName()==""||deviceCategory.getCategory()=="")
+        if(deviceNameRequest.getName()==""||device=="")
         {
             throw new FieldEmptyException("field should not empty");
         }
@@ -246,11 +234,10 @@ public class DeviceService {
             throw new AlreadyExistsException("This device Name is Already Exists: "+deviceNameRequest.getName());
         }
 
-        deviceNameRequest.setName(lowerCase);
-        deviceNameRequest.setDeviceCategory(new DeviceCategoryRequest(device));
+        DeviceCategory deviceCategory=new DeviceCategory(deviceNameRequest.getDeviceCategory().getCategory());
         saveHistory(deviceNameRequest,DEVICE_NAME_ADD);
         deviceNameRequest.setName(lowerCase);
-        DeviceName deviceName = new DeviceName(deviceNameRequest.getName());
+        DeviceName deviceName = new DeviceName(deviceNameRequest.getName(),deviceCategory);
         deviceNameDao.save(deviceName);
         return new ResponseEntity<>(
                 new Response<>(String.valueOf(HttpStatus.CREATED.value()),
