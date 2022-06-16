@@ -78,7 +78,7 @@ public class DeviceRestController {
 
     @PostMapping("/v1/device")
     @Operation(summary = "CreateDevice", description = "Create a Device")
-    public ResponseEntity<Object> addDeviceDetails(@RequestBody DeviceRequest device) throws FieldEmptyException {
+    public ResponseEntity<Object> addDeviceDetails(@RequestBody DeviceRequest device) throws FieldEmptyException, ResourceNotFoundException {
         return deviceService.addDeviceDetails(device);
     }
 
@@ -96,10 +96,10 @@ public class DeviceRestController {
 
     }
 
-    @PutMapping("/v1/device")
+    @PutMapping("/v1/device/{id}")
     @Operation(summary = "EditDevice", description = "update the device")
-    public ResponseEntity updateDevice(@RequestBody DeviceRequest device) throws FieldEmptyException {
-        return deviceService.updateDeviceDetails(device);
+    public ResponseEntity updateDevice(@PathVariable(name = "id") Integer id, @RequestBody DeviceRequest device) throws FieldEmptyException {
+        return deviceService.updateDeviceDetails(id,device);
     }
 
     @DeleteMapping("/v1/devices/{id}")
