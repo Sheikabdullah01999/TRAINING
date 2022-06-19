@@ -12,10 +12,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 @ApiResponses(value = {
@@ -36,11 +33,11 @@ public class RoleRestController {
         return ResponseEntity.status(HttpStatus.OK).body(roleService.getAllRoles());
     }
 
-    @PostMapping("/v1/role")
+    @PostMapping("/v1/roleId/role")
     @Operation(summary = "CreateRole", description = "Create a Role")
-    public ResponseEntity<Object> saveRole(@RequestBody Role role) {
+    public ResponseEntity<Object> saveRole(@PathVariable("roleId") Long id, @RequestBody Role role) {
         try {
-            return ResponseEntity.status(HttpStatus.CREATED).body(roleService.saveRoles(role));
+            return ResponseEntity.status(HttpStatus.CREATED).body(roleService.saveRoles(id,role));
         } catch (GeneralException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         }

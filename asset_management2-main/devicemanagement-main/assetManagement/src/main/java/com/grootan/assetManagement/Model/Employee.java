@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import javax.persistence.*;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -23,7 +24,7 @@ public class Employee
     private String assignRole;
     private String empDepartment;
 
-    public Employee(String empId, String email, String empName, String empPassword, String assignRole, String empDepartment, EmployeeDepartment department, Collection<Role> role, List<Device> devices) {
+    public Employee(String empId, String email, String empName, String empPassword, String assignRole, String empDepartment, EmployeeDepartment department, Set<Role> role, List<Device> devices) {
         this.empId = empId;
         this.email = email;
         this.empName = empName;
@@ -35,17 +36,24 @@ public class Employee
         this.devices = devices;
     }
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinTable(name = "department_emp",
-            joinColumns = @JoinColumn(name = "emp_id"),
-            inverseJoinColumns = @JoinColumn(name = "department_id"))
+    @OneToOne(fetch=FetchType.LAZY,cascade = {
+            CascadeType.DETACH,
+            CascadeType.MERGE,
+            CascadeType.PERSIST,
+            CascadeType.REFRESH
+    })
     private EmployeeDepartment department;
 
 
     @Transient
     private String empDevices;
-
-    @ManyToMany(cascade = {CascadeType.ALL})
+    @JoinColumn(insertable = false,updatable = false)
+    @ManyToMany(fetch = FetchType.EAGER,cascade = {
+            CascadeType.DETACH,
+            CascadeType.MERGE,
+            CascadeType.PERSIST,
+            CascadeType.REFRESH
+    })
     @JoinTable(name = "user_role",
             joinColumns = {
                     @JoinColumn(name = "emp_id")
@@ -54,9 +62,13 @@ public class Employee
                     @JoinColumn(name = "role_id")
             }
     )
-    private Collection<Role> role;
-
-    @OneToMany(cascade = {CascadeType.PERSIST,CascadeType.MERGE})
+    private Set<Role> role;
+    @JoinColumn(insertable = true,updatable = true)
+    @OneToMany(fetch = FetchType.EAGER,cascade = {
+            CascadeType.DETACH,
+            CascadeType.MERGE,
+            CascadeType.PERSIST,
+            CascadeType.REFRESH})
     private List<Device> devices;
 
     public Employee()

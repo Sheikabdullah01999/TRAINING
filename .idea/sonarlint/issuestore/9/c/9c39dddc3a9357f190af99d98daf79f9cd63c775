@@ -1,0 +1,11 @@
+
+
+java:S14880"fImmediately return this expression instead of assigning it to the temporary variable "authentication".(ÍÑÖûÿÿÿÿ
+{
+java:S1488<"`Immediately return this expression instead of assigning it to the temporary variable "employee".(¢‹©–øÿÿÿÿ
+o	java:S120"ZRename this package name to match the regular expression '^[a-z_]+(\.[a-z_][a-z0-9_]*)*$'.(–ÇÍù
+h	java:S1005"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(Õ±Øøÿÿÿÿ
+V
+java:S18588"@"format" returns a string, there's no need to call "toString()".(áÆÖİ
+Q
+java:S1128";Remove this unused import 'javax.annotation.PostConstruct'.(›ÅÁ

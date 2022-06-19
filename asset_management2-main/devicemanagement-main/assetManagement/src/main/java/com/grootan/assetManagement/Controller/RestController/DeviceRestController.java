@@ -5,8 +5,6 @@ import com.grootan.assetManagement.Exception.AlreadyExistsException;
 import com.grootan.assetManagement.Exception.FieldEmptyException;
 import com.grootan.assetManagement.Exception.ResourceNotFoundException;
 import com.grootan.assetManagement.Model.Device;
-import com.grootan.assetManagement.Model.DeviceCategory;
-import com.grootan.assetManagement.Model.DeviceName;
 import com.grootan.assetManagement.Repository.DeviceCategoryDao;
 import com.grootan.assetManagement.Repository.DeviceDao;
 import com.grootan.assetManagement.Repository.HistoryDao;
@@ -57,13 +55,20 @@ public class DeviceRestController {
     @GetMapping("/v1/devices")
     @Operation(summary = "GetDevices", description = "Returns a List Of Devices")
     public ResponseEntity<Object> getAllDeviceList() throws ResourceNotFoundException {
-        List<Device> devices = deviceDao.findAll();
-        if (devices.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
-        return ResponseEntity.status(HttpStatus.OK).body(devices);
+        return deviceService.getAllDevices();
     }
 
+    @GetMapping("/v1/devices/categories")
+    @Operation(summary = "GetDeviceCategories", description = "Returns a List Of DeviceCategories")
+    public ResponseEntity<Object> getDeviceCategories() throws ResourceNotFoundException {
+        return deviceService.getCategory();
+    }
+
+    @GetMapping("/v1/devices/deviceNames")
+    @Operation(summary = "GetDeviceNames", description = "Returns a List Of DeviceNames")
+    public ResponseEntity<Object> getDeviceNames() throws ResourceNotFoundException {
+        return deviceService.getDeviceNames();
+    }
 
     @GetMapping("/v1/devices/{deviceId}")
     @Operation(summary = "GetDevice", description = "Returns a Device By Id")
@@ -71,54 +76,53 @@ public class DeviceRestController {
         return deviceService.findDeviceById(deviceId);
     }
 
-    @GetMapping("/v1/devices/categories")
-    @Operation(summary = "GetDeviceCategories", description = "Returns a List Of DeviceCategories")
-    public ResponseEntity<Object> getDeviceCategory() throws ResourceNotFoundException {
-        return deviceService.getCategory();
-    }
-
-    @PostMapping("/v1/device")
+    @PostMapping("/v1/{deviceId}/device")
     @Operation(summary = "CreateDevice", description = "Create a Device")
-    public ResponseEntity<Object> addDeviceDetails(@RequestBody DeviceRequest device) throws FieldEmptyException, ResourceNotFoundException {
-        return deviceService.addDeviceDetails(device);
+    public ResponseEntity<Object> addDevice(@PathVariable(name = "deviceId") Integer deviceId, @RequestBody DeviceRequest device) throws FieldEmptyException, ResourceNotFoundException {
+        return deviceService.addDeviceDetails(deviceId,device);
     }
 
-    @PostMapping("/v1/devices/category")
+    @PostMapping("/v1/devices/{deviceCategoryId}/category")
     @Operation(summary = "CreateDeviceCategory", description = "Create a DeviceCategory")
-    public ResponseEntity<Object> addDeviceCategory(@RequestBody DeviceCategoryRequest deviceCategory) throws FieldEmptyException, AlreadyExistsException {
+    public ResponseEntity<Object> addDeviceCategory(@PathVariable(name = "deviceCategoryId") Long deviceCategoryId, @RequestBody DeviceCategoryRequest deviceCategory) throws FieldEmptyException, AlreadyExistsException {
 
-        return deviceService.saveDeviceCategory(deviceCategory);
+        return deviceService.saveDeviceCategory(deviceCategoryId,deviceCategory);
     }
 
-    @PostMapping("/v1/devices/deviceName")
+    @PostMapping("/v1/devices/{deviceNameId}/deviceName")
     @Operation(summary = "CreateDeviceName", description = "Create a DeviceName")
-    public ResponseEntity addDeviceName(@RequestBody DeviceNameRequest deviceName) throws FieldEmptyException, AlreadyExistsException {
-        return deviceService.saveDeviceName(deviceName);
+    public ResponseEntity<Object> addDeviceName(@PathVariable(name = "deviceNameId") Long deviceNameId, @RequestBody DeviceNameRequest deviceName) throws FieldEmptyException, AlreadyExistsException {
+        return deviceService.saveDeviceName(deviceNameId,deviceName);
 
     }
 
-    @PutMapping("/v1/device/{id}")
+    @PutMapping("/v1/device/{deviceId}")
     @Operation(summary = "EditDevice", description = "update the device")
-    public ResponseEntity updateDevice(@PathVariable(name = "id") Integer id, @RequestBody DeviceRequest device) throws FieldEmptyException {
-        return deviceService.updateDeviceDetails(id,device);
+    public ResponseEntity<Object> updateDevice(@PathVariable(name = "deviceId") Integer deviceId, @RequestBody DeviceRequest device) throws FieldEmptyException,ResourceNotFoundException {
+        return deviceService.updateDeviceDetails(deviceId,device);
     }
 
-    @DeleteMapping("/v1/devices/{id}")
+    @DeleteMapping("/v1/devices/{deviceId}")
     @Operation(summary = "DeleteDevice", description = "delete the device")
-    public ResponseEntity deleteDevice(@PathVariable(name = "id") Integer id) throws ResourceNotFoundException {
-        return deviceService.deleteDeviceDetails(id);
+    public ResponseEntity<Object> deleteDevice(@PathVariable(name = "deviceId") Integer deviceId) throws ResourceNotFoundException {
+        return deviceService.deleteDevice(deviceId);
     }
 
-//    @DeleteMapping("/v1/devices/category/{id}")
-//    @Operation(summary = "DeleteDeviceCategory", description = "delete the device category")
-//    public ResponseEntity deleteDeviceCategory(@PathVariable(name = "id") String category) throws ResourceNotFoundException {
-//
-//        return deviceService.deleteDeviceCategory(category);
-//    }
+    @DeleteMapping("/v1/devices/deviceCategories/{deviceCategoryId}")
+    @Operation(summary = "DeleteDeviceCategory", description = "delete the deviceCategory")
+    public ResponseEntity<Object> deleteDeviceCategory(@PathVariable(name = "deviceCategoryId") Long deviceCategoryId) throws ResourceNotFoundException {
+        return deviceService.deleteDeviceCategory(deviceCategoryId);
+    }
+
+    @DeleteMapping("/v1/devices/deviceNames/{deviceNameId}")
+    @Operation(summary = "DeleteDeviceName", description = "delete the deviceName")
+    public ResponseEntity<Object> deleteDeviceName(@PathVariable(name = "deviceNameId") Long deviceNameId) throws ResourceNotFoundException {
+        return deviceService.deleteDeviceName(deviceNameId);
+    }
 
     @GetMapping("/v1/devices/search")
     @Operation(summary = "DeviceSearch", description = "search device by keyword")
-    public ResponseEntity search(@RequestParam(name = "keyword") String keyword) throws ResourceNotFoundException {
+    public ResponseEntity<Object> search(@RequestParam(name = "keyword") String keyword){
         List<Device> devices = deviceDao.findByKeyword(keyword);
         if (devices.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
@@ -127,7 +131,7 @@ public class DeviceRestController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "/v1/devices/deviceCategory/{deviceName}", method = RequestMethod.GET)
+    @GetMapping(value = "/v1/devices/deviceCategory/{deviceName}")
     @Operation(summary = "GetDeviceCategory", description = "get deviceCategory by deviceName")
     public String loadNamesByCategory(@PathVariable("deviceName") String name) {
         Gson gson = new Gson();
@@ -136,17 +140,11 @@ public class DeviceRestController {
     }
 
     @ResponseBody
-    @RequestMapping(value="/v1/devices/deviceCategoryIds/{deviceName}", method=RequestMethod.GET)
+    @GetMapping(value="/v1/devices/deviceCategoryIds/{deviceName}")
     @Operation(summary = "GetDeviceCategoryId", description = "get deviceCategory by deviceName")
     public long loadIdsByCategory(@PathVariable("deviceName") String name)
     {
         Gson gson = new Gson();
         return Long.parseLong(gson.toJson(deviceCategoryDao.findByDeviceCategoryId(name)));
-    }
-
-    @GetMapping("/v1/devices/deviceNames")
-    @Operation(summary = "GetDeviceNames", description = "Returns a List Of DeviceNames")
-    public ResponseEntity<Object> getDeviceName() throws ResourceNotFoundException {
-        return deviceService.getDeviceNames();
     }
 }

@@ -40,7 +40,7 @@ public class RoleService {
         return roles;
     }
 
-    public Role saveRoles(Role role) {
+    public Role saveRoles(Long id, Role role) {
         if(role.getRoleName()=="")
         {
             throw new GeneralException("Enter the roleName");
@@ -56,6 +56,7 @@ public class RoleService {
         String roleHistory=NEW_ROLE+role.getRoleName();
         History history=new History(service.currentUser(),ROLE_ADD,new Gson().toJson(role),service.DateAndTime());
         historyDao.save(history);
+        role.setId(id);
         return roleDao.save(role);
     }
 }

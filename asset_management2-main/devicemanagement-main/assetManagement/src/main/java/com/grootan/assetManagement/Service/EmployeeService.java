@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import static com.grootan.assetManagement.Model.Constants.*;
@@ -166,7 +167,7 @@ public class EmployeeService {
                 employeeDetails.getEmpName(),employeeDetails.getEmail(),
                 passwordEncoder.encode(employeeDetails.getEmpPassword()),
                 employeeDetails.getAssignRole(),employeeDetails.getEmpDepartment(),
-                employeeDetails.getDepartment(),Arrays.asList(new Role(employeeDetails.getAssignRole())),device);
+                employeeDetails.getDepartment(), Set.of(new Role(employeeDetails.getAssignRole())),device);
 
         return employee;
     }

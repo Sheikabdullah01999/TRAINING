@@ -16,9 +16,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
+import java.util.*;
 
 @Service
 public class CommonService {
@@ -78,22 +76,19 @@ public class CommonService {
         adminRole.setId(2);
         adminRole.setRoleName("ADMIN");
         adminRole.setRoleDescription("Admin role");
-        roleDao.save(adminRole);
 
 
         Role userRole = new Role();
         userRole.setId(1);
         userRole.setRoleName("USER");
         userRole.setRoleDescription("Default role for newly created record");
-
         roleDao.save(userRole);
 
-
         EmployeeDepartment adminEmployeeDepartment=new EmployeeDepartment();
-        adminEmployeeDepartment.setId(1);
         adminEmployeeDepartment.setDepartment("admin");
-        employeeDepartmentDao.save(adminEmployeeDepartment);
 
+        EmployeeDepartment userEmployeeDepartment=new EmployeeDepartment();
+        userEmployeeDepartment.setDepartment("user");
 
         Employee adminUser = new Employee();
 
@@ -101,13 +96,12 @@ public class CommonService {
         adminUser.setEmpName("grootan");
         adminUser.setEmail("grootan@gmail.com");
         adminUser.setEmpPassword(getEncodedPassword("gr00tan"));
-        adminUser.setEmpDepartment("admin");
+        adminUser.setEmpDepartment(adminEmployeeDepartment.getDepartment());
         adminUser.setAssignRole(adminRole.getRoleName());
-        Collection<Role> adminRoles = new ArrayList<>();
+        Set<Role> adminRoles = new HashSet<>();
         adminRoles.add(adminRole);
         adminUser.setRole(adminRoles);
 
         adminDao.save(adminUser);
-
     }
 }

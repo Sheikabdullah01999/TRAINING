@@ -132,7 +132,7 @@ public class DeviceController {
 
     @GetMapping("/device/delete/{id}")
     public String deleteDeviceDetails(@PathVariable(name="id") Integer id, Model model) throws ResourceNotFoundException {
-        deviceService.deleteDeviceDetails(id);
+        deviceService.deleteDevice(id);
         return "redirect:/device/list";
     }
 

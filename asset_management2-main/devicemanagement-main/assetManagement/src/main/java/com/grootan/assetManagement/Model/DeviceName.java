@@ -13,7 +13,6 @@ import javax.persistence.*;
 public class DeviceName {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private String name;
 
@@ -22,6 +21,9 @@ public class DeviceName {
     }
 
     @ManyToOne()
+    @JoinTable(name = "deviceCategory_deviceName",
+            joinColumns = @JoinColumn(name = "deviceName_id",referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "deviceCategory_id",referencedColumnName = "id"))
     private DeviceCategory deviceCategory;
 
     public DeviceName()

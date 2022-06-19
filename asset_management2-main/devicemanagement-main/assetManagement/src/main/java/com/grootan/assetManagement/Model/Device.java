@@ -12,7 +12,6 @@ import java.sql.Date;
 public class Device {
         @Id
         @Column(name="DeviceId")
-        @GeneratedValue(strategy = GenerationType.AUTO)
         private Integer DeviceId;
 
         @Column(name="manufacturedId")
@@ -109,9 +108,6 @@ public class Device {
                 this.deviceStatus = deviceStatus;
         }
 
-        public Device(Integer id) {
-                this.DeviceId = id;
-        }
         public Device()
         {
 

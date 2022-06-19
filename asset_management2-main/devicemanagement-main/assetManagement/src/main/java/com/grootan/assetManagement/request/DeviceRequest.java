@@ -15,17 +15,12 @@ public class DeviceRequest {
 
     private Date devicePurchaseDate;
 
-    private String assignStatus;
 
-    private String deviceStatus;
-
-    public DeviceRequest(String manufacturedId, String category, String deviceName, Date devicePurchaseDate, String assignStatus, String deviceStatus) {
+    public DeviceRequest(String manufacturedId, String category, String deviceName, Date devicePurchaseDate) {
         this.manufacturedId = manufacturedId;
         this.category = category;
         this.deviceName = deviceName;
         this.devicePurchaseDate = devicePurchaseDate;
-        this.assignStatus = assignStatus;
-        this.deviceStatus = deviceStatus;
     }
 
     public String getManufacturedId() {
@@ -58,22 +53,6 @@ public class DeviceRequest {
 
     public void setDevicePurchaseDate(Date devicePurchaseDate) {
         this.devicePurchaseDate = devicePurchaseDate;
-    }
-
-    public String getAssignStatus() {
-        return assignStatus;
-    }
-
-    public void setAssignStatus(String assignStatus) {
-        this.assignStatus = assignStatus;
-    }
-
-    public String getDeviceStatus() {
-        return deviceStatus;
-    }
-
-    public void setDeviceStatus(String deviceStatus) {
-        this.deviceStatus = deviceStatus;
     }
 
 }

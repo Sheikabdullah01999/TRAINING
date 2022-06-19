@@ -14,7 +14,6 @@ public class DeviceCategory {
 
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private String category;
 

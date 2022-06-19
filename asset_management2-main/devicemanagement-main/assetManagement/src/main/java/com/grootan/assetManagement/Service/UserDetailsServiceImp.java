@@ -1,6 +1,7 @@
 package com.grootan.assetManagement.Service;
 
 import com.grootan.assetManagement.Model.Employee;
+import com.grootan.assetManagement.Model.MyUserDetails;
 import com.grootan.assetManagement.Model.Role;
 import com.grootan.assetManagement.Repository.EmployeeDao;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,10 +28,11 @@ public class UserDetailsServiceImp implements UserDetailsService {
         if(employee == null) {
             throw new UsernameNotFoundException("Invalid username or password.");
         }
-        return new org.springframework.security.core.userdetails.User(employee.getEmail(), employee.getEmpPassword(), mapRolesToAuthorities(employee.getRole()));
+        return new MyUserDetails(employee);
+        //return new org.springframework.security.core.userdetails.User(employee.getEmail(), employee.getEmpPassword(), mapRolesToAuthorities(employee.getRole()));
     }
 
-    private Collection<? extends GrantedAuthority> mapRolesToAuthorities(Collection<Role> roles){
-        return roles.stream().map(role -> new SimpleGrantedAuthority(role.getRoleName())).collect(Collectors.toList());
-    }
+//    private Collection<? extends GrantedAuthority> mapRolesToAuthorities(Collection<Role> roles){
+//        return roles.stream().map(role -> new SimpleGrantedAuthority(role.getRoleName())).collect(Collectors.toList());
+//    }
 }

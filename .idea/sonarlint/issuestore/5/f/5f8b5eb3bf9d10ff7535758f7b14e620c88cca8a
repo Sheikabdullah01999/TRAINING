@@ -1,0 +1,10 @@
+
+R
+java:S4973,"<Strings and Boxed types should be compared using "equals()".(Ò…µú
+W
+java:S49730"<Strings and Boxed types should be compared using "equals()".(Åğèàıÿÿÿÿ
+o	java:S120"ZRename this package name to match the regular expression '^[a-z_]+(\.[a-z_][a-z0-9_]*)*$'.(–ÇÍù
+U
+java:S18548"?Remove this useless assignment to local variable "roleHistory".(Ä¡‡”
+F
+java:S14818"0Remove this unused "roleHistory" local variable.(Ä¡‡”
