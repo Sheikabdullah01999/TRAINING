@@ -1,0 +1,8 @@
+
+h	java:S1004"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(žÕ±Øøÿÿÿÿ
+V
+java:S18587"@"format" returns a string, there's no need to call "toString()".(áÆÖÝ
+`
+java:S1128"ERemove this unused import 'com.grootan.assetManagement.model.Device'.(ß¡ÈÞøÿÿÿÿ
+F
+java:S1128"+Remove this unused import 'java.util.List'.(Õë±Äøÿÿÿÿ
