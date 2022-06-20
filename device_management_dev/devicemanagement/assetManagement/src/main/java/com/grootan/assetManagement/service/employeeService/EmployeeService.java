@@ -99,6 +99,48 @@ public class EmployeeService
     }
 
     /**
+     * to get all the employee device
+     * @return
+     * @throws ResourceNotFoundException
+     */
+    public ResponseEntity<Object> getUserDevices() throws ResourceNotFoundException
+    {
+        List<EmployeeDevices> userDevices = employeeDao.getUserDevice();
+        if(userDevices.isEmpty())
+        {
+            throw new ResourceNotFoundException(NO_RECORDS);
+        }
+        return   new ResponseEntity<>(
+                new Response<>(String.valueOf(HttpStatus.OK.value()), HttpStatus.OK, "device found",userDevices),
+                new HttpHeaders(),
+                HttpStatus.OK);
+    }
+
+    /**
+     * to find employee by employee id
+     * @param id
+     * @return
+     * @throws ResourceNotFoundException
+     */
+
+    public ResponseEntity<Object> findEmployeeById(String id) throws ResourceNotFoundException {
+        Employee employee = employeeDao.findByEmpId(id);
+        if(employee==null)
+        {
+            throw new ResourceNotFoundException(NO_RECORDS);
+        }
+        EmployeeResponse employeeResponse= new EmployeeResponse(employee.getEmpId(),employee.getEmail(),
+                employee.getEmpName(),employee.getEmpPassword(),employee.getDepartment(),
+                employee.getRole(),employee.getDevices());
+
+
+        return   new ResponseEntity<>(
+                new Response<>(String.valueOf(HttpStatus.OK.value()), HttpStatus.OK, "employee found",employeeResponse),
+                new HttpHeaders(),
+                HttpStatus.OK);
+    }
+
+    /**
      * update device  assign status after it assign to the employee
      * to fill the details to the employee object to save in the database
      * @param employeeDetails
@@ -221,47 +263,37 @@ public class EmployeeService
                 HttpStatus.CREATED);
     }
 
-
     /**
-     * to get all the employee device
+     * method to save employee department
+     *
+     * @param employeeDepartment
      * @return
-     * @throws ResourceNotFoundException
+     * @throws FieldEmptyException
+     * @throws AlreadyExistsException
      */
-    public ResponseEntity<Object> getUserDevices() throws ResourceNotFoundException
-    {
-        List<EmployeeDevices> userDevices = employeeDao.getUserDevice();
-        if(userDevices.isEmpty())
+    public ResponseEntity<Object> saveEmpDepartment(EmployeeDepartmentRequest employeeDepartment) throws FieldEmptyException, AlreadyExistsException {
+
+        String empDepartment = employeeDepartment.getDepartment().toLowerCase();
+        if(employeeDepartment.getDepartment().isEmpty())
         {
-            throw new ResourceNotFoundException(NO_RECORDS);
+            throw new FieldEmptyException("field should not empty");
         }
-        return   new ResponseEntity<>(
-                new Response<>(String.valueOf(HttpStatus.OK.value()), HttpStatus.OK, "device found",userDevices),
-                new HttpHeaders(),
-                HttpStatus.OK);
-    }
 
-    /**
-     * to find employee by employee id
-     * @param id
-     * @return
-     * @throws ResourceNotFoundException
-     */
-
-    public ResponseEntity<Object> findEmployeeById(String id) throws ResourceNotFoundException {
-        Employee employee = employeeDao.findByEmpId(id);
-        if(employee==null)
+        if(departmentExists(empDepartment))
         {
-            throw new ResourceNotFoundException(NO_RECORDS);
+            throw new AlreadyExistsException("Department Name  Already Exists: "+employeeDepartment.getDepartment());
         }
-        EmployeeResponse employeeResponse= new EmployeeResponse(employee.getEmpId(),employee.getEmail(),
-                employee.getEmpName(),employee.getEmpPassword(),employee.getDepartment(),
-                        employee.getRole(),employee.getDevices());
 
+        saveHistory(employeeDepartment,EMP_DEPARTMENT_ADD);
+        employeeDepartment.setDepartment(empDepartment);
 
-        return   new ResponseEntity<>(
-                new Response<>(String.valueOf(HttpStatus.OK.value()), HttpStatus.OK, "employee found",employeeResponse),
+        logger.info("department saved success");
+        EmployeeDepartment department= new EmployeeDepartment(employeeDepartment.getDepartment());
+        employeeDepartmentDao.save(department);
+        return new ResponseEntity<>(
+                new Response<>(String.valueOf(HttpStatus.CREATED.value()), HttpStatus.CREATED, "successfully saved",employeeDepartment),
                 new HttpHeaders(),
-                HttpStatus.OK);
+                HttpStatus.CREATED);
     }
 
 
@@ -383,41 +415,9 @@ public class EmployeeService
                 HttpStatus.OK);
     }
 
-    /**
-     * method to save employee department
-     *
-     * @param employeeDepartment
-     * @return
-     * @throws FieldEmptyException
-     * @throws AlreadyExistsException
-     */
-    public ResponseEntity<Object> saveEmpDepartment(EmployeeDepartmentRequest employeeDepartment) throws FieldEmptyException, AlreadyExistsException {
-
-        String empDepartment = employeeDepartment.getDepartment().toLowerCase();
-        if(employeeDepartment.getDepartment().isEmpty())
-        {
-            throw new FieldEmptyException("field should not empty");
-        }
-
-        if(departmentExists(empDepartment))
-        {
-            throw new AlreadyExistsException("Department Name  Already Exists: "+employeeDepartment.getDepartment());
-        }
-
-        saveHistory(employeeDepartment,EMP_DEPARTMENT_ADD);
-        employeeDepartment.setDepartment(empDepartment);
-
-        logger.info("department saved success");
-        EmployeeDepartment department= new EmployeeDepartment(employeeDepartment.getDepartment());
-        employeeDepartmentDao.save(department);
-        return new ResponseEntity<>(
-                new Response<>(String.valueOf(HttpStatus.CREATED.value()), HttpStatus.CREATED, "successfully saved",employeeDepartment),
-                new HttpHeaders(),
-                HttpStatus.CREATED);
-    }
 
 
-    /**
+    /**-------------------->
      * ->validation part
      * email validation
      * emptyField validation
@@ -425,7 +425,7 @@ public class EmployeeService
      * employee id exists validation
      * department and role availability check
      * device availability check
-     */
+     **--------------------->/
 
 
 
@@ -509,12 +509,21 @@ public class EmployeeService
     }
 
 
-
+    /**
+     * to  check given depart available not
+     * @param department
+     * @return
+     */
     public boolean departmentExists(final String department)
     {
         return employeeDepartmentDao.findByDepartmentName(department)!=null;
     }
 
+    /**
+     * to validate role exists or not
+     * @param role
+     * @return
+     */
     public  boolean roleExistsCheck(String role)
     {
         return  roleDao.findByName(role)!=null;
@@ -589,21 +598,21 @@ public class EmployeeService
      */
     public void availableDeviceCheck(EmployeeRequest employeeDetails) throws ResourceNotFoundException {
         List<Device> availableDevices=deviceDao.availableDevice();
-        List<Integer> newDevice = new ArrayList<>();
+        List<Integer> newDevices = new ArrayList<>();
         if(!Objects.equals(employeeDetails.getEmpDevices(), ""))
         {
-            newDevice=getDeviceID(employeeDetails.getEmpDevices());
+            newDevices=getDeviceID(employeeDetails.getEmpDevices());
             if(availableDevices.isEmpty())
             {
                 throw new ResourceNotFoundException("device unavailable ");
             }
 
         }
-        if(!newDevice.isEmpty())
+        if(!newDevices.isEmpty())
         {
-            for(Integer id:newDevice)
+            for(Integer id:newDevices)//1,2,3
             {
-                for(Device device:availableDevices)
+                for(Device device:availableDevices)//2,3,5
                 {
                     if(!device.getDeviceId().equals(id))
                     {
@@ -612,13 +621,6 @@ public class EmployeeService
                 }
             }
 
-            for (Integer id : newDevice) {
-                for (Device device : availableDevices) {
-                    if (!device.getDeviceId().equals(id)) {
-                        throw new ResourceNotFoundException("device unavailable: " + id);
-                    }
-                }
-            }
         }
     }
 

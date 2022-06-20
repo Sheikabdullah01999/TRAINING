@@ -1,4 +1,4 @@
-package com.grootan.assetManagement.controller.restController.roleRestController;
+package com.grootan.assetManagement.controller.restController;
 
 import com.grootan.assetManagement.exception.GeneralException;
 import com.grootan.assetManagement.model.Role;

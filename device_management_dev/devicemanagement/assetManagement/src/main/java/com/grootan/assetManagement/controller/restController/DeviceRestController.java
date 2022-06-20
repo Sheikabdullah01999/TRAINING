@@ -1,4 +1,4 @@
-package com.grootan.assetManagement.controller.restController.deviceRestController;
+package com.grootan.assetManagement.controller.restController;
 
 
 import com.grootan.assetManagement.exception.AlreadyExistsException;
@@ -53,6 +53,11 @@ public class DeviceRestController {
         return deviceService.getHistory();
     }
 
+    /**
+     * rest api to get all the device details
+     * @return
+     * @throws ResourceNotFoundException
+     */
     @GetMapping("/v1/devices")
     @Operation(summary = "GetDevices", description = "Returns a List Of Devices")
     public ResponseEntity<Object> getAllDeviceList() throws ResourceNotFoundException {
@@ -63,25 +68,48 @@ public class DeviceRestController {
         return ResponseEntity.status(HttpStatus.OK).body(devices);
     }
 
-
+    /**
+     * rest api to get device by id
+     * @param deviceId
+     * @return
+     */
     @GetMapping("/v1/devices/{deviceId}")
     @Operation(summary = "GetDevice", description = "Returns a Device By Id")
     public ResponseEntity<Object> getDeviceById(@PathParam("deviceId") Integer deviceId) {
         return deviceService.findDeviceById(deviceId);
     }
 
+    /**
+     * rest api to get categories
+     * @return
+     * @throws ResourceNotFoundException
+     */
     @GetMapping("/v1/devices/categories")
     @Operation(summary = "GetDeviceCategories", description = "Returns a List Of DeviceCategories")
     public ResponseEntity<Object> getDeviceCategory() throws ResourceNotFoundException {
         return deviceService.getCategory();
     }
 
+    /**
+     * rest api to create new device
+     * @param device
+     * @return
+     * @throws FieldEmptyException
+     * @throws ResourceNotFoundException
+     */
     @PostMapping("/v1/device")
     @Operation(summary = "CreateDevice", description = "Create a Device")
     public ResponseEntity<Object> addDeviceDetails(@RequestBody DeviceRequest device) throws FieldEmptyException, ResourceNotFoundException {
         return deviceService.addDeviceDetails(device);
     }
 
+    /**
+     * rest api to add device category
+     * @param deviceCategory
+     * @return
+     * @throws FieldEmptyException
+     * @throws AlreadyExistsException
+     */
     @PostMapping("/v1/devices/category")
     @Operation(summary = "CreateDeviceCategory", description = "Create a DeviceCategory")
     public ResponseEntity<Object> addDeviceCategory(@RequestBody DeviceCategoryRequest deviceCategory) throws FieldEmptyException, AlreadyExistsException {
@@ -89,12 +117,20 @@ public class DeviceRestController {
         return deviceService.saveDeviceCategory(deviceCategory);
     }
 
+    /**
+     * to create device along  with category
+     * @param deviceName
+     * @return
+     * @throws FieldEmptyException
+     * @throws AlreadyExistsException
+     */
     @PostMapping("/v1/devices/deviceName")
     @Operation(summary = "CreateDeviceName", description = "Create a DeviceName")
-    public ResponseEntity addDeviceName(@RequestBody DeviceNameRequest deviceName) throws FieldEmptyException, AlreadyExistsException {
+    public ResponseEntity addDeviceName(@RequestBody DeviceNameRequest deviceName) throws FieldEmptyException, AlreadyExistsException
+    {
         return deviceService.saveDeviceName(deviceName);
-
     }
+
 
     @PutMapping("/v1/device/{id}")
     @Operation(summary = "EditDevice", description = "update the device")
